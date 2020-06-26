@@ -1,5 +1,5 @@
 #  Web Deploy 前端自动化部署平台
-
+若图片无法显示请点击这里：[https://zllugithub.github.io/web-deploy/](https://zllugithub.github.io/web-deploy/)
 ### 简述
 Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动化部署平台，相较于强大的Jenkins更加配置简单、使用更加方便快捷！支持发布版本回滚、各种Web代码的一键部署发布等。
 
@@ -16,7 +16,7 @@ Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动�
 - 支持多个项目部署
 
 ### 示意图
-![image](./images/20200626121718.jpg)
+![image](https://zllugithub.github.io/web-deploy/images/20200626121718.jpg)
 
 ## 快速开始配置环境
 
@@ -103,12 +103,12 @@ pm2 start ./www
 ````
 ## 界面示例
 ##### 登录界面
-![image](./images/index.jpg)
+![image](https://zllugithub.github.io/web-deploy/images/index.jpg)
 ##### 首页
-![image](./images/0200625145438.jpg)
+![image](https://zllugithub.github.io/web-deploy/images/0200625145438.jpg)
 ##### 静态部署界面
-![image](./images/20200625145514.jpg)
+![image](https://zllugithub.github.io/web-deploy/images/20200625145514.jpg)
 ##### 自动化部署界面
-![image](./images/20200625145530.png)
+![image](https://zllugithub.github.io/web-deploy/images/20200625145530.png)
 ##### 项目列表界面
-![image](./images/20200625145547.jpg)
+![image](https://zllugithub.github.io/web-deploy/images/20200625145547.jpg)
