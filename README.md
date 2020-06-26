@@ -16,7 +16,7 @@ Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动�
 - 支持多个项目部署
 
 ### 示意图
-![image](https://zllugithub.github.io/web-deploy/images/20200626121718.jpg)
+![image](./images/20200626121718.jpg)
 
 ## 快速开始配置环境
 
@@ -103,12 +103,12 @@ pm2 start ./www
 ````
 ## 界面示例
 ##### 登录界面
-![image](https://zllugithub.github.io/web-deploy/images/index.jpg)
+![image](./images/index.jpg)
 ##### 首页
-![image](https://zllugithub.github.io/web-deploy/images/0200625145438.jpg)
+![image](./images/0200625145438.jpg)
 ##### 静态部署界面
-![image](https://zllugithub.github.io/web-deploy/images/20200625145514.jpg)
+![image](./images/20200625145514.jpg)
 ##### 自动化部署界面
-![image](https://zllugithub.github.io/web-deploy/images/20200625145530.png)
+![image](./images/20200625145530.png)
 ##### 项目列表界面
-![image](https://zllugithub.github.io/web-deploy/images/20200625145547.jpg)
+![image](./images/20200625145547.jpg)
