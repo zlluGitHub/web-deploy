@@ -1,7 +1,7 @@
 #  Web Deploy 前端自动化部署平台
 若图片无法显示请点击这里：[https://zllugithub.github.io/web-deploy/](https://zllugithub.github.io/web-deploy/)
 ### 简述
-Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动化部署平台，相较于强大的Jenkins更加配置简单、使用更加方便快捷！支持发布版本回滚、各种Web代码的一键部署发布等。
+Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动化部署平台，相较于强大的Jenkins更加配置简单、使用更加方便快捷！支持发布版本回滚、各种Web代码的一键部署发布等，另外此平台中包含基于 vue-cli3.0 开发的 vue 项目开发脚手架 swt-cli ,此脚手架中已安装好我们经常用的一些包并对目录结构进行了部分整改，以便利于后期开发。
 
 
 ### 技术栈
@@ -74,7 +74,7 @@ mv mongodb-linux-x86_64-rhel70-4.0.1 mongodbserver
 ````
 参考资料：[linux 下 mongodb 的安装及配置](http://zhenglinglu.cn/detail?id=76174b6ab88f388ff08db75f06e2e3)
 
-## 快速启动项目
+## 快速安装平台
 
 #### 1、全局安装构建 Web Deploy 的脚手架 swd-cli
 ````bash
@@ -85,6 +85,7 @@ npm install swd-cli -g
 swd -v
 ````
 若出现版本号，则安装成功！
+
 #### 2、使用 swd 命令构建 Web Deploy 平台
 ````bash
 swd install web-deploy
@@ -101,6 +102,50 @@ node ./www
 cd web-deploy/bin
 pm2 start ./www
 ````
+## 安装示意图
+以 Linux CentOS 7 为例
+![image](https://zllugithub.github.io/web-deploy/images/20200627070846.jpg)
+## 快速构建项目模板
+#### 1、其中 my-template 为需要构建的项目名称，可随意更改。
+````bash
+swt install my-template
+````
+#### 2、所包含的安装包
+````json
+{
+    "dependencies": {
+    "axios": "^0.19.2",
+    "core-js": "^3.6.4",
+    "echarts": "^4.7.0",
+    "echarts-liquidfill": "^2.0.6",
+    "font-awesome": "^4.7.0",
+    "mockjs": "^1.1.0",
+    "postcss-px2rem": "^0.3.0",
+    "view-design": "^4.0.2",
+    "vue": "^2.6.11",
+    "vue-router": "^3.1.3",
+    "vuex": "^3.1.2"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^4.3.0",
+    "@vue/cli-plugin-eslint": "^4.3.0",
+    "@vue/cli-service": "^4.3.0",
+    "babel-eslint": "^10.1.0",
+    "compression-webpack-plugin": "^3.1.0",
+    "cross-env": "^6.0.3",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "lib-flexible": "^0.3.2",
+    "node-sass": "^4.13.0",
+    "sass-loader": "^8.0.0",
+    "vue-template-compiler": "^2.6.11",
+    "webpack-bundle-analyzer": "^3.6.0"
+  }
+}
+````
+#### 3、目录结构示意图
+![image](https://zllugithub.github.io/web-deploy/images/20200627073035.jpg)
+
 ## 界面示例
 ##### 登录界面
 ![image](https://zllugithub.github.io/web-deploy/images/index.jpg)
