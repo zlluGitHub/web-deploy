@@ -1,0 +1,426 @@
+<!DOCTYPE html><html><head>
+      <title>README</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <style>
+      /**
+ * prism.js Github theme based on GitHub's theme.
+ * @author Sam Clarke
+ */
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #333;
+  background: none;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.4;
+
+  -moz-tab-size: 8;
+  -o-tab-size: 8;
+  tab-size: 8;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+  padding: .8em;
+  overflow: auto;
+  /* border: 1px solid #ddd; */
+  border-radius: 3px;
+  /* background: #fff; */
+  background: #f5f5f5;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  padding: .1em;
+  border-radius: .3em;
+  white-space: normal;
+  background: #f5f5f5;
+}
+
+.token.comment,
+.token.blockquote {
+  color: #969896;
+}
+
+.token.cdata {
+  color: #183691;
+}
+
+.token.doctype,
+.token.punctuation,
+.token.variable,
+.token.macro.property {
+  color: #333;
+}
+
+.token.operator,
+.token.important,
+.token.keyword,
+.token.rule,
+.token.builtin {
+  color: #a71d5d;
+}
+
+.token.string,
+.token.url,
+.token.regex,
+.token.attr-value {
+  color: #183691;
+}
+
+.token.property,
+.token.number,
+.token.boolean,
+.token.entity,
+.token.atrule,
+.token.constant,
+.token.symbol,
+.token.command,
+.token.code {
+  color: #0086b3;
+}
+
+.token.tag,
+.token.selector,
+.token.prolog {
+  color: #63a35c;
+}
+
+.token.function,
+.token.namespace,
+.token.pseudo-element,
+.token.class,
+.token.class-name,
+.token.pseudo-class,
+.token.id,
+.token.url-reference .token.variable,
+.token.attr-name {
+  color: #795da3;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.token.title,
+.token.title .token.punctuation {
+  font-weight: bold;
+  color: #1d3e81;
+}
+
+.token.list {
+  color: #ed6a43;
+}
+
+.token.inserted {
+  background-color: #eaffea;
+  color: #55a532;
+}
+
+.token.deleted {
+  background-color: #ffecec;
+  color: #bd2c00;
+}
+
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+
+/* JSON */
+.language-json .token.property {
+  color: #183691;
+}
+
+.language-markup .token.tag .token.punctuation {
+  color: #333;
+}
+
+/* CSS */
+code.language-css,
+.language-css .token.function {
+  color: #0086b3;
+}
+
+/* YAML */
+.language-yaml .token.atrule {
+  color: #63a35c;
+}
+
+code.language-yaml {
+  color: #183691;
+}
+
+/* Ruby */
+.language-ruby .token.function {
+  color: #333;
+}
+
+/* Markdown */
+.language-markdown .token.url {
+  color: #795da3;
+}
+
+/* Makefile */
+.language-makefile .token.symbol {
+  color: #795da3;
+}
+
+.language-makefile .token.variable {
+  color: #183691;
+}
+
+.language-makefile .token.builtin {
+  color: #0086b3;
+}
+
+/* Bash */
+.language-bash .token.keyword {
+  color: #0086b3;
+}
+
+/* highlight */
+pre[data-line] {
+  position: relative;
+  padding: 1em 0 1em 3em;
+}
+pre[data-line] .line-highlight-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  display: block;
+  width: 100%;
+}
+
+pre[data-line] .line-highlight {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: inherit 0;
+  margin-top: 1em;
+  background: hsla(24, 20%, 50%,.08);
+  background: linear-gradient(to right, hsla(24, 20%, 50%,.1) 70%, hsla(24, 20%, 50%,0));
+  pointer-events: none;
+  line-height: inherit;
+  white-space: pre;
+}
+
+pre[data-line] .line-highlight:before, 
+pre[data-line] .line-highlight[data-end]:after {
+  content: attr(data-start);
+  position: absolute;
+  top: .4em;
+  left: .6em;
+  min-width: 1em;
+  padding: 0 .5em;
+  background-color: hsla(24, 20%, 50%,.4);
+  color: hsl(24, 20%, 95%);
+  font: bold 65%/1.5 sans-serif;
+  text-align: center;
+  vertical-align: .3em;
+  border-radius: 999px;
+  text-shadow: none;
+  box-shadow: 0 1px white;
+}
+
+pre[data-line] .line-highlight[data-end]:after {
+  content: attr(data-end);
+  top: auto;
+  bottom: .4em;
+}html body{font-family:"Helvetica Neue",Helvetica,"Segoe UI",Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ul,html body>ol{margin-bottom:16px}html body ul,html body ol{padding-left:2em}html body ul.no-list,html body ol.no-list{padding:0;list-style-type:none}html body ul ul,html body ul ol,html body ol ol,html body ol ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;background-color:#f0f0f0;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:bold;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:bold}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em !important;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::before,html body code::after{letter-spacing:-0.2em;content:"\00a0"}html body pre>code{padding:0;margin:0;font-size:.85em !important;word-break:normal;white-space:pre;background:transparent;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;font-size:.85em !important;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:before,html body pre tt:before,html body pre code:after,html body pre tt:after{content:normal}html body p,html body blockquote,html body ul,html body ol,html body dl,html body pre{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body pre,html body code{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview .pagebreak,.markdown-preview .newpage{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center !important}.markdown-preview:not([for="preview"]) .code-chunk .btn-group{display:none}.markdown-preview:not([for="preview"]) .code-chunk .status{display:none}.markdown-preview:not([for="preview"]) .code-chunk .output-div{margin-bottom:16px}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0}@media screen and (min-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px + 2em)}}@media screen and (max-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{font-size:14px !important;padding:1em}}@media print{html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,0.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul{padding:0 1.6em;margin-top:.8em}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc li{margin-bottom:.8em}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul{list-style-type:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% -  300px);padding:2em calc(50% - 457px -  150px);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+
+      </style>
+    </head>
+    <body for="html-export">
+      <div class="mume markdown-preview  ">
+      <h1 class="mume-header" id="web-deploy-%E5%89%8D%E7%AB%AF%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E5%B9%B3%E5%8F%B0">Web Deploy &#x524D;&#x7AEF;&#x81EA;&#x52A8;&#x5316;&#x90E8;&#x7F72;&#x5E73;&#x53F0;</h1>
+
+<p>&#x82E5;&#x56FE;&#x7247;&#x65E0;&#x6CD5;&#x663E;&#x793A;&#x8BF7;&#x70B9;&#x51FB;&#x8FD9;&#x91CC;&#xFF1A;<a href="https://zllugithub.github.io/web-deploy/">https://zllugithub.github.io/web-deploy/</a></p>
+<h3 class="mume-header" id="%E7%AE%80%E8%BF%B0">&#x7B80;&#x8FF0;</h3>
+
+<p>Web Deploy &#x524D;&#x7AEF;&#x81EA;&#x52A8;&#x5316;&#x90E8;&#x7F72;&#x5E73;&#x53F0;&#xFF0C;&#x4E00;&#x4E2A;&#x4E13;&#x95E8;&#x90E8;&#x7F72; Web &#x524D;&#x7AEF;&#x7684;&#x81EA;&#x52A8;&#x5316;&#x90E8;&#x7F72;&#x5E73;&#x53F0;&#xFF0C;&#x76F8;&#x8F83;&#x4E8E;&#x5F3A;&#x5927;&#x7684;Jenkins&#x66F4;&#x52A0;&#x914D;&#x7F6E;&#x7B80;&#x5355;&#x3001;&#x4F7F;&#x7528;&#x66F4;&#x52A0;&#x65B9;&#x4FBF;&#x5FEB;&#x6377;&#xFF01;&#x652F;&#x6301;&#x53D1;&#x5E03;&#x7248;&#x672C;&#x56DE;&#x6EDA;&#x3001;&#x5404;&#x79CD;Web&#x4EE3;&#x7801;&#x7684;&#x4E00;&#x952E;&#x90E8;&#x7F72;&#x53D1;&#x5E03;&#x7B49;&#xFF0C;&#x53E6;&#x5916;&#x6B64;&#x5E73;&#x53F0;&#x4E2D;&#x5305;&#x542B;&#x57FA;&#x4E8E; vue-cli3.0 &#x5F00;&#x53D1;&#x7684; vue &#x9879;&#x76EE;&#x5F00;&#x53D1;&#x811A;&#x624B;&#x67B6; swt-cli ,&#x6B64;&#x811A;&#x624B;&#x67B6;&#x4E2D;&#x5DF2;&#x5B89;&#x88C5;&#x597D;&#x6211;&#x4EEC;&#x7ECF;&#x5E38;&#x7528;&#x7684;&#x4E00;&#x4E9B;&#x5305;&#x5E76;&#x5BF9;&#x76EE;&#x5F55;&#x7ED3;&#x6784;&#x8FDB;&#x884C;&#x4E86;&#x90E8;&#x5206;&#x6574;&#x6539;&#xFF0C;&#x4EE5;&#x4FBF;&#x5229;&#x4E8E;&#x540E;&#x671F;&#x5F00;&#x53D1;&#x3002;</p>
+<h3 class="mume-header" id="%E6%8A%80%E6%9C%AF%E6%A0%88">&#x6280;&#x672F;&#x6808;</h3>
+
+<ul>
+<li>&#x524D;&#x7AEF;&#xFF1A; Vue&#xFF08;&#x5168;&#x5BB6;&#x6876;&#xFF09;&#x3001;font-awesome&#x3001;view-design</li>
+<li>&#x540E;&#x7AEF;&#xFF1A;Nodejs&#x3001;Express&#x3001;Multer</li>
+<li>&#x6570;&#x636E;&#x5E93;&#xFF1A;MongoDB</li>
+</ul>
+<h3 class="mume-header" id="%E5%8A%9F%E8%83%BD%E7%82%B9">&#x529F;&#x80FD;&#x70B9;</h3>
+
+<ul>
+<li>&#x9879;&#x76EE;&#x9759;&#x6001;&#x90E8;&#x7F72;</li>
+<li>&#x4E00;&#x952E;&#x81EA;&#x52A8;&#x90E8;&#x7F72;</li>
+<li>&#x9879;&#x76EE;&#x7248;&#x672C;&#x56DE;&#x6EDA;&#x90E8;&#x7F72;</li>
+<li>&#x652F;&#x6301;&#x591A;&#x4E2A;&#x9879;&#x76EE;&#x90E8;&#x7F72;</li>
+</ul>
+<h3 class="mume-header" id="%E7%A4%BA%E6%84%8F%E5%9B%BE">&#x793A;&#x610F;&#x56FE;</h3>
+
+<p><img src="https://zllugithub.github.io/web-deploy/images/20200626121718.jpg" alt="image"></p>
+<h2 class="mume-header" id="%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83">&#x5FEB;&#x901F;&#x5F00;&#x59CB;&#x914D;&#x7F6E;&#x73AF;&#x5883;</h2>
+
+<h3 class="mume-header" id="%E7%8E%AF%E5%A2%83%E8%A6%81%E6%B1%82">&#x73AF;&#x5883;&#x8981;&#x6C42;</h3>
+
+<ul>
+<li>&#x64CD;&#x4F5C;&#x7CFB;&#x7EDF; Centos &#x6216;&#x8005; Ubuntu</li>
+</ul>
+<h3 class="mume-header" id="%E5%AE%89%E8%A3%85%E4%BB%A5-centos-%E4%B8%BA%E4%BE%8B">&#x5B89;&#x88C5;&#xFF08;&#x4EE5; Centos &#x4E3A;&#x4F8B;&#xFF09;</h3>
+
+<h4 class="mume-header" id="1-%E5%AE%89%E8%A3%85git">1&#x3001;&#x5B89;&#x88C5;Git</h4>
+
+<pre data-role="codeBlock" data-info="bash" class="language-bash">yum <span class="token function">install</span> <span class="token function">git</span>
+</pre><p>&#x786E;&#x8BA4;Git&#x5DF2;&#x7ECF;&#x5B89;&#x88C5;&#x6210;&#x529F;</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">git</span> version
+</pre><p>&#x82E5;&#x51FA;&#x73B0;&#x7248;&#x672C;&#x53F7;&#x5219;&#x5B89;&#x88C5;&#x6210;&#x529F;&#xFF01;</p>
+<h4 class="mume-header" id="2-%E5%AE%89%E8%A3%85-nodejs-lts%E7%89%88%E6%9C%AC">2&#x3001;&#x5B89;&#x88C5; Nodejs LTS&#x7248;&#x672C;</h4>
+
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">wget</span> https://nodejs.org/dist/v13.1.0/node-v13.1.0-linux-x64.tar.xz
+xz -d node-v13.1.0-linux-x64.tar.xz
+<span class="token function">tar</span> -xvf node-v13.1.0-linux-x64.tar.xz
+</pre><p>Nodejs &#x5B89;&#x88C5;&#x6210;&#x529F;&#x540E;&#x914D;&#x7F6E;&#x4E00;&#x4E0B;&#x73AF;&#x5883;&#x53D8;&#x91CF;&#xFF0C;&#x5373;&#x53EF;&#x3002;</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash">node -v
+<span class="token function">npm</span> -v
+</pre><p>&#x82E5;&#x51FA;&#x73B0;&#x7248;&#x672C;&#x53F7;&#x5219;&#x5B89;&#x88C5;&#x6210;&#x529F;&#xFF01;<br>
+&#x53C2;&#x8003;&#x8D44;&#x6599;&#xFF1A;<a href="http://zhenglinglu.cn/detail?id=fHPUroAoogKKOczW613W">CentOS 7&#x4E0A;&#x5B89;&#x88C5; Node.js &#x7684; 4 &#x79CD;&#x65B9;&#x6CD5;&#xFF08;&#x5305;&#x542B;npm&#xFF09;</a></p>
+<h4 class="mume-header" id="3-%E5%AE%89%E8%A3%85cnpm">3&#x3001;&#x5B89;&#x88C5;cnpm</h4>
+
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> cnpm -g --registry<span class="token operator">=</span>https://r.npm.taobao.org
+</pre><p>&#x53C2;&#x8003;&#x8D44;&#x6599;&#xFF1A;<a href="https://developer.aliyun.com/mirror/npm/package/cnpm">https://developer.aliyun.com/mirror/npm/package/cnpm</a></p>
+<h4 class="mume-header" id="4-%E5%AE%89%E8%A3%85pm2">4&#x3001;&#x5B89;&#x88C5;pm2</h4>
+
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> -g pm2
+</pre><p>&#x786E;&#x8BA4;pm2&#x5DF2;&#x7ECF;&#x5B89;&#x88C5;&#x6210;&#x529F;</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">git</span> -v
+</pre><p>&#x82E5;&#x51FA;&#x73B0;&#x7248;&#x672C;&#x53F7;&#x5219;&#x5B89;&#x88C5;&#x6210;&#x529F;&#xFF01;&#x53C2;&#x8003;&#x8D44;&#x6599;&#xFF1A;<a href="http://zhenglinglu.cn/detail?id=826b0a9ae0219362495a27de03847f">Linux&#xFF08;centos7&#xFF09;&#x4E0B; pm2 &#x7684;&#x5B89;&#x88C5;&#x6B65;&#x9AA4;&#x53CA;&#x95EE;&#x9898;&#x603B;&#x7ED3;</a></p>
+<h4 class="mume-header" id="5-%E5%AE%89%E8%A3%85-mongodb">5&#x3001;&#x5B89;&#x88C5; MongoDB</h4>
+
+<pre data-role="codeBlock" data-info="bash" class="language-bash">//&#x4E0B;&#x8F7D;mongodb&#x5305; 
+<span class="token function">wget</span> http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.0.1.tgz
+//&#x89E3;&#x538B;mongodb&#x5305;
+<span class="token function">tar</span> xzvf mongodb-linux-x86_64-rhel70-4.0.1.tgz
+//&#x91CD;&#x547D;&#x540D;
+<span class="token function">mv</span> mongodb-linux-x86_64-rhel70-4.0.1 mongodbserver
+</pre><p>&#x53C2;&#x8003;&#x8D44;&#x6599;&#xFF1A;<a href="http://zhenglinglu.cn/detail?id=76174b6ab88f388ff08db75f06e2e3">linux &#x4E0B; mongodb &#x7684;&#x5B89;&#x88C5;&#x53CA;&#x914D;&#x7F6E;</a></p>
+<h2 class="mume-header" id="%E5%BF%AB%E9%80%9F%E5%AE%89%E8%A3%85%E5%B9%B3%E5%8F%B0">&#x5FEB;&#x901F;&#x5B89;&#x88C5;&#x5E73;&#x53F0;</h2>
+
+<h4 class="mume-header" id="1-%E5%85%A8%E5%B1%80%E5%AE%89%E8%A3%85%E6%9E%84%E5%BB%BA-web-deploy-%E7%9A%84%E8%84%9A%E6%89%8B%E6%9E%B6-swd-cli">1&#x3001;&#x5168;&#x5C40;&#x5B89;&#x88C5;&#x6784;&#x5EFA; Web Deploy &#x7684;&#x811A;&#x624B;&#x67B6; swd-cli</h4>
+
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">npm</span> <span class="token function">install</span> swd-cli -g
+</pre><p>&#x5224;&#x65AD;&#x662F;&#x5426;&#x5B89;&#x88C5;&#x6210;&#x529F;</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash">swd -v
+</pre><p>&#x82E5;&#x51FA;&#x73B0;&#x7248;&#x672C;&#x53F7;&#xFF0C;&#x5219;&#x5B89;&#x88C5;&#x6210;&#x529F;&#xFF01;</p>
+<h4 class="mume-header" id="2-%E4%BD%BF%E7%94%A8-swd-%E5%91%BD%E4%BB%A4%E6%9E%84%E5%BB%BA-web-deploy-%E5%B9%B3%E5%8F%B0">2&#x3001;&#x4F7F;&#x7528; swd &#x547D;&#x4EE4;&#x6784;&#x5EFA; Web Deploy &#x5E73;&#x53F0;</h4>
+
+<pre data-role="codeBlock" data-info="bash" class="language-bash">swd <span class="token function">install</span> web-deploy
+</pre><p>&#x5176;&#x4E2D; web-deploy &#x4E3A;&#x9879;&#x76EE;&#x5B58;&#x653E;&#x7684;&#x6587;&#x4EF6;&#x5939;&#xFF0C;&#x53EF;&#x4EE5;&#x968F;&#x610F;&#x547D;&#x540D;&#x3002;</p>
+<h4 class="mume-header" id="3-%E5%BF%AB%E9%80%9F%E8%BF%90%E8%A1%8C">3&#x3001;&#x5FEB;&#x901F;&#x8FD0;&#x884C;</h4>
+
+<p>&#x6D4B;&#x8BD5;</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">cd</span> web-deploy/bin
+node ./www
+</pre><p>&#x82E5;&#x6D4B;&#x8BD5;&#x6CA1;&#x6709;&#x95EE;&#x9898;&#xFF0C;&#x5219;&#x53EF;&#x4EE5;&#x4F7F;&#x7528; pm2 &#x4F7F;&#x8FDB;&#x7A0B;&#x5E38;&#x9A7B;&#x540E;&#x53F0;</p>
+<pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">cd</span> web-deploy/bin
+pm2 start ./www
+</pre><h2 class="mume-header" id="%E5%AE%89%E8%A3%85%E7%A4%BA%E6%84%8F%E5%9B%BE">&#x5B89;&#x88C5;&#x793A;&#x610F;&#x56FE;</h2>
+
+<p>&#x4EE5; Linux CentOS 7 &#x4E3A;&#x4F8B;<br>
+<img src="https://zllugithub.github.io/web-deploy/images/20200627070846.jpg" alt="image"></p>
+<h2 class="mume-header" id="%E5%BF%AB%E9%80%9F%E6%9E%84%E5%BB%BA%E9%A1%B9%E7%9B%AE%E6%A8%A1%E6%9D%BF">&#x5FEB;&#x901F;&#x6784;&#x5EFA;&#x9879;&#x76EE;&#x6A21;&#x677F;</h2>
+
+<h4 class="mume-header" id="1-%E5%85%B6%E4%B8%AD-my-template-%E4%B8%BA%E9%9C%80%E8%A6%81%E6%9E%84%E5%BB%BA%E7%9A%84%E9%A1%B9%E7%9B%AE%E5%90%8D%E7%A7%B0%E5%8F%AF%E9%9A%8F%E6%84%8F%E6%9B%B4%E6%94%B9">1&#x3001;&#x5176;&#x4E2D; my-template &#x4E3A;&#x9700;&#x8981;&#x6784;&#x5EFA;&#x7684;&#x9879;&#x76EE;&#x540D;&#x79F0;&#xFF0C;&#x53EF;&#x968F;&#x610F;&#x66F4;&#x6539;&#x3002;</h4>
+
+<pre data-role="codeBlock" data-info="bash" class="language-bash">swt <span class="token function">install</span> my-template
+</pre><h4 class="mume-header" id="2-%E6%89%80%E5%8C%85%E5%90%AB%E7%9A%84%E5%AE%89%E8%A3%85%E5%8C%85">2&#x3001;&#x6240;&#x5305;&#x542B;&#x7684;&#x5B89;&#x88C5;&#x5305;</h4>
+
+<pre data-role="codeBlock" data-info="json" class="language-json"><span class="token punctuation">{</span>
+    <span class="token property">&quot;dependencies&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">&quot;axios&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^0.19.2&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;core-js&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^3.6.4&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;echarts&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^4.7.0&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;echarts-liquidfill&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^2.0.6&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;font-awesome&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^4.7.0&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;mockjs&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^1.1.0&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;postcss-px2rem&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^0.3.0&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;view-design&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^4.0.2&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;vue&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^2.6.11&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;vue-router&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^3.1.3&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;vuex&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^3.1.2&quot;</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token property">&quot;devDependencies&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">&quot;@vue/cli-plugin-babel&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^4.3.0&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;@vue/cli-plugin-eslint&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^4.3.0&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;@vue/cli-service&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^4.3.0&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;babel-eslint&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^10.1.0&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;compression-webpack-plugin&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^3.1.0&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;cross-env&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^6.0.3&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;eslint&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^6.7.2&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;eslint-plugin-vue&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^6.2.2&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;lib-flexible&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^0.3.2&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;node-sass&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^4.13.0&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;sass-loader&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^8.0.0&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;vue-template-compiler&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^2.6.11&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;webpack-bundle-analyzer&quot;</span><span class="token operator">:</span> <span class="token string">&quot;^3.6.0&quot;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><h4 class="mume-header" id="3-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84%E7%A4%BA%E6%84%8F%E5%9B%BE">3&#x3001;&#x76EE;&#x5F55;&#x7ED3;&#x6784;&#x793A;&#x610F;&#x56FE;</h4>
+
+<p><img src="https://zllugithub.github.io/web-deploy/images/20200627073035.jpg" alt="image"></p>
+<h2 class="mume-header" id="%E7%95%8C%E9%9D%A2%E7%A4%BA%E4%BE%8B">&#x754C;&#x9762;&#x793A;&#x4F8B;</h2>
+
+<h5 class="mume-header" id="%E7%99%BB%E5%BD%95%E7%95%8C%E9%9D%A2">&#x767B;&#x5F55;&#x754C;&#x9762;</h5>
+
+<p><img src="https://zllugithub.github.io/web-deploy/images/index.jpg" alt="image"></p>
+<h5 class="mume-header" id="%E9%A6%96%E9%A1%B5">&#x9996;&#x9875;</h5>
+
+<p><img src="https://zllugithub.github.io/web-deploy/images/0200625145438.jpg" alt="image"></p>
+<h5 class="mume-header" id="%E9%9D%99%E6%80%81%E9%83%A8%E7%BD%B2%E7%95%8C%E9%9D%A2">&#x9759;&#x6001;&#x90E8;&#x7F72;&#x754C;&#x9762;</h5>
+
+<p><img src="https://zllugithub.github.io/web-deploy/images/20200625145514.jpg" alt="image"></p>
+<h5 class="mume-header" id="%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E7%95%8C%E9%9D%A2">&#x81EA;&#x52A8;&#x5316;&#x90E8;&#x7F72;&#x754C;&#x9762;</h5>
+
+<p><img src="https://zllugithub.github.io/web-deploy/images/20200625145530.png" alt="image"></p>
+<h5 class="mume-header" id="%E9%A1%B9%E7%9B%AE%E5%88%97%E8%A1%A8%E7%95%8C%E9%9D%A2">&#x9879;&#x76EE;&#x5217;&#x8868;&#x754C;&#x9762;</h5>
+
+<p><img src="https://zllugithub.github.io/web-deploy/images/20200625145547.jpg" alt="image"></p>
+
+      </div>
+      
+      
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    </body></html>
