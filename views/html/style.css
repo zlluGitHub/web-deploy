@@ -1,0 +1,34 @@
+html,body,#box{
+    height: 100%;
+    width: 100%;
+}
+#box {
+    background: url('./bgc.jpg') center center;
+    background-size: 100% 100%;
+}
+#box header{
+    display: flex;
+    flex-direction: column;
+     align-items: center;
+   padding-top: 80px;
+}
+#box header h1{
+    display: flex;
+    align-items: center;
+    color: #fff;
+}
+#box header img{
+   width: 90px;
+   height: 60px;
+}
+#box section {
+    display: flex;
+    justify-content: center;
+}
+#box section .content{
+ width: 1000px;
+ background-color: #fff;
+ padding: 30px;
+ box-shadow: 0 0 20px rgba(6,17,47,.7);
+ border-radius: 30px;
+}

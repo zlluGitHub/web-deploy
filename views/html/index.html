@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>前端自动化部署平台</title>
+  <link rel="stylesheet" href="./iview.css">
+  <!-- <link rel="stylesheet" type="text/css" href="http://unpkg.com/view-design/dist/styles/iview.css"> -->
+  <link rel="stylesheet" href="./style.css">
+  <script type="text/javascript" src="./vue.js"></script>
+  <script type="text/javascript" src="./iview.min.js"></script>
+</head>
+
+<body>
+  <div id="box">
+    <header>
+      <h1><img src="./logo.png" alt="Web Deploy"><span>Web Deploy</span></h1>
+      <div><span>Web Deploy 轻量级前端自动化部署平台</span></div>
+    </header>
+    <section>
+      <!-- <i-button @click="show">Click me!</i-button>
+      <Modal v-model="visible" title="Welcome">Welcome to ViewUI</Modal> -->
+      <div class="content">
+        <Steps :current="1">
+          <Step title="已完成" content="这里是该步骤的描述信息"></Step>
+          <Step title="进行中" content="这里是该步骤的描述信息"></Step>
+          <Step title="待进行" content="这里是该步骤的描述信息"></Step>
+        </Steps>
+        <div class="input-box">
+          <ul>
+            <li> <label>登录账号：</label> <Input v-model="value" placeholder="Enter something..." style="width: 300px" />
+            </li>
+            <li> <label>登录账号：</label> <Input v-model="value" placeholder="Enter something..." style="width: 300px" />
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+    new Vue({
+      el: '#box',
+      data: {
+        visible: false
+      },
+      methods: {
+        show: function () {
+          this.visible = true;
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>

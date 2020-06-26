@@ -1,0 +1,78 @@
+{
+    "secret": "zll123456",
+    "ref": "refs/heads/master",
+    "before": "e1e926ed2f8c4df8a9f02879665fa720ed3beb7f",
+    "after": "2857b90ff6d5d92f48f61ba97b25f577d45fe68f",
+    "compare_url": "http://10.0.86.12/zhenglinglu/test/compare/e1e926ed2f8c4df8a9f02879665fa720ed3beb7f...2857b90ff6d5d92f48f61ba97b25f577d45fe68f",
+    "commits": [
+        {
+            "id": "2857b90ff6d5d92f48f61ba97b25f577d45fe68f",
+            "message": "洒下是\n",
+            "url": "http://10.0.86.12/zhenglinglu/test/commit/2857b90ff6d5d92f48f61ba97b25f577d45fe68f",
+            "author": [
+                null
+            ],
+            "committer": [
+                null
+            ],
+            "verification": null,
+            "timestamp": "2020-06-24T18:15:14+08:00"
+        }
+    ],
+    "repository": {
+        "id": 105,
+        "owner": {
+            "id": 29,
+            "login": "zhenglinglu",
+            "full_name": "",
+            "email": "18230086651@163.com",
+            "avatar_url": "https://secure.gravatar.com/avatar/dc134d1ea1424af38b642666ef5473c0?d=identicon",
+            "language": "en-US",
+            "username": "zhenglinglu"
+        },
+        "name": "test",
+        "full_name": "zhenglinglu/test",
+        "description": "",
+        "empty": false,
+        "private": false,
+        "fork": false,
+        "parent": null,
+        "mirror": false,
+        "size": 456,
+        "html_url": "http://10.0.86.12/zhenglinglu/test",
+        "ssh_url": "root@10.0.86.12:zhenglinglu/test.git",
+        "clone_url": "http://10.0.86.12/zhenglinglu/test.git",
+        "website": "",
+        "stars_count": 0,
+        "forks_count": 0,
+        "watchers_count": 1,
+        "open_issues_count": 0,
+        "default_branch": "master",
+        "archived": false,
+        "created_at": "2020-05-11T13:22:14+08:00",
+        "updated_at": "2020-06-24T18:15:27+08:00",
+        "permissions": {
+            "admin": false,
+            "push": false,
+            "pull": false
+        }
+    },
+    "pusher": {
+        "id": 29,
+        "login": "zhenglinglu",
+        "full_name": "",
+        "email": "18230086651@163.com",
+        "avatar_url": "https://secure.gravatar.com/avatar/dc134d1ea1424af38b642666ef5473c0?d=identicon",
+        "language": "en-US",
+        "username": "zhenglinglu"
+    },
+    "sender": {
+        "id": 29,
+        "login": "zhenglinglu",
+        "full_name": "",
+        "email": "18230086651@163.com",
+        "avatar_url": "https://secure.gravatar.com/avatar/dc134d1ea1424af38b642666ef5473c0?d=identicon",
+        "language": "en-US",
+        "username": "zhenglinglu"
+    }
+}
