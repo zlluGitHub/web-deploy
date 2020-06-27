@@ -5,7 +5,7 @@
 ### 简述
 Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动化部署平台，相较于强大的Jenkins更加配置简单、使用更加方便快捷！支持发布版本回滚、各种Web代码的一键部署发布等，另外此平台中包含基于 vue-cli3.0 开发的 vue 项目开发脚手架 swt-cli ,此脚手架中已安装好我们经常用的一些包并对目录结构进行了部分整改，以便利于后期开发。若有任何疑问欢迎在  [Issues](https://github.com/zlluGitHub/web-deploy/issues)  留言一起讨论。本项目持续更新中...  ٩(๑>◡<๑)۶ 
 - 演示地址：[http://swd.zhenglinglu.cn](http://swd.zhenglinglu.cn)
-- 说明文档：[https://zllugithub.github.io/web-deploy/](https://zllugithub.github.io/web-deploy/)
+- 说明文档：[https://zllugithub.github.io/web-deploy/README.html](https://zllugithub.github.io/web-deploy/README.html)
 
 ### 主要技术栈
 - 前端： Vue（全家桶）、font-awesome、view-design
