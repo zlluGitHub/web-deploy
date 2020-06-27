@@ -1,17 +1,19 @@
+<p align="center"><a href="http://swd.zhenglinglu.cn" target="_blank"><img width="100"src="https://zllugithub.github.io/web-deploy/images/logo.png"></a></p>
+
 #  Web Deploy 前端自动化部署平台
-若图片无法显示请点击这里：[https://zllugithub.github.io/web-deploy/](https://zllugithub.github.io/web-deploy/)
+---
 ### 简述
-Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动化部署平台，相较于强大的Jenkins更加配置简单、使用更加方便快捷！支持发布版本回滚、各种Web代码的一键部署发布等，另外此平台中包含基于 vue-cli3.0 开发的 vue 项目开发脚手架 swt-cli ,此脚手架中已安装好我们经常用的一些包并对目录结构进行了部分整改，以便利于后期开发。
+> Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动化部署平台，相较于强大的Jenkins更加配置简单、使用更加方便快捷！支持发布版本回滚、各种Web代码的一键部署发布等，另外此平台中包含基于 vue-cli3.0 开发的 vue 项目开发脚手架 swt-cli ,此脚手架中已安装好我们经常用的一些包并对目录结构进行了部分整改，以便利于后期开发。
+- 演示地址：[http://swd.zhenglinglu.cn](http://swd.zhenglinglu.cn)
+- 说明文档：[https://zllugithub.github.io/web-deploy/](https://zllugithub.github.io/web-deploy/)
 
-
-### 技术栈
+### 主要技术栈
 - 前端： Vue（全家桶）、font-awesome、view-design
-- 后端：Nodejs、Express、Multer
-- 数据库：MongoDB
+- 后端：Nodejs、Express、Multer、MongoDB、git、pm2
 
-### 功能点
+### 主要功能点
 - 项目静态部署
-- 一键自动部署
+- Git自动部署
 - 项目版本回滚部署
 - 支持多个项目部署
 
