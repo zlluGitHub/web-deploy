@@ -1,25 +1,28 @@
 <p align="center"><a href="http://swd.zhenglinglu.cn" target="_blank"><img width="160"src="https://zllugithub.github.io/web-deploy/images/logo.png"></a></p>
-<h2 align="center">Web Deploy 前端自动化部署平台</h2>
+
+<!-- # Web Deploy 前端自动化部署平台 -->
+<h1 align="center">Web Deploy 前端自动化部署平台</h1>
 
 ---
-### 简述
+
+## 简述
 Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动化部署平台，相较于强大的Jenkins配置更加简单、使用更加方便快捷！支持发布版本回滚、各种 Web 的跨域部署等，另外此平台中包含基于 vue-cli3.0 开发的 vue 项目开发脚手架 swt-cli ,此脚手架中已安装好我们经常用的一些包并对目录结构进行了部分整改，以便利于后期开发。若有任何疑问欢迎在  [Issues](https://github.com/zlluGitHub/web-deploy/issues)  留言一起讨论。本项目持续更新中...  ٩(๑>◡<๑)۶ 
 - 演示地址：[http://swd.zhenglinglu.cn](http://swd.zhenglinglu.cn)
 - GitHub：[https://github.com/zlluGitHub/web-deploy](https://github.com/zlluGitHub/web-deploy)
 - Gitee：[https://gitee.com/zlluGitHub/web-deploy](https://gitee.com/zlluGitHub/web-deploy)
 - 说明文档：[https://zllugithub.github.io/web-deploy/](https://zllugithub.github.io/web-deploy/)
 
-### 主要技术栈
+## 主要技术栈
 - 前端： Vue（全家桶）、font-awesome、view-design
 - 后端：Nodejs、Express、Multer、MongoDB、git、pm2
 
-### 主要功能点
-1、项目静态部署
-2、Git自动部署
-3、项目版本回滚部署
-4、支持多个项目部署
-5、支持跨域部署
-### 示意图
+## 主要功能点
+- 项目静态部署
+- Git自动部署
+- 项目版本回滚部署
+- 支持多个项目部署
+- 支持跨域部署
+## 示意图
 ![image](https://zllugithub.github.io/web-deploy/images/20200626121718.jpg)
 
 ## 快速开始配置环境
@@ -29,7 +32,7 @@ Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动�
 
 ### 安装（以 Centos 为例）
 
-#### 1、安装Git
+#### 安装Git
 ````bash
 yum install git
 ````
@@ -38,7 +41,7 @@ yum install git
 git version
 ````
 若出现版本号则安装成功！
-#### 2、安装 Nodejs LTS版本
+#### 安装 Nodejs LTS版本
 ````bash
 wget https://nodejs.org/dist/v13.1.0/node-v13.1.0-linux-x64.tar.xz
 xz -d node-v13.1.0-linux-x64.tar.xz
@@ -51,13 +54,13 @@ npm -v
 ````
 若出现版本号则安装成功！
 参考资料：[CentOS 7上安装 Node.js 的 4 种方法（包含npm）](http://zhenglinglu.cn/detail?id=fHPUroAoogKKOczW613W)
-#### 3、安装cnpm
+#### 安装cnpm
 ````bash
 npm install cnpm -g --registry=https://r.npm.taobao.org
 ````
 参考资料：https://developer.aliyun.com/mirror/npm/package/cnpm
 
-#### 4、安装pm2
+#### 安装pm2
 ````bash
 npm install -g pm2
 ````
@@ -67,7 +70,7 @@ git -v
 ````
 若出现版本号则安装成功！参考资料：[Linux（centos7）下 pm2 的安装步骤及问题总结](http://zhenglinglu.cn/detail?id=826b0a9ae0219362495a27de03847f)
 
-#### 5、安装 MongoDB
+#### 安装 MongoDB
 ````bash
 //下载mongodb包 
 wget http://fastdl.mongodb.org/linux/mongodb-linux-x86_64-rhel70-4.0.1.tgz
@@ -79,8 +82,7 @@ mv mongodb-linux-x86_64-rhel70-4.0.1 mongodbserver
 参考资料：[linux 下 mongodb 的安装及配置](http://zhenglinglu.cn/detail?id=76174b6ab88f388ff08db75f06e2e3)
 
 ## 快速安装平台
-
-#### 1、全局安装构建 Web Deploy 的脚手架 swd-cli
+### 全局安装 swd-cli 脚手架
 ````bash
 npm install swd-cli -g
 ````
@@ -89,13 +91,12 @@ npm install swd-cli -g
 swd -v
 ````
 若出现版本号，则安装成功！
-
-#### 2、使用 swd 命令构建 Web Deploy 平台
+### 构建 Web Deploy 平台
 ````bash
 swd install web-deploy
 ````
 其中 web-deploy 为项目存放的文件夹，可以随意命名。
-#### 3、快速运行
+### 快速运行
 测试
 ````bash
 cd web-deploy/bin
@@ -110,11 +111,12 @@ pm2 start ./www
 以 Linux CentOS 7 为例
 ![image](https://zllugithub.github.io/web-deploy/images/20200627070846.jpg)
 ## 快速构建项目模板
-#### 1、其中 my-template 为需要构建的项目名称，可随意更改。
+### 使用 swt 构建项目模板
+其中 my-template 为需要构建的项目名称，可随意更改。
 ````bash
 swt install my-template
 ````
-#### 2、所包含的安装包
+### 所包含的安装包
 ````json
 {
     "dependencies": {
@@ -147,17 +149,17 @@ swt install my-template
   }
 }
 ````
-#### 3、目录结构示意图
+### 目录结构示意图
 ![image](https://zllugithub.github.io/web-deploy/images/20200627073035.jpg)
 
 ## 界面示例
-##### 登录界面
+### 登录界面
 ![image](https://zllugithub.github.io/web-deploy/images/index.jpg)
-##### 首页
+### 首页
 ![image](https://zllugithub.github.io/web-deploy/images/0200625145438.jpg)
-##### 静态部署界面
+### 静态部署界面
 ![image](https://zllugithub.github.io/web-deploy/images/20200625145514.jpg)
-##### 自动化部署界面
+### 自动化部署界面
 ![image](https://zllugithub.github.io/web-deploy/images/20200625145530.png)
-##### 项目列表界面
+### 项目列表界面
 ![image](https://zllugithub.github.io/web-deploy/images/20200625145547.jpg)
