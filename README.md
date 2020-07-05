@@ -149,17 +149,60 @@ swt install my-template
   }
 }
 ````
+## 项目部署说明
+### 静态部署
+这种部署适用于一些静态资源的部署，部署方式如下：
+- 第一步：填写（选择）项目名称；
+- 第二步：填写你要部署的根目录；
+- 第三步：若部署项目存在跨域问题，可在这里填写代理地址（选填）；
+- 第四步：点击上传你要部署的项目打包目录文件；
+- 第五步：填写项目的部署摘要内容；
+- 第六步：点击提交部署即可；
+![image](https://zllugithub.github.io/web-deploy/images/20200625145530.jpg)
+
+### 自动化部署
+- 第一步：填写（选择）项目名称；
+- 第二步：填写你要部署的根目录；
+- 第三步：若部署项目存在跨域问题，可在这里填写代理地址（选填）；
+- 第四步：填写你要部署的项目的 Git 地址；
+- 第五步：填写你要部署的项目的 Git 分支，默认 master；
+- 第六步：填写项目的打包部署命令，例如：npm run build；
+- 第七步：根据项目实际的打包目录为准，默认：dist；
+- 第八步：填写项目的部署摘要内容；
+- 第九步：点击提交部署即可；
+注意：此部署方式部署时间会根据项目的大小而不同，请耐心等待即可，另外，部署成功之后会返回一个 key 值，此 key 值将用于关联Git，且只会出现一次。
+
+![image](https://zllugithub.github.io/web-deploy/images/20200705161150.jpg)
+
+### 关联 Git 实现自动部署
+#### 关联 gitea 
+- 配置 webhook 相关钩子链接，打开 gitea 找到需要部署的项目仓库 -> Settings -> Webhooks -> Add webhook；
+![image](https://zllugithub.github.io/web-deploy/images/b_20200705163216.jpg)
+- 填入相关配置信息
+![image](https://zllugithub.github.io/web-deploy/images/b_20200705164219.jpg)
+- 点击 Add Webhook 配置成功
+![image](https://zllugithub.github.io/web-deploy/images/b_20200705164637.jpg)
+
+#### 关联 gitlab
+- 由于仓库的公开程度是 Private 需将其设置成 Public，打开 gitlab 找到需要部署的项目仓库 -> Settings -> General
+![image](https://zllugithub.github.io/web-deploy/images/l_20200705172837.jpg)
+- 配置 webhook 相关钩子链接，打开 gitlab 找到需要部署的项目仓库 -> Settings -> Integrations；
+![image](https://zllugithub.github.io/web-deploy/images/l_20200705172359.jpg)
+- 填入相关配置信息
+![image](https://zllugithub.github.io/web-deploy/images/l_20200705171905.jpg)
+- 点击 Add Webhook 配置成功
+![image](https://zllugithub.github.io/web-deploy/images/l_20200705172240.jpg)
+
+#### 关联 github 
+- 配置 webhook 相关钩子链接，打开 github 找到需要部署的项目仓库 -> Settings -> Webhooks -> Add webhook；
+![image](https://zllugithub.github.io/web-deploy/images/g_20200705165340.jpg)
+- 填入相关配置信息
+![image](https://zllugithub.github.io/web-deploy/images/g_20200705170758.jpg)
+- 点击 Add Webhook 配置成功
+![image](https://zllugithub.github.io/web-deploy/images/g_20200705171043.jpg)
+
 ### 目录结构示意图
 ![image](https://zllugithub.github.io/web-deploy/images/20200627073035.jpg)
 
-## 界面示例
-### 登录界面
+## 彩蛋
 ![image](https://zllugithub.github.io/web-deploy/images/index.jpg)
-### 首页
-![image](https://zllugithub.github.io/web-deploy/images/0200625145438.jpg)
-### 静态部署界面
-![image](https://zllugithub.github.io/web-deploy/images/20200625145514.jpg)
-### 自动化部署界面
-![image](https://zllugithub.github.io/web-deploy/images/20200625145530.png)
-### 项目列表界面
-![image](https://zllugithub.github.io/web-deploy/images/20200625145547.jpg)
