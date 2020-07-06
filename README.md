@@ -174,9 +174,12 @@ swt install my-template
 7、根据项目实际的打包目录为准，默认：dist；
 8、填写项目的部署摘要内容；
 9、点击提交部署即可；
-注意：此部署方式部署时间会根据项目的大小而不同，请耐心等待即可，另外，部署成功之后会返回一个 key 值，此 key 值将用于关联Git，且只会出现一次。
 
 ![image](https://zllugithub.github.io/web-deploy/images/20200705161150.jpg)
+
+注意：此部署方式部署时间会根据项目的大小而不同，请耐心等待即可，另外，部署成功之后会返回一个 key 值，此 key 值将用于关联Git，且只会出现一次。
+
+![image](https://zllugithub.github.io/web-deploy/images/key_20200706125626.jpg)
 
 ### 关联 Git 实现自动部署
 #### 关联 gitea 
