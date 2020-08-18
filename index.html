@@ -281,14 +281,13 @@ pre[data-line] .line-highlight[data-end]:after {
 </ul>
 <h2 class="mume-header" id="%E4%B8%BB%E8%A6%81%E5%8A%9F%E8%83%BD%E7%82%B9">&#x4E3B;&#x8981;&#x529F;&#x80FD;&#x70B9;</h2>
 
-<ul>
-<li>&#x9879;&#x76EE;&#x9759;&#x6001;&#x90E8;&#x7F72;</li>
-<li>Git&#x81EA;&#x52A8;&#x90E8;&#x7F72;</li>
-<li>&#x9879;&#x76EE;&#x7248;&#x672C;&#x56DE;&#x6EDA;&#x90E8;&#x7F72;</li>
-<li>&#x652F;&#x6301;&#x591A;&#x4E2A;&#x9879;&#x76EE;&#x90E8;&#x7F72;</li>
-<li>&#x652F;&#x6301;&#x8DE8;&#x57DF;&#x90E8;&#x7F72;</li>
-</ul>
-<h2 class="mume-header" id="%E7%A4%BA%E6%84%8F%E5%9B%BE">&#x793A;&#x610F;&#x56FE;</h2>
+<p>&#x3010;&#x2714;&#x3011;&#x524D;&#x7AEF;&#x9879;&#x76EE;&#x9759;&#x6001;&#x90E8;&#x7F72;&#xFF0C;&#x6307;&#x90E8;&#x7F72;&#x6253;&#x5305;&#x540E;&#x7684;&#x9759;&#x6001;&#x8D44;&#x6E90;&#xFF08;&#x5DF2;&#x5B8C;&#x6210;&#xFF09;<br>
+&#x3010;&#x2714;&#x3011;git &#x81EA;&#x52A8;&#x90E8;&#x7F72;&#xFF0C;&#x5305;&#x62EC; github&#x3001;gitlab&#x3001;gitee &#x4EE3;&#x7801;&#x6258;&#x7BA1;&#x5E73;&#x53F0;&#x5173;&#x8054;&#x90E8;&#x7F72;&#xFF08;&#x5DF2;&#x5B8C;&#x6210;&#xFF09;<br>
+&#x3010;&#x2714;&#x3011;&#x9879;&#x76EE;&#x7248;&#x672C;&#x56DE;&#x6EDA;&#x90E8;&#x7F72;&#xFF0C;&#x6BCF;&#x4E2A;&#x7248;&#x672C;&#x95F4;&#x53EF;&#x4EE5;&#x8FDB;&#x884C;&#x5207;&#x6362;&#x90E8;&#x7F72;&#xFF08;&#x5DF2;&#x5B8C;&#x6210;&#xFF09;<br>
+&#x3010;&#x2714;&#x3011;&#x652F;&#x6301;&#x591A;&#x4E2A;&#x9879;&#x76EE;&#x90E8;&#x7F72;&#xFF0C;&#x5404;&#x9879;&#x76EE;&#x4E4B;&#x95F4;&#x4E92;&#x4E0D;&#x5F71;&#x54CD;&#xFF08;&#x5DF2;&#x5B8C;&#x6210;&#xFF09;<br>
+&#x3010;&#x2714;&#x3011;&#x5404;&#x9879;&#x76EE;&#x652F;&#x6301;&#x8DE8;&#x57DF;&#x8BF7;&#x6C42;&#x90E8;&#x7F72;&#xFF08;&#x5DF2;&#x5B8C;&#x6210;&#xFF09;<br>
+&#x3010;&#x2714;&#x3011;&#x652F;&#x6301; OAuth&#xFF08;github&#x3001;gitlab&#x3001;gitee&#xFF09;&#x7B2C;&#x4E09;&#x65B9;&#x767B;&#x5F55;&#xFF08;&#x5DF2;&#x5B8C;&#x6210;&#xFF09;</p>
+<h2 class="mume-header" id="%E7%AE%80%E6%98%93%E7%A4%BA%E6%84%8F%E5%9B%BE">&#x7B80;&#x6613;&#x793A;&#x610F;&#x56FE;</h2>
 
 <p><img src="https://zllugithub.github.io/web-deploy/images/20200626121718.jpg" alt="image"></p>
 <h2 class="mume-header" id="%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B%E9%85%8D%E7%BD%AE%E7%8E%AF%E5%A2%83">&#x5FEB;&#x901F;&#x5F00;&#x59CB;&#x914D;&#x7F6E;&#x73AF;&#x5883;</h2>
@@ -349,11 +348,60 @@ xz -d node-v13.1.0-linux-x64.tar.xz
 
 <p>&#x6D4B;&#x8BD5;</p>
 <pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">cd</span> web-deploy/bin
-node ./www
+node ./www 
 </pre><p>&#x82E5;&#x6D4B;&#x8BD5;&#x6CA1;&#x6709;&#x95EE;&#x9898;&#xFF0C;&#x5219;&#x53EF;&#x4EE5;&#x4F7F;&#x7528; pm2 &#x4F7F;&#x8FDB;&#x7A0B;&#x5E38;&#x9A7B;&#x540E;&#x53F0;</p>
 <pre data-role="codeBlock" data-info="bash" class="language-bash"><span class="token function">cd</span> web-deploy/bin
-pm2 start ./www
-</pre><h2 class="mume-header" id="%E5%AE%89%E8%A3%85%E7%A4%BA%E6%84%8F%E5%9B%BE">&#x5B89;&#x88C5;&#x793A;&#x610F;&#x56FE;</h2>
+pm2 start ./www --name<span class="token operator">=</span><span class="token string">&quot;web-deploy&quot;</span>
+</pre><h3 class="mume-header" id="%E5%BC%80%E5%90%AF%E9%82%AE%E7%AE%B1%E6%B3%A8%E5%86%8C%E9%AA%8C%E8%AF%81">&#x5F00;&#x542F;&#x90AE;&#x7BB1;&#x6CE8;&#x518C;&#x9A8C;&#x8BC1;</h3>
+
+<p>&#x6B64;&#x5E73;&#x53F0;&#x5305;&#x542B;&#x81EA;&#x5DF1;&#x7684;&#x767B;&#x5F55;&#x65B9;&#x5F0F;&#xFF0C;&#x82E5;&#x9700;&#x5F00;&#x542F;&#x90AE;&#x7BB1;&#x6CE8;&#x518C;&#x9A8C;&#x8BC1;&#xFF0C;&#x9700;&#x8981;&#x5728;&#x6839;&#x76EE;&#x5F55;&#x4E0B;&#x627E;&#x5230; config.json &#x914D;&#x7F6E;&#x6587;&#x4EF6;&#xFF0C;&#x6DFB;&#x52A0;&#x5982;&#x4E0B;&#x914D;&#x7F6E;&#x5373;&#x53EF;&#xFF08;&#x4EE5; 163&#x90AE;&#x7BB1; &#x4E3A;&#x4F8B;&#xFF09;</p>
+<pre data-role="codeBlock" data-info="json" class="language-json"><span class="token punctuation">{</span>
+  ...
+  ...
+
+  <span class="token property">&quot;email&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">&quot;host&quot;</span><span class="token operator">:</span> <span class="token string">&quot;smtp.163.com&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;port&quot;</span><span class="token operator">:</span> <span class="token number">465</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;from&quot;</span><span class="token operator">:</span> <span class="token string">&quot;xxxxxxxx@163.com&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;password&quot;</span><span class="token operator">:</span> <span class="token string">&quot;xxxxxxxxxxxxx&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;subject&quot;</span><span class="token operator">:</span> <span class="token string">&quot;&#x6807;&#x9898;&#x5185;&#x5BB9;&quot;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><p>&#x6839;&#x636E;&#x81EA;&#x8EAB;&#x9700;&#x6C42;&#x6DFB;&#x52A0;&#x5BF9;&#x5E94;&#x7B2C;&#x4E09;&#x65B9;&#x914D;&#x7F6E;&#x5373;&#x53EF;&#x3002;</p>
+<h3 class="mume-header" id="%E5%BC%80%E5%90%AF%E7%AC%AC%E4%B8%89%E6%96%B9%E7%99%BB%E5%BD%95">&#x5F00;&#x542F;&#x7B2C;&#x4E09;&#x65B9;&#x767B;&#x5F55;</h3>
+
+<p>&#x6B64;&#x5E73;&#x53F0;&#x5DF2;&#x652F;&#x6301; github&#x3001;gitlab&#x3001;gitee &#x8FD9;&#x4E09;&#x79CD;&#x767B;&#x5F55;&#x65B9;&#x5F0F;&#xFF0C;&#x9996;&#x5148;&#xFF0C;&#x9700;&#x8981;&#x5728;&#x6839;&#x76EE;&#x5F55;&#x4E0B;&#x627E;&#x5230; config.json &#x914D;&#x7F6E;&#x6587;&#x4EF6;&#xFF0C;&#x6DFB;&#x52A0;&#x5982;&#x4E0B;&#x5185;&#x5BB9;&#xFF08;&#x6839;&#x636E;&#x81EA;&#x8EAB;&#x9700;&#x6C42;&#x6DFB;&#x52A0;&#x5373;&#x53EF;&#xFF09;</p>
+<pre data-role="codeBlock" data-info="json" class="language-json"><span class="token punctuation">{</span>
+  ...
+  ...
+
+  <span class="token property">&quot;oauth&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">&quot;github&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">&quot;state&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span> 
+      <span class="token property">&quot;client_ID&quot;</span><span class="token operator">:</span> <span class="token string">&quot;&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;client_Secret&quot;</span><span class="token operator">:</span> <span class="token string">&quot;&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;access_token_url&quot;</span><span class="token operator">:</span> <span class="token string">&quot;&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;user_info_url&quot;</span><span class="token operator">:</span> <span class="token string">&quot;&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;name&quot;</span><span class="token operator">:</span> <span class="token string">&quot;&quot;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;gitee&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+      <span class="token property">&quot;state&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span> 
+      <span class="token property">&quot;client_ID&quot;</span><span class="token operator">:</span> <span class="token string">&quot;&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;client_Secret&quot;</span><span class="token operator">:</span> <span class="token string">&quot;&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;access_token_url&quot;</span><span class="token operator">:</span> <span class="token string">&quot;&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;user_info_url&quot;</span><span class="token operator">:</span> <span class="token string">&quot;&quot;</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;gitlab&quot;</span><span class="token operator">:</span> <span class="token punctuation">{</span> 
+      <span class="token property">&quot;state&quot;</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;client_ID&quot;</span><span class="token operator">:</span> <span class="token string">&quot;&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;client_Secret&quot;</span><span class="token operator">:</span> <span class="token string">&quot;&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;access_token_url&quot;</span><span class="token operator">:</span> <span class="token string">&quot;&quot;</span><span class="token punctuation">,</span>
+      <span class="token property">&quot;user_info_url&quot;</span><span class="token operator">:</span> <span class="token string">&quot;&quot;</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</pre><p>&#x6839;&#x636E;&#x81EA;&#x8EAB;&#x9700;&#x6C42;&#x6DFB;&#x52A0;&#x5BF9;&#x5E94;&#x7B2C;&#x4E09;&#x65B9;&#x914D;&#x7F6E;&#x5373;&#x53EF;&#x3002;</p>
+<h2 class="mume-header" id="%E5%AE%89%E8%A3%85%E7%A4%BA%E6%84%8F%E5%9B%BE">&#x5B89;&#x88C5;&#x793A;&#x610F;&#x56FE;</h2>
 
 <p>&#x4EE5; Linux CentOS 7 &#x4E3A;&#x4F8B;<br>
 <img src="https://zllugithub.github.io/web-deploy/images/20200627070846.jpg" alt="image"></p>
@@ -463,7 +511,8 @@ pm2 start ./www
     
     
     
-        
+    
+          
       <script src="./js/jquery-1.10.2.min.js"></script>
       <script src="./js/jquery.ztree.all-3.5.min.js"></script>
       <script src="./js/jquery.ztree_toc.min.js"></script>
