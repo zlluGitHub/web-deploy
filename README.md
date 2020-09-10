@@ -6,15 +6,16 @@
 ---
 
 ## 简述
-Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动化部署平台，相较于强大的Jenkins配置更加简单、使用更加方便快捷！支持发布版本回滚、各种 Web 的跨域部署等，另外此平台中包含基于 vue-cli3.0 开发的 vue 项目开发脚手架 swt-cli ,此脚手架中已安装好我们经常用的一些包并对目录结构进行了部分整改，以便利于后期开发。若有任何疑问欢迎在  [Issues](https://github.com/zlluGitHub/web-deploy/issues)  留言一起讨论。本项目持续更新中...  ٩(๑>◡<๑)۶ 
+Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动化部署平台，相较于强大的 Jenkins 配置更加简单、使用更加方便快捷！支持发布版本回滚、各种 Web 的跨域部署等，目前此平台只支持 vue-cli3.0 脚手架开发的 vue 项目。若有任何疑问欢迎在  [Issues](https://github.com/zlluGitHub/web-deploy/issues)  留言一起讨论。本项目持续更新中...  ٩(๑>◡<๑)۶ 
 - 演示地址：[http://swd.zhenglinglu.cn](http://swd.zhenglinglu.cn)
 - GitHub：[https://github.com/zlluGitHub/web-deploy](https://github.com/zlluGitHub/web-deploy)
 - Gitee：[https://gitee.com/zlluGitHub/web-deploy](https://gitee.com/zlluGitHub/web-deploy)
 - 说明文档：[https://zllugithub.github.io/web-deploy/](https://zllugithub.github.io/web-deploy/)
 
 ## 主要技术栈
-- 前端： Vue（全家桶）、font-awesome、view-design
-- 后端：Nodejs、Express、Multer、MongoDB、git、pm2
+- 前端：Vue（全家桶）、font-awesome、view-design
+- 后端：Nodejs、MongoDB
+- 工具：npm、git、pm2
 
 ## 主要功能点
 【✔】前端项目静态部署，指部署打包后的静态资源（已完成）
@@ -84,6 +85,7 @@ mv mongodb-linux-x86_64-rhel70-4.0.1 mongodbserver
 
 ## 快速安装平台
 ### 全局安装 swd-cli 脚手架
+`swd-cli` 脚手架为 Web Deploy 平台构建工具，在这里类似 `vue-cli`
 ````bash
 npm install swd-cli -g
 ````
@@ -103,13 +105,13 @@ swd install web-deploy
 cd web-deploy/bin
 node ./www 
 ````
-若测试没有问题，则可以使用 pm2 使进程常驻后台
+若测试没有问题，则可以使用 `pm2` 使进程常驻后台
 ````bash
 cd web-deploy/bin
 pm2 start ./www --name="web-deploy"
 ````
 ### 开启邮箱注册验证
-此平台包含自己的登录方式，若需开启邮箱注册验证，需要在根目录下找到 config.json 配置文件，添加如下配置即可（以 163邮箱 为例）
+此平台包含自己的登录方式，若需开启邮箱注册验证，需要在根目录下找到 `config.json` 配置文件，添加如下配置即可（以 163邮箱 为例）
 ````json
 {
   ...
@@ -126,7 +128,7 @@ pm2 start ./www --name="web-deploy"
 ````
 根据自身需求添加对应第三方配置即可。
 ### 开启第三方登录
-此平台已支持 github、gitlab、gitee 这三种登录方式，首先，需要在根目录下找到 config.json 配置文件，添加如下内容（根据自身需求添加即可）
+此平台已支持 `github`、`gitlab`、`gitee` 这三种登录方式，首先，需要在根目录下找到 config.json 配置文件，添加如下内容（根据自身需求添加即可）
 ````json
 {
   ...
@@ -158,15 +160,25 @@ pm2 start ./www --name="web-deploy"
   }
 }
 ````
+**属性说明**
+|  属性   | 说明  |
+|  ----  | ----  |
+| state  | 开启状态（ `true` 或 `false` ）|
+| client_ID  | 用户编号。在自己的 `git` 上获取 |
+| client_Secret  | 用户秘钥。在自己的 `git` 上获取 |
+| access_token_url  | 获取令牌 `access_token` 的 `url`  |
+| user_info_url  | 获取用户信息的 `url` |
+| name  | `github` 账号名称（只有 `github` 需要此配置） |
 根据自身需求添加对应第三方配置即可。
-
+ 
 ## 安装示意图
 以 Linux CentOS 7 为例
 ![image](https://zllugithub.github.io/web-deploy/images/20200627070846.jpg)
 
 ## 快速构建项目模板
 ### 使用 swt 构建项目模板
-其中 my-template 为需要构建的项目名称，可随意更改。
+安装 `swt-cli` 后 `swt` 命令即可使用，可通过此命令快速构建与 web deploy 平台配套的 `Vue` 项目模板。
+其中 `my-template` 为需要构建的项目名称，可随意更改。
 ````bash
 swt install my-template
 ````
