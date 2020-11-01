@@ -6,15 +6,14 @@
 ---
 
 ## 简述
-Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动化部署平台，相较于强大的 Jenkins 配置更加简单、使用更加方便快捷！支持发布版本回滚、各种 Web 的跨域部署等，目前此平台只支持 vue-cli3.0 脚手架开发的 vue 项目。若有任何疑问欢迎在  [Issues](https://github.com/zlluGitHub/web-deploy/issues)  留言一起讨论。本项目持续更新中...  ٩(๑>◡<๑)۶ 
+Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动化部署平台，相较于强大的 Jenkins 配置更加简单、使用更加方便快捷！支持发布版本回滚、各种 Web 的跨域部署等，目前此平台支持静态资源、 Vue、React 项目部署。若有任何疑问欢迎在  [Issues](https://github.com/zlluGitHub/web-deploy/issues)  留言一起讨论。本项目将持续更新中...  ٩(๑>◡<๑)۶ 
 - 演示地址：[http://swd.zhenglinglu.cn](http://swd.zhenglinglu.cn)
-- GitHub：[https://github.com/zlluGitHub/web-deploy](https://github.com/zlluGitHub/web-deploy)
-- Gitee：[https://gitee.com/zlluGitHub/web-deploy](https://gitee.com/zlluGitHub/web-deploy)
+- GitHub：[https://github.com/zlluGitHub/swd-server](https://github.com/zlluGitHub/swd-server)
 - 说明文档：[https://zllugithub.github.io/web-deploy/](https://zllugithub.github.io/web-deploy/)
 
 ## 主要技术栈
 - 前端：Vue（全家桶）、font-awesome、view-design
-- 后端：Nodejs、MongoDB
+- 后端：Nodejs、MongoDB、Express
 - 工具：npm、git、pm2
 
 ## 主要功能点
@@ -22,8 +21,12 @@ Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动�
 【✔】git 自动部署，包括 github、gitlab、gitee 代码托管平台关联部署（已完成）
 【✔】项目版本回滚部署，每个版本间可以进行切换部署（已完成）
 【✔】支持多个项目部署，各项目之间互不影响（已完成）
-【✔】各项目支持跨域请求部署（已完成）
+【✔】各项目支持跨域（多个）请求部署（已完成）
 【✔】支持 OAuth（github、gitlab、gitee）第三方登录（已完成）
+【✔】支持项目部署服务的暂停/启动（已完成）
+【✔】支持自动部署服务的暂停/启动（已完成）
+【✔】支持部署项目的 history/hash 访问模式（已完成）
+
 ## 简易示意图
 ![image](https://zllugithub.github.io/web-deploy/images/20200626121718.jpg)
 
@@ -84,7 +87,24 @@ mv mongodb-linux-x86_64-rhel70-4.0.1 mongodbserver
 参考资料：[linux 下 mongodb 的安装及配置](http://zhenglinglu.cn/detail?id=76174b6ab88f388ff08db75f06e2e3)
 
 ## 快速安装平台
-### 全局安装 swd-cli 脚手架
+### 安装方法
+#### 1、方法一
+下载完成之后打开 swd-server 根目录下的 `config.json` 文件，填写配置项。
+````bash
+git clone https://github.com/zlluGitHub/swd-server.git
+````
+快速运行
+````bash
+cd web-deploy/bin
+node ./www 
+````
+若运行没有问题，则可以使用 `pm2` 使进程常驻后台
+````bash
+cd web-deploy/bin
+pm2 start ./www --name="web-deploy"
+````
+
+#### 2、方法二
 `swd-cli` 脚手架为 Web Deploy 平台构建工具，在这里类似 `vue-cli`
 ````bash
 npm install swd-cli -g
@@ -93,23 +113,67 @@ npm install swd-cli -g
 ````bash
 swd -v
 ````
-若出现版本号，则安装成功！
-### 构建 Web Deploy 平台
+若出现版本号，则安装成功，然后构建 Web Deploy 平台
 ````bash
 swd install web-deploy
 ````
 其中 web-deploy 为项目存放的文件夹，可以随意命名。
-### 快速运行
-测试
+快速运行
 ````bash
 cd web-deploy/bin
 node ./www 
 ````
-若测试没有问题，则可以使用 `pm2` 使进程常驻后台
+若运行没有问题，则可以使用 `pm2` 使进程常驻后台
 ````bash
 cd web-deploy/bin
 pm2 start ./www --name="web-deploy"
 ````
+### 配置文件 config.json 说明
+```json
+{
+    "database": {
+        "port": "27017",  //数据库端口
+        "ip": "127.0.0.1"  //数据库ip
+    },
+    "port": 80, //项目启动端口
+    "process": true, //项目进程启动，默认true否则无法启动
+    "email": {
+        "state": true, //如需开启请设置成 true ,默认 true
+        "host": "smtp.163.com",
+        "port": 465, //163 邮件端口号（默认465）
+        "from": "", //你的邮件用户名（发件人）
+        "password": "", //你的邮件密码
+        "subject": "" //邮件主题
+    },
+    "oauth": { // 第三方登录相关配置
+        "github": {
+            "state": false, //如需开启请设置成 true ,默认 false
+            "client_ID": "", // 客户ID
+            "client_Secret": "", // 客户密匙
+            "access_token_url": "https://github.com/login/oauth/access_token", // 获取 access_token 地址
+            "user_info_url": "https://api.github.com/user", // 获取用户信息
+            "name": "你的github账号名称" 
+        },
+        "gitee": {
+            "state": false, //如需开启请设置成 true ,默认 false
+            "client_ID": "", // 客户ID
+            "client_Secret": "", // 客户密匙
+            "headers": {  //请求头配置
+                "User-Agent": "你的gitee用户名" 
+            },
+            "access_token_url": "https://gitee.com/oauth/token",// 获取 access_token 地址
+            "user_info_url": "https://gitee.com/api/v5/user" // 获取用户信息
+        },
+        "gitlab": {
+            "state": false, //如需开启请设置成 true ,默认 false
+            "client_ID": "", // 客户ID
+            "client_Secret": "", // 客户密匙
+            "access_token_url": "", // 获取 access_token 地址
+            "user_info_url": "" // 获取用户信息
+        }
+    }
+}
+```
 ### 开启邮箱注册验证
 此平台包含自己的登录方式，若需开启邮箱注册验证，需要在根目录下找到 `config.json` 配置文件，添加如下配置即可（以 163邮箱 为例）
 ````json
