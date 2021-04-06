@@ -1,0 +1,90 @@
+.swd-create {
+    /deep/ .header__change {
+        position: absolute;
+        bottom: 0px;
+        right: 150px;
+        display: flex;
+        // margin-top: 20px;
+        .em-header__nav__item {
+            float: left;
+            height: 40px;
+            line-height: 40px;
+            padding: 0 15px;
+            color: #586069;
+            cursor: pointer;
+            border: solid transparent;
+            border-width: 3px 1px 1px;
+            border-radius: 3px 3px 0 0;
+        }
+        .is-active {
+            color: #24292e;
+            background: #f5f7fa;
+            border-color: #2d8cf0 #e1e4e8 transparent;
+        }
+    }
+    .content {
+        display: flex;
+        justify-content: center;
+        > section {
+            width: 80%;
+            margin-top: 20px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            position: relative;
+            .tip-box {
+                top: 20px;
+                right: 20px;
+                position: absolute;
+            }
+        }
+        .list-item {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            .star{
+                color: red;
+                margin-right: 3px;
+            }
+            label {
+                width: 100px;
+                text-align: right;
+            }
+            .put-warp {
+                width: 450px;
+            }
+            ul{
+                li {
+                    display: flex;
+                    align-items: center;
+                    margin-bottom: 5px;
+                    &:last-child{
+                        margin-bottom: 0;
+                    }
+                }
+                .proxy-warp{
+                    display: flex;
+                    align-items: center;
+                    span{
+                        margin: 0 3px;
+                    }
+                }
+            }
+            .tip {
+                margin-left: 20px;
+                i {
+                    font-size: 22px;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+    .button-footer {
+        margin: 20px 100px;
+        display: flex;
+        button {
+            width: 120px;
+            margin: 0 30px;
+        }
+    }
+}
