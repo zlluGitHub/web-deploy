@@ -6,6 +6,7 @@ const path = require('path');
 const tools = require("../public/javascripts/tools");
 const workflow = require('../workflow');
 const deploySchema = require("../schema/deploy");
+const logger = require('../logs/index.js');
 
 //项目部署
 router.get('/init', async (req, res, next) => {
@@ -37,12 +38,51 @@ router.get('/init', async (req, res, next) => {
         await deploySchema.create(body, (err, data) => {
             if (err) {
                 console.log('错误信息：', err);
+                logger.error('信息入库错误：', err)
                 res.json({ message: body.title + "项目信息保存失败，但部署成功，请检查数据库是否连接！", result: false, code: 500 });
             } else {
-                console.log('项目部署成功！');
+                console.log(body.title + "项目部署成功！");
+                logger.info(body.title + "项目部署成功！")
                 res.json({ message: body.title + "项目部署成功！", result: true, code: 200 });
             }
         })
+    }
+});
+//项目重新部署
+router.get('/update', async (req, res, next) => {
+    // let body = req.body;
+    let body = {
+        title: "asdsd",
+        proxy: [{
+            rewrite: "text",
+            target: "/jjjjj",
+        }],
+        dist: "dist",
+        remark: 'remark',
+        git: 'https://gitee.com/zlluGitHub/test-project.git', //git 地址
+        www: 'root',
+        port: 8899,
+        branch: "master", //git 分支
+        build: "npm run build", //部署命令
+    }
+    body.time = tools.dateTime();
+    body.bid = tools.getUid();
+
+    if (!shell.which('git')) {
+        // shell.echo('Sorry, this script requires git');
+        res.json({ message: "Git 命令不存在，请安装后再试！", result: false, code: 500 });
+        shell.exit(1);
+    } else {
+        await workflow.initProject(body, res);
+        await deploySchema.updateMany({ bid: body.bid }, { $set: body }, (err, data) => {
+            if (err) {
+                console.log('错误信息：', err);
+                res.json({ message: body.title + "项目信息更新失败，但部署成功，请检查数据库是否连接！", result: false, code: 500 });
+            } else {
+                logger.info(body.title + "项目更新部署成功！")
+                res.json({ message: body.title + "项目更新部署成功！", result: true, code: 200 });
+            };
+        });
     }
 });
 
@@ -59,27 +99,39 @@ router.get('/test', async (req, res, next) => {
 //重新安装依赖文件
 router.post('/rely', async (req, res, next) => {
     let body = req.body;
-    body.time = tools.dateTime();
-    body.bid = tools.getUid();
 
-    let git = 'https://gitee.com/zlluGitHub/test-project.git';
-    let projectName = git.slice(git.lastIndexOf('/') + 1, git.lastIndexOf('.'));
-    await command.deleteProject(`${projectName}/node_modules`)
-    await command.initProject(projectName)
-    await command.buildProject(projectName)
-    res.json({ message: projectName + "项目部署成功！", result: true, code: 200 });
+    if (!shell.which('git')) {
+        // shell.echo('Sorry, this script requires git');
+        res.json({ message: "Git 命令不存在，请安装后再试！", result: false, code: 500 });
+        shell.exit(1);
+    } else {
+        await workflow.initRely(body, res);
+        logger.info(body.title + "项目依赖已安装，项目更新部署成功！")
+        res.json({ message: body.title + "项目依赖已安装，项目更新部署成功！", result: true, code: 200 });
+        // await deploySchema.updateMany({ bid: body.bid }, { $set: body }, (err, data) => {
+        //     if (err) {
+        //         console.log('错误信息：', err);
+        //         res.json({ message: body.title + "项目信息更新失败，但部署成功，请检查数据库是否连接！", result: false, code: 500 });
+        //     } else {
+        //         res.json({ message: body.title + "项目更新部署成功！", result: true, code: 200 });
+        //     };
+        // });
+    }
 });
 
 //重新打包文件
 router.post('/build', async (req, res, next) => {
     let body = req.body;
-    body.time = tools.dateTime();
-    body.bid = tools.getUid();
 
-    let git = 'https://gitee.com/zlluGitHub/test-project.git';
-    let projectName = git.slice(git.lastIndexOf('/') + 1, git.lastIndexOf('.'));
-    await command.buildProject(projectName)
-    res.json({ message: projectName + "项目部署成功！", result: true, code: 200 });
+    if (!shell.which('git')) {
+        // shell.echo('Sorry, this script requires git');
+        res.json({ message: "Git 命令不存在，请安装后再试！", result: false, code: 500 });
+        shell.exit(1);
+    } else {
+        await workflow.initBuild(body, res);
+        logger.info(body.title + "已打包完成，项目更新部署成功！")
+        res.json({ message: body.title + "已打包完成，项目更新部署成功！", result: true, code: 200 });
+    }
 });
 
 
