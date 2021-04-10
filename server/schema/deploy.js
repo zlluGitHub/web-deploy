@@ -1,7 +1,6 @@
 let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 let editionSchema = new Schema({
-
     title: {  //所属项目
         type: String,
         default: ""

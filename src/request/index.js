@@ -25,12 +25,12 @@ axios.interceptors.request.use((config) => {
     //     config.headers['token'] = `${user.token}`;
     // }
 
-    if (config.method === 'post') {
-        config.data = qs.stringify(config.data);
-    }
-    if (config.method === 'get') {
-        config.data = { params: config.data };
-    }
+    // if (config.method === 'post') {
+    //     config.data = qs.stringify(config.data);
+    // }
+    // if (config.method === 'get') {
+    //     config.data = { params: config.data };
+    // }
     // config.headers.Authorization = " ";
     // config.headers.token = ' ';
     return config;

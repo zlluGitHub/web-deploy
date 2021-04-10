@@ -31,13 +31,13 @@
  */
 const winston = require('winston');
 const path = require('path');
-// const transportConsole = new winston.transports.Console({
-//     json: false,
-//     timestamp: true,
-//     prettyPrint: true,
-//     colorize: true,
-//     level: 'debug'
-// });
+const transportConsole = new winston.transports.Console({
+    json: false,
+    timestamp: true,
+    prettyPrint: true,
+    colorize: true,
+    level: 'debug'
+});
 const transportFileDebug = new winston.transports.File({
     filename: path.join(__dirname, './file/index.log'),
     json: true,
@@ -52,11 +52,11 @@ const logger = winston.createLogger({
         debug: 3,
     },
     transports: [
-        // transportConsole,
+        transportConsole,
         transportFileDebug
     ],
     exceptionHandlers: [
-        // transportConsole,
+        transportConsole,
         transportFileDebug
     ],
     exitOnError: false

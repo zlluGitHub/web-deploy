@@ -63,7 +63,7 @@
                 <Icon type="ios-star" size="26" v-else @click="handleStar(item.bid,'0')" />-->
             </div>
 
-            <h2 @click="handleHref(item)">{{ item.projectName }}</h2>
+            <h2 @click="handleHref(item)">{{ item.title }}</h2>
             <p>
               <Icon type="ios-code-working" size="20" />
               <span>{{ item.version }}</span>
@@ -148,7 +148,7 @@ export default {
       pageNo: 1,
       pageSize: 10,
       total: 0,
-      projectData: [{}],
+      projectData: [],
     };
   },
   watch: {
@@ -174,6 +174,7 @@ export default {
     // this.$event.on("isPort", (e) => {
     //   this.handleProt(e);
     // });
+    this.handleGetData();
   },
   mounted() {
     // this.$Message.destroy();
@@ -189,15 +190,14 @@ export default {
     // //   this.projectName = val;
     // //   this.handleGetData();
     // // });
-    this.$Message.destroy();
-    this.user = this.$store.state.variable.info;
-    this.authorId = this.user.bid;
-    if (this.user.name === "admin") {
-      this.authorId = "";
-      this.collect = "";
-      this.qurey = "全部";
-    }
-    this.handleGetData();
+    // this.$Message.destroy();
+    // this.user = this.$store.state.variable.info;
+    // this.authorId = this.user.bid;
+    // if (this.user.name === "admin") {
+    //   this.authorId = "";
+    //   this.collect = "";
+    //   this.qurey = "全部";
+    // }
   },
   methods: {
     handleGetData() {
@@ -206,55 +206,23 @@ export default {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
         // pageSize: this.pageSize
-        idDeployment: "yes",
+        // idDeployment: "yes",
       };
-      if (this.authorId && this.qurey !== "全部") {
-        data.authorId = this.authorId;
-      }
-      if (this.collect) {
-        data.collect = this.collect;
-      }
-      if (this.key) {
-        data.key = this.key;
-      }
-      this.$axios
-        .get("/api/deploy/edition/get", { params: data })
-        .then((res) => {
-          if (res.data.result) {
-            let data = res.data.list;
-            data.forEach((item) => {
-              // let href = this.$url;
-              if (!item.port) {
-                item.href = this.$url + item.webUrl + "/index.html";
-              } else {
-                // let url = this.$url.slice(0, this.$url.lastIndexOf(":") + 1);
-                item.href =
-                  window.location.protocol +
-                  "//" +
-                  window.location.hostname +
-                  ":" +
-                  item.port;
-              }
-              // item.href = href;
-              // if (item.mode == "1") {
-              //   item.isAuto =
-              //     !item.isAuto || item.isAuto === "yes" ? "已开启" : "已关闭";
-              // }
-            });
-            this.total = res.data.total;
-            // this.projectData = data;
-            this.projectNameArr = res.data.project;
-            this.$store.commit("setProjectTitleArr", res.data.project);
-          } else {
-            this.$Message["error"]({
-              background: true,
-              content: "数据请求失败！",
-            });
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+      // if (this.authorId && this.qurey !== "全部") {
+      //   data.authorId = this.authorId;
+      // }
+      // if (this.collect) {
+      //   data.collect = this.collect;
+      // }
+      // if (this.key) {
+      //   data.key = this.key;
+      // }
+      this.$request.get("/swd/deploy/get", { params: data }).then((res) => {
+        if (res.data.code === 200) {
+          this.total = res.data.count;
+          this.projectData = res.data.data;
+        }
+      });
     },
     changePage(event) {
       this.pageNo = event;

@@ -91,7 +91,7 @@ module.exports = {
     // host: "localhost",
     proxy: {
       '/api': {
-        target: 'http://localhost:3000/',
+        target: 'http://localhost:3002/',
         changeOrigin: true,
         ws: true, // 是否启用websockets
         secure: false, // 使用的是http协议则设置为false，https协议则设置为true

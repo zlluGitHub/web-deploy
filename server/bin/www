@@ -40,6 +40,7 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 // );
 // 路由引入
 app.use('/swd/deploy', require('../routes/deploy'));
+// app.use('/swd/project', require('../routes/project'));
 
 app.use(express.static(path.join(__dirname, 'web')))
 

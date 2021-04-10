@@ -7,7 +7,6 @@ export default new Router({
   // mode: 'history',
   // mode: 'hash', //默认 有#号
   routes: [
-   
     {
       path: '/login',
       name: 'login',
