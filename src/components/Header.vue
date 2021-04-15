@@ -8,7 +8,7 @@
           <!-- <Input v-model="value14" placeholder="Enter something..." clearable style="width: 100px" /> -->
           <MenuItem name="1" to="/"> <Icon type="md-cube" size="18" />工作台 </MenuItem>
 
-          <MenuItem name="2" to="/addpage">
+          <MenuItem name="2" to="/create">
             <Icon type="md-add" size="20" />创建项目
           </MenuItem>
           <MenuItem name="3" to="/projectmanage">

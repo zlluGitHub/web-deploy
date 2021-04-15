@@ -45,6 +45,46 @@ let editionSchema = new Schema({
         type: String,
         default: ""
     },
+    install: { // 依赖安装
+        type: String,
+        default: ""
+    },
+    // isServer: { 
+    //     type: String,
+    //     default: "no"
+    // },
+    commitBid: { // 部署id
+        type: String,
+        default: "no"
+    },
+    isAuto: { // 是否开启自动部署
+        type: String,
+        default: "no"
+    },
+    router: { // 路由模式
+        type: String,
+        default: "history"
+    },
+    isZip: { // zip压缩模式
+        type: String,
+        default: "no"
+    },
+    isStatic: { // 是否静态服务
+        type: String,
+        default: "no"
+    },
+    state: { //  服务是否启动
+        type: Boolean,
+        default: false
+    },
+    duration: { // 部署时长
+        type: String,
+        default: ""
+    },
+    key: { // 项目秘钥
+        type: String,
+        default: ""
+    }
 });
 
 // 输出(导出);

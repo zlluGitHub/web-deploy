@@ -1,5 +1,5 @@
 <template>
-  <div class="swd-index">
+  <div class="swd-commit">
     <div class="header">
       <Decorate
         icon="ivu-icon ivu-icon-md-cube"
@@ -9,114 +9,220 @@
     </div>
     <div class="content">
       <div>
-        <ul>
-          <li v-for="(item, i) in projectData" :key="item.bid + i">
-            <div class="item-header">
-              <div class="left">
-                <span class="state">
-                  <i
-                    :style="{
-                      background: item.state ? '#2d8cf0' : 'red',
-                    }"
-                  ></i>
-                  <span>{{ item.state ? "服务运行中" : "服务已暂停" }}</span>
-                </span>
-                <span class="state auto">
-                  <i
-                    :style="{
-                      background: item.isAuto === 'yes' ? '#2d8cf0' : 'red',
-                    }"
-                  ></i>
-                  <span>{{
-                    item.isAuto === "yes" ? "自动部署已开启" : "自动部署已暂停"
-                  }}</span>
-                </span>
-              </div>
+        <div class="details-box">
+          <Row>
+            <Col span="12">
+              <label>项目名称：</label>
+              <p>按说出生地发</p>
+            </Col>
+            <Col span="12">
+              <label>CommitID：</label>
+              <p>按说出生地发</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="12">
+              <label>Git：</label>
+              <p>按说出生地发</p>
+            </Col>
+            <Col span="12">
+              <label>部署目录：</label>
+              <p>按说出生地发</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="12">
+              <label>构建者：</label>
+              <p>按说出生地发</p>
+            </Col>
+            <Col span="12">
+              <label>开始时间：</label>
+              <p>按说出生地发</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="12">
+              <label>部署端口：</label>
+              <p>按说出生地发</p>
+            </Col>
+            <Col span="12">
+              <label>代理地址：</label>
+              <p>按说出生地发</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="12">
+              <label>项目分支：</label>
+              <p>按说出生地发</p>
+            </Col>
+            <Col span="12">
+              <label>安装依赖：</label>
+              <p>按说出生地发</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="12">
+              <label>打包命令：</label>
+              <p>按说出生地发</p>
+            </Col>
+            <Col span="12">
+              <label>打包目录：</label>
+              <p>按说出生地发</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col >
+              <label>部署KEY：</label>
+              <p>按说出生地发</p>
+            </Col>
+            
+          </Row>
+          <Row>
+            <Col span="12">
+              <label>部署秘钥：</label>
+              <p>按说出生地发</p>
+            </Col>
+            <Col span="12">
+              <label>部署摘要：</label>
+              <p>按说出生地发</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="12">
+              <label>结束时间：</label>
+              <p>按说出生地发</p>
+            </Col>
+            <Col span="12">
+              <label>部署时长：</label>
+              <p>按说出生地发</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="12">
+              <label>部署状态：</label>
+              <p>按说出生地发</p>
+            </Col>
+            <Col span="12">
+              <label>服务状态：</label>
+              <p>按说出生地发</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="12">
+              <label>路由模式：</label>
+              <p>按说出生地发</p>
+            </Col>
+            <Col span="12">
+              <label>部署模式：</label>
+              <p>按说出生地发</p>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="12">
+              <label>创建时间：</label>
+              <p>按说出生地发</p>
+            </Col>
+            <Col span="12">
+              <label>部署状态：</label>
+              <p>按说出生地发</p>
+            </Col>
+          </Row>
+        </div>
+        <Divider orientation="left">部署历史</Divider>
+        <Table border :columns="columns" :data="content">
+          <!-- <template slot-scope="{ row }" slot="author">
+                <div class="author">
+                  <img :src="$url+row.url" :alt="row.author" />
+                  <span>{{row.author}}</span>
+                </div>
+              </template>-->
+          <template slot-scope="{ row }" slot="projectName">
+            <Tooltip max-width="200" :content="row.projectName" placement="top">
+              <span class="nowrap">{{ row.projectName }}</span>
+            </Tooltip>
+          </template>
+          <template slot-scope="{ row }" slot="version">
+            <span style="color: #fab67b">{{ row.version }}</span>
+          </template>
+          <template slot-scope="{ row }" slot="target">
+            <span>{{ row.target ? row.target : "暂无代理" }}</span>
+          </template>
+          <template slot-scope="{ row }" slot="port">
+            <p>
+              <i
+                v-if="row.port"
+                class="yuandian"
+                :style="{
+                  background:
+                    row.idDeployment == 'yes' && row.isPort == 'yes'
+                      ? 'cornflowerblue'
+                      : '#ccc',
+                }"
+              ></i>
+              <span>{{ row.port ? row.port : "无端口号" }}</span>
+            </p>
+          </template>
+          <template slot-scope="{ row }" slot="idDeployment">
+            <span
+              v-if="row.idDeployment == 'yes'"
+              :style="{
+                color: row.port ? (row.isPort === 'yes' ? '#6CD1A7' : 'red') : '#6CD1A7',
+              }"
+              >{{
+                row.port ? (row.isPort === "yes" ? "已部署" : "已暂停") : "已部署"
+              }}</span
+            >
+            <span v-else style="color: #ec6c73">未部署</span>
+          </template>
+          <template slot-scope="{ row }" slot="remark">
+            <Tooltip max-width="200" :content="row.remark" placement="top">
+              <span class="nowrap">{{ row.remark }}</span>
+            </Tooltip>
+          </template>
+          <!-- <template slot-scope="{ row }" slot="webUrl">
+                <span
+                  v-if="row.idDeployment=='yes'"
+                  class="copy1"
+                  v-clipboard:copy="row.href"
+                  v-clipboard:success="onCopy"
+                  v-clipboard:error="onError"
+                >复制链接</span>
+                <span v-else class="copy2">复制链接</span>
+              </template>-->
+          <!-- <template slot-scope="{ row }" slot="mode">
+                <span>{{row.mode!='1'?'静态部署':'自动部署'}}</span>
+              </template>-->
+          <template slot-scope="{ row }" slot="action">
+            <div class="error-bot">
+              <!-- <Button
+                v-if="!row.port"
+                @click="handleShow(row)"
+                type="success"
+                size="small"
+                :disabled="row.idDeployment !== 'yes'"
+                >访问</Button
+              > -->
 
-              <div class="right">
-                <Dropdown trigger="click">
-                  <Icon type="md-more" size="18" />
-                  <DropdownMenu slot="list">
-                    <DropdownItem @click.native="handleProt(item)"
-                      >{{ item.state ? "暂停" : "开启" }}运行服务</DropdownItem
-                    >
-                    <DropdownItem @click.native="handleAuto(item)"
-                      >{{ item.isAuto === "yes" ? "关闭" : "开启" }}自动部署</DropdownItem
-                    >
-                    <DropdownItem @click.native="handleHistory(item)"
-                      >{{
-                        item.isStatic === "yes" ? "关闭" : "开启"
-                      }}History模式</DropdownItem
-                    >
-                  </DropdownMenu>
-                </Dropdown>
-              </div>
+              <Button type="primary" size="small" @click="handleDeploy(row)"
+                >重新构建</Button
+              >
+              <Button @click="handleShow(row)" type="success" size="small"
+                >构建日志</Button
+              >
+              <Button @click="handleShow(row)" type="success" size="small"
+                >构建日志</Button
+              >
+              <!-- <Button
+                    v-if="user.bid == row.authorId"
+                    type="error"
+                    size="small"
+                    @click="handleDelecte(row)"
+                    :disabled="row.idDeployment == 'yes'"
+                    >删除</Button
+                  > -->
             </div>
-
-            <!--     <div class="icon">
-            <Icon
-                  type="ios-star-outline"
-                  size="26"
-                  v-if="item.collect!=='1'"
-                  @click="handleStar(item.bid,'1')"
-                /> 
-                <Icon type="ios-star" size="26" v-else @click="handleStar(item.bid,'0')" />
-            </div>-->
-
-            <h2 @click="handleHref(item)">{{ item.title }}</h2>
-
-            <p>
-              <Icon type="ios-settings-outline" size="18" />
-              <span>{{ item.isStatic == "0" ? "静态部署" : "自动部署" }}</span>
-            </p>
-            <p>
-              <Icon type="ios-code-working" size="20" />
-              <span>History模式</span>
-            </p>
-            <p>
-              <Icon type="ios-time-outline" size="18" />
-              <span>{{ item.time }}</span>
-            </p>
-            <div class="description">{{ item.remark }}</div>
-            <div class="bottom-list">
-              <Tooltip
-                content="复制链接"
-                placement="top"
-                class="border-r-no"
-                v-clipboard:copy="item.href"
-                v-clipboard:success="onCopy"
-                v-clipboard:error="onError"
-              >
-                <Icon type="ios-link" size="20" />
-              </Tooltip>
-              <Tooltip
-                content="删除"
-                placement="top"
-                class="border-r-no"
-                @click.native="handleDelete(item)"
-              >
-                <Icon type="ios-trash" size="20" />
-              </Tooltip>
-
-              <Tooltip
-                content="更新项目"
-                placement="top"
-                class="border-r-no"
-                @click.native="handleRouter('/addpage', item.key, item)"
-              >
-                <Icon type="md-repeat" size="20" />
-                <!-- <Icon type="md-add"/> -->
-              </Tooltip>
-              <Tooltip
-                content="部署列表"
-                placement="top"
-                @click.native="handleRouter('/tablePage', item.key)"
-              >
-                <Icon type="ios-list-box-outline" size="20" />
-              </Tooltip>
-            </div>
-          </li>
-        </ul>
+          </template>
+        </Table>
         <div class="page">
           <Page
             prev-text="上一页"
@@ -148,8 +254,81 @@ export default {
     return {
       pageNo: 1,
       pageSize: 10,
-      total: 0,
-      projectData: [],
+      total: 10,
+      isModel: false,
+      modal_loading: false,
+      columns: [
+        {
+          title: "ID",
+          width: 180,
+          slot: "projectName",
+        },
+        {
+          title: "CommitID",
+
+          slot: "projectName",
+        },
+        {
+          title: "构建者",
+
+          slot: "author",
+        },
+        {
+          title: "开始时间",
+
+          slot: "version",
+        },
+        {
+          title: "结束时间",
+
+          slot: "version",
+        },
+        {
+          title: "部署时长",
+
+          slot: "version",
+        },
+        {
+          title: "部署状态",
+
+          slot: "version",
+        },
+        {
+          title: "操作",
+
+          slot: "action",
+        },
+      ],
+      content: [
+        {
+          name: "John Brown",
+          age: 18,
+          address: "New York No. 1 Lake Park",
+        },
+      ],
+      itemData: {},
+      isOpen: true,
+
+      cityList1: [],
+      cityList2: [
+        { name: "已部署", value: "yes" },
+        { name: "未部署", value: "no" },
+      ],
+      titleVal: "",
+      authorVal: "",
+      publishVal: "",
+      user: {},
+      // -----------------------------------------
+      // isDetail: true,
+      // mark: true,
+      // author: "",
+      // page: 1,
+      typeArr: [],
+
+      cityList3: [],
+      // bid: "",
+
+      classVal: "",
     };
   },
   watch: {
@@ -304,115 +483,67 @@ export default {
     // 单个端口操作
     handleProt(data) {
       this.$Message.destroy();
-      if (data.state) {
-        this.$request
-          .post("/swd/deploy/closeServer", {
-            bid: data.bid,
-            commitBid: data.commitBid,
-            title: data.title,
-            port: data.port,
-          })
+      if (data.isPort === "yes") {
+        this.$axios
+          .post(
+            "/api/service/operation/close",
+            this.$qs.stringify({ key: data.key, port: data.port })
+          )
           .then((res) => {
+            // let message = data.isPort == "yes" ? data.port+"端口关闭成功！" :  data.port+"端口关闭失败！";
+            this.$Message.destroy();
             if (res.data.result) {
+              // this.$Message["success"]({
+              //   background: true,
+              //   content: data.projectName + "服务关闭成功！",
+              // });
               this.$Modal.success({
                 title: "系统提示",
-                content: data.title + "服务关闭成功！",
+                content: data.projectName + "服务关闭成功！",
               });
               this.handleGetData();
             } else {
-              this.$Modal.error({
-                title: "系统提示",
-                content: data.title + "服务关闭失败！",
+              this.$Message["error"]({
+                background: true,
+                content: data.projectName + "服务关闭失败！",
               });
             }
+          })
+          .catch(function (error) {
+            console.log(error);
           });
       } else {
-        this.$request
-          .post("/swd/deploy/openServer", {
-            bid: data.bid,
-            commitBid: data.commitBid,
-            title: data.title,
-            port: data.port,
-            proxy: data.proxy,
-            www: data.www,
-          })
+        this.$axios
+          .post("/api/service/operation/open", this.$qs.stringify(data))
           .then((res) => {
+            // let message = data.isPort == "yes" ? data.port+"端口关闭成功！" :  data.port+"端口关闭失败！";
+            this.$Message.destroy();
             if (res.data.result) {
+              // this.$Message["success"]({
+              //   background: true,
+              //   content:
+              //     data.projectName +
+              //     "服务开启成功，已运行在 " +
+              //     data.port +
+              //     " 端口！",
+              // });
               this.$Modal.success({
                 title: "系统提示",
-                content: data.title + "服务开启成功！",
+                content:
+                  data.projectName + "服务开启成功，已运行在 " + data.port + " 端口！",
               });
               this.handleGetData();
             } else {
-              this.$Modal.error({
-                title: "系统提示",
-                content: data.title + "服务开启失败！",
+              this.$Message["error"]({
+                background: true,
+                content: data.projectName + "服务开启失败！",
               });
             }
+          })
+          .catch(function (error) {
+            console.log(error);
           });
       }
-
-      // if (data.state === "yes") {
-      //   this.$axios
-      //     .post(
-      //       "/api/service/operation/close",
-      //       this.$qs.stringify({ key: data.key, port: data.port })
-      //     )
-      //     .then((res) => {
-      //       // let message = data.isPort == "yes" ? data.port+"端口关闭成功！" :  data.port+"端口关闭失败！";
-      //       this.$Message.destroy();
-      //       if (res.data.result) {
-      //         // this.$Message["success"]({
-      //         //   background: true,
-      //         //   content: data.projectName + "服务关闭成功！",
-      //         // });
-      //         this.$Modal.success({
-      //           title: "系统提示",
-      //           content: data.projectName + "服务关闭成功！",
-      //         });
-      //         this.handleGetData();
-      //       } else {
-      //         this.$Message["error"]({
-      //           background: true,
-      //           content: data.projectName + "服务关闭失败！",
-      //         });
-      //       }
-      //     })
-      //     .catch(function (error) {
-      //       console.log(error);
-      //     });
-      // } else {
-      //   this.$axios
-      //     .post("/api/service/operation/open", this.$qs.stringify(data))
-      //     .then((res) => {
-      //       // let message = data.isPort == "yes" ? data.port+"端口关闭成功！" :  data.port+"端口关闭失败！";
-      //       this.$Message.destroy();
-      //       if (res.data.result) {
-      //         // this.$Message["success"]({
-      //         //   background: true,
-      //         //   content:
-      //         //     data.projectName +
-      //         //     "服务开启成功，已运行在 " +
-      //         //     data.port +
-      //         //     " 端口！",
-      //         // });
-      //         this.$Modal.success({
-      //           title: "系统提示",
-      //           content:
-      //             data.projectName + "服务开启成功，已运行在 " + data.port + " 端口！",
-      //         });
-      //         this.handleGetData();
-      //       } else {
-      //         this.$Message["error"]({
-      //           background: true,
-      //           content: data.projectName + "服务开启失败！",
-      //         });
-      //       }
-      //     })
-      //     .catch(function (error) {
-      //       console.log(error);
-      //     });
-      // }
     },
     // 自动部署
     handleAuto(data) {
@@ -581,134 +712,26 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.swd-index {
+.swd-commit {
   .content {
     padding-top: 20px;
     display: flex;
     justify-content: center;
     > div {
       width: 80%;
-      > ul {
-        display: flex;
-        flex-wrap: wrap;
-        .item-header {
-          margin-top: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 13px 0;
-          border-bottom: 1px solid #eee;
-          margin-bottom: 10px;
-          .left {
-            .state {
-              top: 18px;
-              left: 20px;
-              i {
-                padding: 5px;
-                border-radius: 100%;
-                background: #f84c5b;
-                display: inline-block;
-                margin-right: 6px;
-              }
-              span {
-                margin-right: 10px;
-              }
-            }
-            .auto {
-              left: 120px;
-            }
-          }
-          .right {
-            position: relative;
-            /deep/ .ivu-dropdown {
-              // position: absolute;
-              // top: 5px;
-              // right: 0px;
-              cursor: pointer;
-            }
-          }
-        }
-        > li {
-          background: #fff;
-          width: 282px;
-          padding: 10px 20px;
-          padding-top: 0;
-          box-shadow: 0 1px 5px #e5e5e5;
-          border-radius: 4px;
-          transition: all 0.3s;
-          position: relative;
-          margin: 20px 10px;
-          margin-top: 0px;
-
-          .icon {
+      background-color: #fff;
+      padding: 20px;
+      .details-box {
+        /deep/ .ivu-row {
+          margin: 10px 0;
+          .ivu-col {
             display: flex;
-            justify-content: center;
-            padding: 10px;
-            margin-bottom: 20px;
-            margin-top: 15px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            color: #f84c5b;
-          }
-          h2 {
-            font-weight: 800;
-            font-size: 16px;
-            cursor: pointer;
-            letter-spacing: 2px;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            word-break: break-all;
-            transition: color 0.2s;
-            padding: 10px 0;
-          }
-          h2:hover {
-            color: #27cfc3;
-          }
-          .description {
-            padding: 10px;
-            border: 1px solid #eee;
-            border-radius: 4px;
-            margin-top: 10px;
-            background: #f5f5f5;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-          }
-          .description:before {
-            content: "";
-            display: block;
-            width: 20px;
-            height: 2px;
-            background: #f84c5b;
-            border-radius: 4px;
-            margin-bottom: 3px;
-          }
-          p {
-            margin: 15px 0;
-            i {
-              margin-right: 8px;
-            }
-          }
-          .bottom-list {
-            display: flex;
-            //  border-top: 1px solid #eee;
-            margin-top: 12px;
-            padding: 10px 0;
-            > div {
-              padding: 10px 0px;
-              flex-grow: 1;
-              display: flex;
-              justify-content: center;
-              border: 1px solid #eee;
-              cursor: pointer;
-            }
-            > div:hover {
-              color: #2d8cf0;
-              //    border-color: #2d8cf0;
-            }
-            .border-r-no {
-              border-right: 0;
+            label {
+              color: #515a6e;
+              font-size: 14px;
+              font-weight: 600;
+              width: 80px;
+              text-align: right;
             }
           }
         }

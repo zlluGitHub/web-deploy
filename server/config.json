@@ -3,7 +3,7 @@
         "port": "27019",
         "ip": "152.136.101.31"
     },
-    "port": 3002,
+    "port": 3006,
     "email": {
         "state": true,
         "host": "smtp.163.com",

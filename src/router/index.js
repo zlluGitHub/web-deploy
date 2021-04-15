@@ -27,6 +27,16 @@ export default new Router({
           path: '/create',
           name: 'create',
           component: () => import('@/views/create/Index.vue'),
+        },
+        {
+          path: '/commitList',
+          name: 'commitList',
+          component: () => import('@/views/commitList/Index.vue'),
+        },
+        {
+          path: '/details',
+          name: 'details',
+          component: () => import('@/views/details/Index.vue'),
         }
       ]
     },

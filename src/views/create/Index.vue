@@ -72,11 +72,12 @@
             >
               <Icon type="ios-help-circle-outline" />
             </Tooltip>
-            <span v-if="isPort == 0" class="isEx">此端口已存在，请重新输入！</span>
-            <span v-if="isPort == -2" class="isEx"
-              >端口号格式错误，请正确输入端口号！</span
-            >
-            <span v-if="isPort == -3" class="isEx">端口应大于等于0且小于65536！</span>
+            <span v-if="portMessage.code === 200" class="isExOk">{{
+              portMessage.message
+            }}</span>
+            <span v-if="portMessage.code === 500" class="isExNo">{{
+              portMessage.message
+            }}</span>
           </div>
         </div>
 
@@ -121,8 +122,9 @@
                 <Input v-model="proxy[i].target" placeholder="例如：http://127.0.0.1" />
               </div>
               <div class="tip">
-                <Icon type="ios-add-circle-outline" @click.stop="handleAddProxy(false)" />
+                <Icon type="ios-add-circle-outline" @click.stop="handleAddProxy" />
                 <Icon
+                  v-if="proxy.length > 1"
                   type="ios-close-circle-outline"
                   @click.stop="handleDeleteProxy(i)"
                 />
@@ -165,7 +167,20 @@
         </div>
 
         <div class="list-item">
-          <label> <i class="star">*</i>部署命令： </label>
+          <label> <i class="star">*</i>安装依赖： </label>
+          <Input v-model="install" placeholder="例如：npm install" class="put-warp" />
+          <div class="tip">
+            <Tooltip
+              max-width="200"
+              content="填写项目依赖安装指令，支持 npm 和 cnpm 指令。"
+              placement="right"
+            >
+              <Icon type="ios-help-circle-outline" />
+            </Tooltip>
+          </div>
+        </div>
+        <div class="list-item">
+          <label> <i class="star">*</i>打包命令： </label>
           <Input v-model="build" placeholder="例如：npm run build" class="put-warp" />
           <div class="tip">
             <Tooltip
@@ -185,6 +200,23 @@
             <Tooltip
               max-width="200"
               content="此处填写此项目的打包目录。"
+              placement="right"
+            >
+              <Icon type="ios-help-circle-outline" />
+            </Tooltip>
+          </div>
+        </div>
+        <div class="list-item">
+          <label> 部署秘钥： </label>
+          <Input
+            v-model="key"
+            placeholder="若本项目为私有仓库，请输入秘钥"
+            class="put-warp"
+          />
+          <div class="tip">
+            <Tooltip
+              max-width="200"
+              content="若本项目为私有仓库，请输入该秘钥，否则部署可能失败！"
               placement="right"
             >
               <Icon type="ios-help-circle-outline" />
@@ -272,7 +304,62 @@
         <!-- </Modal> -->
       </section>
     </div>
-  
+    <Modal
+      title="部署日志"
+      v-model="isLogModal"
+      scrollable
+      :mask-closable="false"
+      :footer-hide="true"
+    >
+      <div class="rz-box">
+        <p v-for="(item, i) in socketData" :key="i">
+          {{ item }}
+        </p>
+      </div>
+      <div class="rz-tip" v-if="isOk">
+        <div class="tip-box">
+          <div>
+            <p>
+              √ 秘钥Key：
+              <span style="color: #3390ff">{{ key }}</span>
+            </p>
+            <Divider orientation="left">关联 Git 仓库</Divider>
+            <div class="tisi">
+              <div>1、打开git：项目仓库 -> Settings -> Webhooks -> Add webhook；</div>
+              <div>
+                2、在
+                <span class="code">Target URL</span> 中填入
+                <span class="url">{{ $url }}/api/deploy/git</span> 地址；
+              </div>
+              <div>
+                3、
+                <span class="code">POST Content Type</span> 选择
+                <span class="select">application/json</span>；
+              </div>
+              <div>
+                4、在
+                <span class="code">Secret</span> 中填入秘钥Key：
+                <span class="url">{{ key }}</span
+                >；
+              </div>
+              <div>
+                5、
+                <span class="code">Trigger On</span>选择
+                <span class="select">Push Events</span>；
+              </div>
+              <div>
+                <span style="color: red">注意：</span>若项代码托管平台为 GitHub 时，在第 2
+                步中需要填入
+                <span class="url"
+                  >{{ $url }}/api/deploy/git?key={{ key ? key : "返回的key值" }}</span
+                >
+                地址。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Modal>
   </div>
 </template>
 <script>
@@ -284,74 +371,16 @@ export default {
     Decorate,
     DeployTip,
   },
-  props: ["typeArr", "classArr"],
-
   data() {
     return {
-      sideList: [],
-      author: "",
-      url: "",
-      usre: {},
-      content: {},
-      isToLogin: false,
-      isRizhi: false,
-      socket: null,
-      isKey: true,
-      isIp: false,
-      key: "",
-      target: "",
-
-      isClickBushu: false,
-      // **********************************************
-      isPort: 1,
-      port: "",
-      // portArr: [],
-      oneBugIsShow: false,
-      zzcAutoSubmit: false,
-      isHelp: true,
-      isEx: false,
-      isUpLoader: true,
-      uploader_key: new Date().getTime(), //这个用来刷新组件--解决不刷新页面连续上传的缓存上传数据（注：每次上传时，强制这个值进行更改---根据自己的实际情况重新赋值）
-      options: {
-        target: this.$url + "/api/deploy/files/add", //SpringBoot后台接收文件夹数据的接口
-        query: {
-          root: "",
-          version: "1.0.1",
-        },
-        testChunks: false, //是否分片-不分片
-        fileParameterName: "file", //上传文件时文件的参数名，默认file
-      },
-      root: "",
-      version: "1.0.1",
-      versionVal: "1.0.1",
-      fileStatusText: {
-        error: "上传失败",
-        paused: "等待上传",
-        success: "上传成功",
-        uploading: "正在上传...",
-        waiting: "等待中...",
-      },
-      baseUrl: "",
-
-      idDeployment: "yes",
-
-      catalog: "", //上传目录
-      isAddClear: true,
-      isOk: false,
-      uid: "",
-
-      // itemData: {}, //静态数据
-      // projectNameData: {}, //单个数据
-      mkdirArr: [], //服务器目录
-
-      isHistory: "yes",
-
-      modeType: "0",
-
       // mode: "静态部署" //模式
-      // ----------------------------------------------------
+      isLogModal: false,
+      sideList: ["已连接到应用服务器，正在部署..."],
+      socket: null,
+      socketData: [],
+      portMessage: "",
       title: "测试项目",
-      www: "/root",
+      www: "/textas",
       port: 8080,
       proxy: [
         {
@@ -365,58 +394,77 @@ export default {
       git: "https://gitee.com/zlluGitHub/test-project.git", //git 地址
       branch: "master", //git 分支
       build: "npm run build", //部署命令
+      install: "cnpm i", //部署命令
     };
   },
-
+  watch: {
+    port(val) {
+      if (this.isIntNum(val)) {
+        this.$request.post("/swd/deploy/portIsOccupied", { port: val }).then((res) => {
+          if (res.data.code === 200) {
+            this.portMessage = {
+              code: 200,
+              message: "端口可用！",
+            };
+          } else {
+            this.portMessage = res.data;
+          }
+        });
+      } else {
+        this.portMessage = {
+          code: 500,
+          message: "端口设置有误，请输入正整数！",
+        };
+      }
+    },
+  },
   methods: {
-
     //拉取项目(自动部署)
     handleAutoSubmit() {
-    
-        let data = {
-          title:this.title,
-          proxy:this.proxy,
-          dist:this.dist,
-          remark:this.remark,
-          git: this.git, //git 地址
-          www: this.www,
-          port: this.port,
-          branch: this.branch ? this.branch : "master", //git 分支
-          build: this.build, //部署命令
-        };
-        // this.$Message.loading({
-        //   content: "请勿关闭浏览器，项目拉取中...",
-        //   duration: 0,
-        // });
-        this.$request
-          .post("/swd/deploy/init", data)
-          .then((res) => {
-            // this.$Message.destroy();
-            // if (res.data.result) {
-            //   this.$Message["success"]({
-            //     background: true,
-            //     content: "项目拉取成功！",
-            //   });
-            //   this.handleInit(data);
-            // } else {
-            //   this.$Message.destroy();
-            //   this.$Modal.error({
-            //     title: "异常提示",
-            //     content: "发生未知错误，项目拉取失败！",
-            //   });
-            //   this.zzcAutoSubmit = false;
-            // }
-          })
-          .catch(function (error) {
-            console.log(error);
-            this.$Message.destroy();
-            this.$Modal.error({
-              title: "异常提示",
-              content: "发生未知错误，项目拉取失败！",
-            });
-            this.zzcAutoSubmit = false;
-          });
+      let data = {
+        title: this.title,
+        proxy: this.proxy,
+        dist: this.dist,
+        remark: this.remark,
+        git: this.git, //git 地址
+        www: this.www,
+        port: this.port,
+        branch: this.branch ? this.branch : "master", //git 分支
+        build: this.build, //部署命令
+        install: this.install, //部署命令
+      };
+      // this.$Message.loading({
+      //   content: "请勿关闭浏览器，项目拉取中...",
+      //   duration: 0,
+      // });
+      // this.$socket.onmessage = (e) => {
+      //   this.socketData.push(e.data);
+      //   console.log("message: " + e.data); //打印出服务端返回过来的数据
+      // };
+      this.createSocketServer(() => {
+        this.isLogModal = true;
+        this.$request.post("/swd/deploy/init", data).then((res) => {
+          if (res.data.result) {
+            this.socketData.push(this.title + "项目部署成功！");
+            // this.$socket.close(); //关闭websocket
+          }
+        });
+      });
     },
+
+    // 添加代理
+    handleAddProxy() {
+      this.proxy.push({
+        rewrite: "",
+        target: "",
+      });
+    },
+    handleDeleteProxy(i) {
+      if (this.proxy.length > 0) {
+        this.proxy.splice(i, 1);
+      }
+    },
+
     //初始化项目 安装依赖
     handleInit(data) {
       this.$Message.destroy();
@@ -542,6 +590,31 @@ export default {
     // 		});
     // 	}
     // }
+    isIntNum(val) {
+      if (val * 1) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    createSocketServer(callBack) {
+      /*创建服务端socket连接*/
+      this.$request.post("/swd/deploy/openSocket").then((res) => {
+        if (res.data.result) {
+          /*创建客户端socket连接*/
+          this.socket = new WebSocket("ws://152.136.101.31:8001");
+          this.socket.onopen = () => {
+            this.socketData = ["已连接到应用服务器，正在部署..."];
+            console.log("WebSocket open"); //成功连接上Websocket
+            callBack();
+          };
+          this.socket.onmessage = (e) => {
+            this.socketData.push(e.data);
+            console.log("message: " + e.data); //打印出服务端返回过来的数据
+          };
+        }
+      });
+    },
   },
   beforeDestroy() {
     if (this.isClickBushu) {
@@ -559,8 +632,105 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-@import "./index.scss";
-/deep/ .ivu-modal-content {
-  margin-bottom: 100px;
+.swd-create {
+  /deep/ .header__change {
+    position: absolute;
+    bottom: 0px;
+    right: 150px;
+    display: flex;
+    // margin-top: 20px;
+    .em-header__nav__item {
+      float: left;
+      height: 40px;
+      line-height: 40px;
+      padding: 0 15px;
+      color: #586069;
+      cursor: pointer;
+      border: solid transparent;
+      border-width: 3px 1px 1px;
+      border-radius: 3px 3px 0 0;
+    }
+    .is-active {
+      color: #24292e;
+      background: #f5f7fa;
+      border-color: #2d8cf0 #e1e4e8 transparent;
+    }
+  }
+  .content {
+    display: flex;
+    justify-content: center;
+    > section {
+      width: 80%;
+      margin-top: 20px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      position: relative;
+      .tip-box {
+        top: 20px;
+        right: 20px;
+        position: absolute;
+      }
+    }
+    .list-item {
+      margin: 15px 0;
+      display: flex;
+      align-items: center;
+      .star {
+        color: red;
+        margin-right: 3px;
+      }
+      label {
+        width: 100px;
+        text-align: right;
+      }
+      .put-warp {
+        width: 450px;
+      }
+      ul {
+        li {
+          display: flex;
+          align-items: center;
+          margin-bottom: 5px;
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+        .proxy-warp {
+          display: flex;
+          align-items: center;
+          span {
+            margin: 0 3px;
+          }
+        }
+      }
+    }
+  }
+  .button-footer {
+    margin: 20px 100px;
+    display: flex;
+    button {
+      width: 120px;
+      margin: 0 30px;
+    }
+  }
+  .tip {
+    display: flex;
+    justify-content: center;
+    margin-left: 10px;
+    i {
+      font-size: 22px;
+      cursor: pointer;
+    }
+    /deep/ .ivu-tooltip {
+      margin-right: 5px;
+    }
+    .isExOk {
+      color: #19be6b;
+    }
+    .isExNo {
+      color: red;
+    }
+  }
 }
 </style>

@@ -15,6 +15,7 @@ Vue.prototype.$mitt = events
 import request from './request/index.js'
 Vue.prototype.$request = request
 
+// Vue.prototype.$socket = new WebSocket("ws://152.136.101.31:8001");
 // axios.defaults.withCredentials = true; //让ajax携带cookie
 // axios.interceptors.request.use(
 //   config => {

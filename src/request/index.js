@@ -1,7 +1,7 @@
 import Axios from 'axios';
 import qs from 'qs';
 import { Notice, Modal, Message, LoadingBar } from "view-design";
-import router from "../router/index";
+// import router from "../router/index";
 const axios = Axios.create();
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
 // axios.defaults.baseURL = 'http://www.tpss.com/';
@@ -25,12 +25,12 @@ axios.interceptors.request.use((config) => {
     //     config.headers['token'] = `${user.token}`;
     // }
 
-    // if (config.method === 'post') {
-    //     config.data = qs.stringify(config.data);
-    // }
-    // if (config.method === 'get') {
-    //     config.data = { params: config.data };
-    // }
+    if (config.method === 'post') {
+        // config.data = qs.stringify(config.data);
+    }
+    if (config.method === 'get') {
+        config.data = { params: config.data };
+    }
     // config.headers.Authorization = " ";
     // config.headers.token = ' ';
     return config;
@@ -43,19 +43,17 @@ axios.interceptors.response.use(
         // Do something with response data
         // let data = response.data;
         // response.data = response.data
-        if (response.data.code !== 200) {
-            // if (response.data.type == 'application/octet-stream') {
+        if (!response.data.result) {
 
-            // } 
-            if (response.data.code === 401) {
-                router.push({ path: '/login' });
-            } else {
-                // console.log(response.data);
-                Modal.error({
-                    title: "系统提示",
-                    content: response.data.errMsg ? response.data.errMsg : response.data.msg ? response.data.msg : '系统发生未知错误，请稍后再试！',
-                });
-            }
+            // if (response.data.code === 401) {
+            //     router.push({ path: '/login' });
+            // } else {
+            // console.log(response.data);
+            Modal.error({
+                title: "系统提示",
+                content: response.data.message ? response.data.message : '系统发生未知错误，请稍后再试！',
+            });
+            // }
         }
         return response;
     },

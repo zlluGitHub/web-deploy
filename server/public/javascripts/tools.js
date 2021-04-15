@@ -1,3 +1,4 @@
+
 // 获取当前时间
 function dateTime() {
     let date = new Date();
@@ -32,6 +33,7 @@ function dateTime() {
         + seperator2 + seconds;
     return currentdate;
 };
+
 // 获取当前时间
 function dateTimeSeconds() {
     let date = new Date();
