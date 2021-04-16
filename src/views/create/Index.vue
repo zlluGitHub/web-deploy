@@ -72,10 +72,10 @@
             >
               <Icon type="ios-help-circle-outline" />
             </Tooltip>
-            <span v-if="portMessage.code === 200" class="isExOk">{{
+            <span v-if="portMessage.code === 1" class="isExOk">{{
               portMessage.message
             }}</span>
-            <span v-if="portMessage.code === 500" class="isExNo">{{
+            <span v-else class="isExNo">{{
               portMessage.message
             }}</span>
           </div>
@@ -401,10 +401,10 @@ export default {
     port(val) {
       if (this.isIntNum(val)) {
         this.$request.post("/swd/deploy/portIsOccupied", { port: val }).then((res) => {
-          if (res.data.code === 200) {
+          if (res.data.data === 1) {
             this.portMessage = {
-              code: 200,
-              message: "端口可用！",
+              code: 1,
+              message: `此服务端口【${val}】可用！`,
             };
           } else {
             this.portMessage = res.data;

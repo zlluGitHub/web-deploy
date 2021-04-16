@@ -5,136 +5,40 @@ const path = require('path');
 const logger = require('../logs/index.js');
 module.exports = {
     // 部署项目
-    initProject: async (body, res, conn, commitBid) => {
+    initProject: async (body, res) => {
         let startIndex = body.git.lastIndexOf('/');
         let endIndex = body.git.lastIndexOf('.');
         let projectName = body.git.slice(startIndex + 1, endIndex);
-
+        console.log('wewewe');
+        // 判断部署项目是否存在，粗在则删除
         if (await fs.existsSync(path.join(__dirname, `../../backups/${projectName}`))) {
-            if (!await command.deleteProject(projectName, conn, commitBid)) {
-                let message = projectName + "项目移除失败！"
-                conn.sendText(message)
-                conn.sendText(`${body.title}项目构建失败！`);
-                res.json({ message, result: false, code: 500 });
-                await logger.updateCommit([
-                    {
-                        type: 'clone',
-                        state: false,
-                        message
-                    },
-                    {
-                        type: 'deploy',
-                        state: false,
-                        message: `${body.title}项目构建失败！`
-                    }
-                ], commitBid, 'exit')
-               
-            }
+            await command.deleteProject(projectName, body.commitBid, res)
         }
-        if (!await command.cloneProject(body.git, body.branch, conn, commitBid)) {
-            let message = projectName + "项目拉取失败！"
-            conn.sendText(message)
-            conn.sendText(`${body.title}项目构建失败！`);
-            res.json({ message, result: false, code: 500 });
-            await logger.updateCommit([{
-                type: 'clone',
-                state: false,
-                message
-            },
-            {
-                type: 'deploy',
-                state: false,
-                message: `${body.title}项目构建失败！`
-            }], commitBid, 'exit')
-           
-        }
+        //从 git 仓库中拉取项目
+        await command.cloneProject(body.git, body.branch, body.commitBid, res)
 
-        if (!await command.initPackage(projectName, body.install, conn, commitBid)) {
-            let message = projectName + "项目初始化失败！"
-            conn.sendText(message)
-            conn.sendText(`${body.title}项目构建失败！`);
-            res.json({ message, result: false, code: 500 });
-            await logger.updateCommit([
-                {
-                    type: 'install',
-                    state: false,
-                    message
-                }, {
-                    type: 'deploy',
-                    state: false,
-                    message: `${body.title}项目构建失败！`
-                }
-            ], commitBid, 'exit')
-           
-        }
-        if (!await command.buildProject(projectName, body.build, conn, commitBid)) {
-            let message = projectName + "项目打包失败！"
-            conn.sendText(message)
-            conn.sendText(`${body.title}项目构建失败！`);
-            res.json({ message, result: false, code: 500 });
+        //安装项目依赖
+        await command.initPackage(projectName, body.install, body.commitBid, res)
 
-            await logger.updateCommit([{
-                type: 'build',
-                state: false,
-                message
-            }, {
-                type: 'deploy',
-                state: false,
-                message: `${body.title}项目构建失败！`
-            }], commitBid, 'exit')
-           
-        }
+        //项目打包
+        await command.buildProject(projectName, body.build, body.commitBid, res)
+
         let wwwDir = path.join(__dirname, `../../www/${body.www}`)
+        // 判断部署目录是否存在，存在则删除
         if (await fs.existsSync(wwwDir)) {
-            if (!await command.deleteRoot(body.www, conn, commitBid)) {
-                let message = projectName + "项目部署文件移除失败！"
-                conn.sendText(message)
-                conn.sendText(`${body.title}项目构建失败！`);
-                res.json({ message, result: false, code: 500 });
-                await logger.updateCommit([{
-                    type: 'deploy',
-                    state: false,
-                    message
-                }, {
-                    type: 'deploy',
-                    state: false,
-                    message: `${body.title}项目构建失败！`
-                }], commitBid, 'exit')
-            
-            }
+            await command.deleteRoot(body.title, body.www, body.commitBid, res)
         }
-        if (!await fs.mkdirSync(wwwDir)) {
-            if (!await command.mvProject(body.dist, body.www, projectName, conn, commitBid)) {
-                let message = projectName + "项目打包文件转移失败！"
-                conn.sendText(message)
-                conn.sendText(`${body.title}项目构建失败！`);
-                res.json({ message, result: false, code: 500 });
-                await logger.updateCommit([{
-                    type: 'deploy',
-                    state: false,
-                    message
-                }, {
-                    type: 'deploy',
-                    state: false,
-                    message: `${body.title}项目构建失败！`
-                }], commitBid, 'exit')
-             
-            }
-        } else {
-            let message = projectName + "项目部署文件夹创建失败！"
-            conn.sendText(message)
-            conn.sendText(`${body.title}项目构建失败！`);
-            res.json({ message, result: false, code: 500 });
-            await logger.updateCommit([{
-                type: 'deploy',
-                state: false,
-                message
-            }, {
-                type: 'deploy',
-                state: false,
-                message: `${body.title}项目构建失败！`
-            }], commitBid, 'exit')
-        }
+
+        await fs.mkdirSync(wwwDir)
+        await logger.updateCommit({
+            type: 'deploy',
+            message: body.title + '项目部署根目录已重建成功！'
+        }, body.commitBid).catch(err => {
+            // res.json({ message: err, data: null, code: 500 });
+            // logger.exitProcess()
+        })
+
+        await command.mvProject(body.dist, body.www, projectName, body.commitBid, res)
     },
 
 

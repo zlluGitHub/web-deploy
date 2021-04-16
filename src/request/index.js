@@ -29,7 +29,7 @@ axios.interceptors.request.use((config) => {
         // config.data = qs.stringify(config.data);
     }
     if (config.method === 'get') {
-        config.data = { params: config.data };
+        // config.data = { params: config.data };
     }
     // config.headers.Authorization = " ";
     // config.headers.token = ' ';
@@ -43,7 +43,7 @@ axios.interceptors.response.use(
         // Do something with response data
         // let data = response.data;
         // response.data = response.data
-        if (!response.data.result) {
+        if (response.data.code !== 200) {
 
             // if (response.data.code === 401) {
             //     router.push({ path: '/login' });

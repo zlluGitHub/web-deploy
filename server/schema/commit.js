@@ -21,10 +21,14 @@ let commitSchema = new Schema({
         type: String,
         default: ""
     },
-    // deployState: {
-    //     type: String,
-    //     default: ""
-    // },
+    deployState: {
+        type: String,
+        default: ""
+    },
+    isServer: {
+        type: Boolean,
+        default: false
+    },
     log: {
         type: Array,
         default: []

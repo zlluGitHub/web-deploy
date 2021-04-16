@@ -85,56 +85,130 @@
 
 
 const commitSchema = require("../schema/commit");
+const deploySchema = require("../schema/deploy");
 const tools = require("../public/javascripts/tools");
 module.exports = {
-    updateCommit: async (log, bid, mark) => {
-
-        await commitSchema.find({ bid }, async (err, data) => {
-            if (err) {
-                console.log('错误信息：', err);
-            } else {
-                let logConent = data[0].log;
-                if (Array.isArray(log)) {
-                    log.forEach(item => {
-                        item.time = tools.dateTime()
-                        console.log(item.message);
-                    })
-                    logConent = [...logConent, ...log]
+    updateCommit: (log, bid) => {
+        return new Promise((resolve, reject) => {
+            let conn = global.connect.conn;
+            commitSchema.find({ bid }, async (err, data) => {
+                if (err) {
+                    console.log('日志信息检索失败：', err);
+                    if (conn.sendText) conn.sendText("日志信息检索失败！");
+                    if (conn.sendText) conn.sendText(err);
+                    reject('日志信息检索失败：' + err)
                 } else {
-                    log.time = tools.dateTime()
-                    logConent = [...logConent, log]
-                    console.log(log.message);
-                }
-
-                await commitSchema.updateOne({ bid }, { $set: { endTime: tools.dateTime(), log: logConent } }, (err, data) => {
-                    if (err) {
-                        console.log('错误信息：', err);
+                    let logConent = data[0].log;
+                    if (Array.isArray(log)) {
+                        log.forEach(item => {
+                            item.time = tools.dateTime()
+                            console.log(item.message);
+                            if (conn.sendText) conn.sendText(item.message);
+                        })
+                        logConent = [...logConent, ...log]
                     } else {
-                        // 结束进程
-                        if (mark === 'exit') {
-                            global.connect.server.close()
-                            if (someConditionNotMet()) {
-                                printUsageToStdout();
-                                process.exitCode = 1;
-                            }
-                        }
+                        log.time = tools.dateTime()
+                        logConent = [...logConent, log]
+                        console.log(log.message);
+                        if (conn.sendText) conn.sendText(log.message);
                     }
-                });
-            }
+
+                    commitSchema.updateOne({ bid }, { $set: { endTime: tools.dateTime(), log: logConent } }, (err, data) => {
+                        if (err) {
+                            console.log('日志信息更新失败：', err);
+                            if (conn.sendText) conn.sendText("日志信息更新失败！");
+                            if (conn.sendText) conn.sendText(err);
+                            reject('日志信息更新失败：' + err)
+                        } else {
+                            resolve(data)
+                        }
+                    });
+                }
+            });
         });
     },
-    saveCommit: async (log, bid, projectId) => {
-        let body = {
-            startTime: tools.dateTime(),
-            bid: bid ? bid : tools.getUid(),
-            endTime: tools.dateTime(),
-            log: [log],
-            projectId
-        }
-        await commitSchema.create(body, async (err, data) => {
-            if (err) {
-                console.log('错误信息：', err)
+    exitState: (body, mark) => {
+        if (body) {
+            commitSchema.updateOne({ bid: body.bid }, body, (err, data) => {
+                if (err) {
+                    console.log(`项目状态【${body.deployState}】更新失败：`, err)
+                } else {
+                    console.log(`项目状态【${body.deployState}】更新成功！：`)
+                    if (global.connect.server) global.connect.server.close()
+                    global.connect = {
+                        conn: {},
+                        server: null,
+                    };
+                    if ((!mark) && someConditionNotMet()) {
+                        printUsageToStdout();
+                        process.exitCode = 1;
+                    }
+
+                }
+            })
+        } else {
+            if (global.connect.server) global.connect.server.close()
+            global.connect = {
+                conn: {},
+                server: null,
+            };
+            if ((!mark) && someConditionNotMet()) {
+                console.log(`构建程序成功退出！`)
+                printUsageToStdout();
+                process.exitCode = 1;
             }
+        }
+    },
+    saveCommit: (log, bid, projectId) => {
+        let conn = global.connect.conn;
+        return new Promise((resolve, reject) => {
+            let body = {
+                startTime: tools.dateTime(),
+                bid: bid ? bid : tools.getUid(),
+                endTime: tools.dateTime(),
+                log: [log],
+                projectId,
+                deployState: 'start',
+                isServer: false,
+            }
+            commitSchema.create(body, (err, data) => {
+                if (err) {
+                    console.log('日志信息保存失败：', err)
+                    if (conn.sendText) conn.sendText(err);
+                    reject('日志信息保存失败：' + err)
+                } else {
+                    resolve(data)
+                }
+            });
+        });
+    },
+    saveDeploy: (body) => {
+        let conn = global.connect.conn;
+        return new Promise((resolve, reject) => {
+            deploySchema.create(body, (err, data) => {
+                if (err) {
+                    console.log('项目信息保存失败：', err)
+                    if (conn.sendText) conn.sendText(err);
+                    reject('项目信息保存失败：' + err)
+                } else {
+                    resolve(data)
+                }
+            })
+        });
+    },
+    updateDeploy: (body) => {
+        let conn = global.connect.conn;
+        return new Promise((resolve, reject) => {
+            deploySchema.updateOne({ bid: body.bid }, body, (err, data) => {
+                if (err) {
+                    console.log('项目信息更新失败：', err)
+                    if (conn.sendText) conn.sendText(err);
+                    reject('项目信息更新失败：' + err)
+                } else {
+                    resolve(data)
+                }
+            })
         });
     }
+
 }

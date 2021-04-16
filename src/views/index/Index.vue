@@ -16,10 +16,10 @@
                 <span class="state">
                   <i
                     :style="{
-                      background: item.state ? '#2d8cf0' : 'red',
+                      background: item.isServer ? '#2d8cf0' : 'red',
                     }"
                   ></i>
-                  <span>{{ item.state ? "服务运行中" : "服务已暂停" }}</span>
+                  <span>{{ item.isServer ? "服务运行中" : "服务已暂停" }}</span>
                 </span>
                 <span class="state auto">
                   <i
@@ -38,7 +38,7 @@
                   <Icon type="md-more" size="18" />
                   <DropdownMenu slot="list">
                     <DropdownItem @click.native="handleProt(item)"
-                      >{{ item.state ? "暂停" : "开启" }}运行服务</DropdownItem
+                      >{{ item.isServer ? "暂停" : "开启" }}运行服务</DropdownItem
                     >
                     <DropdownItem @click.native="handleAuto(item)"
                       >{{ item.isAuto === "yes" ? "关闭" : "开启" }}自动部署</DropdownItem
@@ -304,7 +304,7 @@ export default {
     // 单个端口操作
     handleProt(data) {
       this.$Message.destroy();
-      if (data.state) {
+      if (data.isServer) {
         this.$request
           .post("/swd/deploy/closeServer", {
             bid: data.bid,
@@ -313,7 +313,7 @@ export default {
             port: data.port,
           })
           .then((res) => {
-            if (res.data.result) {
+            if (res.data.code === 200) {
               this.$Modal.success({
                 title: "系统提示",
                 content: data.title + "服务关闭成功！",
@@ -337,7 +337,7 @@ export default {
             www: data.www,
           })
           .then((res) => {
-            if (res.data.result) {
+            if (res.data.code === 200) {
               this.$Modal.success({
                 title: "系统提示",
                 content: data.title + "服务开启成功！",

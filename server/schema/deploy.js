@@ -49,10 +49,10 @@ let editionSchema = new Schema({
         type: String,
         default: ""
     },
-    // isServer: { 
-    //     type: String,
-    //     default: "no"
-    // },
+    isServer: { 
+        type: Boolean,
+        default: false
+    },
     commitBid: { // 部署id
         type: String,
         default: "no"
@@ -73,9 +73,9 @@ let editionSchema = new Schema({
         type: String,
         default: "no"
     },
-    state: { //  服务是否启动
-        type: Boolean,
-        default: false
+    deployState: { //  部署状态
+        type: String,
+        default: ""
     },
     duration: { // 部署时长
         type: String,
