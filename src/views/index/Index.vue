@@ -5,7 +5,33 @@
         icon="ivu-icon ivu-icon-md-cube"
         title="工作台"
         describe="这里将展示你的个人项目，当然也包括协同项目。"
-      />
+      >
+        <div class="button-warp">
+          <Button
+            ghost
+            type="primary"
+            :loading="refreshLoading"
+            icon="md-refresh"
+            @click="handleRefresh"
+            >重启所有服务</Button
+          >
+          <Button
+            ghost
+            type="error"
+            :loading="powerLoading"
+            icon="md-power"
+            @click="handlePower"
+            >关闭所有服务</Button
+          >
+          <Button
+            ghost
+            type="success" 
+            icon="md-add"
+            @click="handleRouter('/create')"
+            >创建新项目</Button
+          >
+        </div>
+      </Decorate>
     </div>
     <div class="content">
       <div>
@@ -24,12 +50,10 @@
                 <span class="state auto">
                   <i
                     :style="{
-                      background: item.isAuto === 'yes' ? '#2d8cf0' : 'red',
+                      background: item.isAuto ? '#2d8cf0' : 'red',
                     }"
                   ></i>
-                  <span>{{
-                    item.isAuto === "yes" ? "自动部署已开启" : "自动部署已暂停"
-                  }}</span>
+                  <span>{{ item.isAuto ? "自动部署已开启" : "自动部署已暂停" }}</span>
                 </span>
               </div>
 
@@ -41,13 +65,11 @@
                       >{{ item.isServer ? "暂停" : "开启" }}运行服务</DropdownItem
                     >
                     <DropdownItem @click.native="handleAuto(item)"
-                      >{{ item.isAuto === "yes" ? "关闭" : "开启" }}自动部署</DropdownItem
+                      >{{ item.isAuto ? "关闭" : "开启" }}自动部署</DropdownItem
                     >
-                    <DropdownItem @click.native="handleHistory(item)"
-                      >{{
-                        item.isStatic === "yes" ? "关闭" : "开启"
-                      }}History模式</DropdownItem
-                    >
+                    <DropdownItem @click.native="handleHistory(item)">{{
+                      item.router === "hash" ? "切换至History模式" : "切换至Hash模式"
+                    }}</DropdownItem>
                   </DropdownMenu>
                 </Dropdown>
               </div>
@@ -63,7 +85,7 @@
                 <Icon type="ios-star" size="26" v-else @click="handleStar(item.bid,'0')" />
             </div>-->
 
-            <h2 @click="handleHref(item)">{{ item.title }}</h2>
+            <h2 @click="handleRouter('/details', item.bid)">{{ item.title }}</h2>
 
             <p>
               <Icon type="ios-settings-outline" size="18" />
@@ -102,7 +124,7 @@
                 content="更新项目"
                 placement="top"
                 class="border-r-no"
-                @click.native="handleRouter('/addpage', item.key, item)"
+                @click.native="handleRouter('/create', item.bid)"
               >
                 <Icon type="md-repeat" size="20" />
                 <!-- <Icon type="md-add"/> -->
@@ -110,7 +132,7 @@
               <Tooltip
                 content="部署列表"
                 placement="top"
-                @click.native="handleRouter('/tablePage', item.key)"
+                @click.native="handleRouter('/commitList', item.bid)"
               >
                 <Icon type="ios-list-box-outline" size="20" />
               </Tooltip>
@@ -146,10 +168,13 @@ export default {
 
   data() {
     return {
+      refreshLoading: false,
+      powerLoading: false,
       pageNo: 1,
       pageSize: 10,
       total: 0,
       projectData: [],
+      serverData: {},
     };
   },
   watch: {
@@ -201,23 +226,52 @@ export default {
     // }
   },
   methods: {
+    handleRefresh() {
+      this.$Modal.confirm({
+        title: "系统提示",
+        content: "<p>确定要重启所有项目服务吗？</p>",
+        onOk: () => {
+          this.refreshLoading = true;
+          this.$request.post("/swd/deploy/openAllServer").then((res) => {
+            if (res.data.code === 200) {
+              this.refreshLoading = false;
+              // this.serverData = res.data.data;
+              this.$Modal.success({
+                title: "系统提示",
+                content: "所有服务已重启成功！",
+              });
+              this.handleGetData();
+            }
+          });
+        },
+      });
+    },
+    handlePower() {
+      this.$Modal.confirm({
+        title: "系统提示",
+        content: "<p>确定要关闭所有项目服务吗？</p>",
+        onOk: () => {
+          this.powerLoading = true;
+          this.$request.post("/swd/deploy/closeAllServer").then((res) => {
+            if (res.data.code === 200) {
+              this.powerLoading = false;
+              // this.serverData = res.data.data;
+              this.$Modal.success({
+                title: "系统提示",
+                content: "所有服务已关闭成功！",
+              });
+              this.handleGetData();
+            }
+          });
+        },
+      });
+    },
     handleGetData() {
       // this.$Message.destroy();
       let data = {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
-        // pageSize: this.pageSize
-        // idDeployment: "yes",
       };
-      // if (this.authorId && this.qurey !== "全部") {
-      //   data.authorId = this.authorId;
-      // }
-      // if (this.collect) {
-      //   data.collect = this.collect;
-      // }
-      // if (this.key) {
-      //   data.key = this.key;
-      // }
       this.$request.get("/swd/deploy/get", { params: data }).then((res) => {
         if (res.data.code === 200) {
           this.total = res.data.count;
@@ -233,74 +287,74 @@ export default {
       this.pageSize = event;
       this.handleGetData();
     },
-    handleOnChange(key) {
-      // this.noauthorId = false;
-      this.authorId = "";
-      this.collect = "";
-      this.handleCancel();
-      // this.$event.emit("inputClear", "");
-      switch (key) {
-        case "我创建的":
-          this.authorId = this.user.bid;
-          break;
-        case "已收藏的":
-          this.collect = "1";
-          // this.authorId = this.user.bid;
-          break;
-        // case "启动服务":
-        //   this.handleServer();
-        //   break;
-        default:
-          break;
-      }
+    // handleOnChange(key) {
+    //   // this.noauthorId = false;
+    //   this.authorId = "";
+    //   this.collect = "";
+    //   this.handleCancel();
+    //   // this.$event.emit("inputClear", "");
+    //   switch (key) {
+    //     case "我创建的":
+    //       this.authorId = this.user.bid;
+    //       break;
+    //     case "已收藏的":
+    //       this.collect = "1";
+    //       // this.authorId = this.user.bid;
+    //       break;
+    //     // case "启动服务":
+    //     //   this.handleServer();
+    //     //   break;
+    //     default:
+    //       break;
+    //   }
 
-      this.handleGetData();
-    },
-    handleServer() {
-      this.$axios
-        .post("/api/service/operation/open", this.$qs.stringify({ port: "all" }))
-        .then((res) => {
-          this.$Message.destroy();
-          if (res.data.result) {
-            this.handleGetData();
-            this.$Modal.success({
-              title: "系统提示",
-              content: "允许启动的项目服务已重启成功！",
-            });
-          } else {
-            this.$Message["error"]({
-              background: true,
-              content: "操作失败，请重试！",
-            });
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    },
-    handleStar(bid, collect) {
-      this.$axios
-        .post("/api/deploy/edition/update", this.$qs.stringify({ bid, collect }))
-        .then((res) => {
-          let message = collect == "1" ? "收藏成功！" : "已取消收藏！";
-          this.$Message.destroy();
-          if (res.data.result) {
-            this.$Message["success"]({
-              background: true,
-              content: message,
-            });
-            this.handleGetData();
-          } else {
-            this.$Message["error"]({
-              background: true,
-              content: "操作失败！",
-            });
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    },
+    //   this.handleGetData();
+    // },
+    // handleServer() {
+    //   this.$axios
+    //     .post("/api/service/operation/open", this.$qs.stringify({ port: "all" }))
+    //     .then((res) => {
+    //       this.$Message.destroy();
+    //       if (res.data.result) {
+    //         this.handleGetData();
+    //         this.$Modal.success({
+    //           title: "系统提示",
+    //           content: "允许启动的项目服务已重启成功！",
+    //         });
+    //       } else {
+    //         this.$Message["error"]({
+    //           background: true,
+    //           content: "操作失败，请重试！",
+    //         });
+    //       }
+    //     })
+    //     .catch(function (error) {
+    //       console.log(error);
+    //     });
+    // },
+    // handleStar(bid, collect) {
+    //   this.$axios
+    //     .post("/api/deploy/edition/update", this.$qs.stringify({ bid, collect }))
+    //     .then((res) => {
+    //       let message = collect == "1" ? "收藏成功！" : "已取消收藏！";
+    //       this.$Message.destroy();
+    //       if (res.data.result) {
+    //         this.$Message["success"]({
+    //           background: true,
+    //           content: message,
+    //         });
+    //         this.handleGetData();
+    //       } else {
+    //         this.$Message["error"]({
+    //           background: true,
+    //           content: "操作失败！",
+    //         });
+    //       }
+    //     })
+    //     .catch(function (error) {
+    //       console.log(error);
+    //     });
+    // },
     // 单个端口操作
     handleProt(data) {
       this.$Message.destroy();
@@ -351,104 +405,35 @@ export default {
             }
           });
       }
-
-      // if (data.state === "yes") {
-      //   this.$axios
-      //     .post(
-      //       "/api/service/operation/close",
-      //       this.$qs.stringify({ key: data.key, port: data.port })
-      //     )
-      //     .then((res) => {
-      //       // let message = data.isPort == "yes" ? data.port+"端口关闭成功！" :  data.port+"端口关闭失败！";
-      //       this.$Message.destroy();
-      //       if (res.data.result) {
-      //         // this.$Message["success"]({
-      //         //   background: true,
-      //         //   content: data.projectName + "服务关闭成功！",
-      //         // });
-      //         this.$Modal.success({
-      //           title: "系统提示",
-      //           content: data.projectName + "服务关闭成功！",
-      //         });
-      //         this.handleGetData();
-      //       } else {
-      //         this.$Message["error"]({
-      //           background: true,
-      //           content: data.projectName + "服务关闭失败！",
-      //         });
-      //       }
-      //     })
-      //     .catch(function (error) {
-      //       console.log(error);
-      //     });
-      // } else {
-      //   this.$axios
-      //     .post("/api/service/operation/open", this.$qs.stringify(data))
-      //     .then((res) => {
-      //       // let message = data.isPort == "yes" ? data.port+"端口关闭成功！" :  data.port+"端口关闭失败！";
-      //       this.$Message.destroy();
-      //       if (res.data.result) {
-      //         // this.$Message["success"]({
-      //         //   background: true,
-      //         //   content:
-      //         //     data.projectName +
-      //         //     "服务开启成功，已运行在 " +
-      //         //     data.port +
-      //         //     " 端口！",
-      //         // });
-      //         this.$Modal.success({
-      //           title: "系统提示",
-      //           content:
-      //             data.projectName + "服务开启成功，已运行在 " + data.port + " 端口！",
-      //         });
-      //         this.handleGetData();
-      //       } else {
-      //         this.$Message["error"]({
-      //           background: true,
-      //           content: data.projectName + "服务开启失败！",
-      //         });
-      //       }
-      //     })
-      //     .catch(function (error) {
-      //       console.log(error);
-      //     });
-      // }
     },
     // 自动部署
     handleAuto(data) {
       let content_success = "";
       let content_error = "";
-      if (data.isAuto === "yes") {
-        data.isAuto = "no";
+      if (data.isAuto) {
+        data.isAuto = false;
         content_success = "自动部署关闭成功！（此项目与Git不在关联，自动部署已暂停）";
         content_error = "自动部署关闭失败！";
       } else {
-        data.isAuto = "yes";
+        data.isAuto = true;
         content_success = "自动部署开启成功！（此项目与Git已关联，自动部署已开启）";
         content_error = "自动部署开启失败！";
       }
-      this.$axios
-        .post(
-          "/api/deploy/edition/update",
-          this.$qs.stringify({ isAuto: data.isAuto, key: data.key })
-        )
+      this.$request
+        .post("/swd/deploy/updateInfo", { isAuto: data.isAuto, bid: data.bid })
         .then((res) => {
           // let message = data.isPort == "yes" ? data.port+"端口关闭成功！" :  data.port+"端口关闭失败！";
           this.$Message.destroy();
           if (res.data.result) {
-            // this.$Message["success"]({
-            //   background: true,
-            //   content: content_success,
-            // });
             this.$Modal.success({
               title: "系统提示",
-              content: data.projectName + content_success,
+              content: data.title + content_success,
             });
             this.handleGetData();
           } else {
             this.$Message["error"]({
               background: true,
-              content: data.projectName + content_error,
+              content: data.title + content_error,
             });
           }
         })
@@ -461,45 +446,29 @@ export default {
     handleHistory(data) {
       let content_success = "";
       let content_error = "";
-      if (data.isHistory === "yes") {
-        data.isHistory = "no";
+      if (data.router === "hash") {
+        data.router = "history";
         content_success = "History路由模式关闭成功！";
         content_error = "History路由模式关闭失败！";
       } else {
-        data.isHistory = "yes";
+        data.router = "hash";
         content_success = "History路由模式开启成功！";
         content_error = "History路由模式开启失败！";
       }
-      this.$axios
-        .post(
-          "/api/service/operation/history",
-          this.$qs.stringify({
-            isHistory: data.isHistory,
-            key: data.key,
-            idDeployment: data.idDeployment,
-            root: data.root,
-            target: data.target,
-            port: data.port,
-            webUrl: data.webUrl,
-          })
-        )
+      this.$request
+        .post("/swd/deploy/history", data)
         .then((res) => {
-          // let message = data.isPort == "yes" ? data.port+"端口关闭成功！" :  data.port+"端口关闭失败！";
           this.$Message.destroy();
-          if (res.data.result) {
-            // this.$Message["success"]({
-            //   background: true,
-            //   content: content_success,
-            // });
+          if (res.data.code === 200) {
             this.$Modal.success({
               title: "系统提示",
-              content: data.projectName + content_success,
+              content: data.title + content_success,
             });
             this.handleGetData();
           } else {
             this.$Message["error"]({
               background: true,
-              content: data.projectName + content_error,
+              content: data.title + content_error,
             });
           }
         })
@@ -507,12 +476,12 @@ export default {
           console.log(error);
         });
     },
-    handleCancel() {
-      this.key = "";
-      this.keySelect = "";
-      this.keyInput = "";
-      this.buttonDisabled = true;
-    },
+    // handleCancel() {
+    //   this.key = "";
+    //   this.keySelect = "";
+    //   this.keyInput = "";
+    //   this.buttonDisabled = true;
+    // },
     handleDelModal() {
       this.$Message.destroy();
       this.$axios
@@ -553,16 +522,16 @@ export default {
       this.root = val.root;
       // }
     },
-    handleRouter(path, val, data) {
+    handleRouter(path, bid, data) {
       // this.$store.commit("setItemData", data);
-      this.$router.push({ path, query: { bid: val } });
+      this.$router.push({ path, query: { bid } });
     },
-    handleHref(data) {
-      let win = window.open();
-      win.opener = null;
-      win.location = data.href;
-      win.target = "_blank";
-    },
+    // handleHref(data) {
+    //   let win = window.open();
+    //   win.opener = null;
+    //   win.location = data.href;
+    //   win.target = "_blank";
+    // },
     onCopy() {
       this.$Message.destroy();
       this.$Message["success"]({
@@ -582,6 +551,17 @@ export default {
 </script>
 <style lang="scss" scoped>
 .swd-index {
+  .header {
+    .button-warp {
+      margin-top: 20px;
+      button {
+        margin-left: 20px;
+      }
+    }
+    /deep/ .ivu-icon-ios-refresh {
+      font-size: 18px;
+    }
+  }
   .content {
     padding-top: 20px;
     display: flex;

@@ -24,43 +24,22 @@
         </div>
       </Decorate>
     </div>
-    <div class="breadcrumb">
-      <Breadcrumb class="warp">
-        <BreadcrumbItem to="/">
-          <Icon type="ios-home-outline" size="18"></Icon>
-          工作台
-        </BreadcrumbItem>
-        <BreadcrumbItem to="/components/breadcrumb">
-          <Icon type="md-add" size="18"></Icon> 创建项目
-        </BreadcrumbItem>
-      </Breadcrumb>
-    </div>
 
     <div class="content">
-      <section>
-        <div :class="['list-item', isProjectExit ? 'ivu-form-item-error' : '']">
+      <section> 
+        <div class="list-item">
           <label> <i class="star">*</i>所属项目： </label>
-          <Input
-            v-model="title"
-            @on-blur="handleIsProjectExit"
-            placeholder="请输入项目名称..."
-            class="put-warp"
-          />
+          <Input v-model="title" placeholder="请输入项目名称..." class="put-warp" />
           <div class="tip">
             <Tooltip max-width="200" content="请填写项目名称。" placement="right">
               <Icon type="ios-help-circle-outline" />
             </Tooltip>
-            <span v-if="isProjectExit" class="isExNo">此项目已存在，请重新输入！</span>
+            <span v-if="isProjectExit" class="isEx">此项目已存在，请重新输入！</span>
           </div>
         </div>
-        <div :class="['list-item', isWwwExit ? 'ivu-form-item-error' : '']">
+        <div class="list-item">
           <label> <i class="star">*</i>部署目录： </label>
-          <Input
-            v-model="www"
-            @on-blur="handleIsWwwExit"
-            placeholder="例如：dist"
-            class="put-warp"
-          />
+          <Input v-model="www" placeholder="例如：dist" class="put-warp" />
           <div class="tip">
             <Tooltip
               max-width="200"
@@ -69,17 +48,13 @@
             >
               <Icon type="ios-help-circle-outline" />
             </Tooltip>
-            <span v-if="isWwwExit" class="isExNo">此目录已存在，请重新输入！</span>
+
+            <span v-if="isWwwExit" class="isEx">此目录已存在，请重新输入！</span>
           </div>
         </div>
-        <div :class="['list-item', portMessage.state ? 'ivu-form-item-error' : '']">
+        <div class="list-item">
           <label>部署端口：</label>
-          <Input
-            v-model="port"
-            @on-blur="handleIsPortExit"
-            placeholder="例如：8080 （选填）"
-            class="put-warp"
-          />
+          <Input v-model="port" placeholder="例如：8080 （选填）" class="put-warp" />
           <div class="tip">
             <Tooltip
               max-width="200"
@@ -88,8 +63,10 @@
             >
               <Icon type="ios-help-circle-outline" />
             </Tooltip>
-            <span v-if="portMessage.state" class="isExNo">{{ portMessage.message }}</span>
-            <!-- <span v-else class="isExNo">{{ portMessage.message }}</span> -->
+            <span v-if="portMessage.code === 1" class="isExOk">{{
+              portMessage.message
+            }}</span>
+            <span v-else class="isExNo">{{ portMessage.message }}</span>
           </div>
         </div>
 
@@ -209,7 +186,7 @@
             </Tooltip>
           </div>
         </div>
-
+         
         <div class="list-item">
           <label>部署摘要：</label>
           <Input
@@ -224,12 +201,8 @@
           <DeployTip />
         </div>
         <div class="button-footer">
-          <Button type="success" ghost @click="handleAutoSubmit('deploy')">{{
-            $route.query.bid ? "更新部署" : "开始部署"
-          }}</Button>
-          <Button type="primary" ghost @click.stop="handleAutoSubmit('save')"
-            >提交保存</Button
-          >
+       
+          <Button type="success" ghost @click="handleAutoSubmit">开始部署</Button>
           <Button type="primary" ghost @click.stop="handleBack">返回首页</Button>
           <Button type="error" ghost @click.stop="handleClear">重置</Button>
         </div>
@@ -241,73 +214,139 @@
         <!-- </Modal> -->
       </section>
     </div>
-    <!-- 日志内容 -->
-    <LogModal :isLogModal="isLogModal" :socketData="socketData" />
+    <Modal
+      title="部署日志"
+      v-model="isLogModal"
+      scrollable
+      :mask-closable="false"
+      :footer-hide="true"
+    >
+      <div class="rz-box">
+        <p v-for="(item, i) in socketData" :key="i">
+          {{ item }}
+        </p>
+      </div>
+      <!-- <div class="rz-tip" v-if="isOk">
+        <div class="tip-box">
+          <div>
+            <p>
+              √ 秘钥Key：
+              <span style="color: #3390ff">{{ key }}</span>
+            </p>
+            <Divider orientation="left">关联 Git 仓库</Divider>
+            <div class="tisi">
+              <div>1、打开git：项目仓库 -> Settings -> Webhooks -> Add webhook；</div>
+              <div>
+                2、在
+                <span class="code">Target URL</span> 中填入
+                <span class="url">{{ $url }}/api/deploy/git</span> 地址；
+              </div>
+              <div>
+                3、
+                <span class="code">POST Content Type</span> 选择
+                <span class="select">application/json</span>；
+              </div>
+              <div>
+                4、在
+                <span class="code">Secret</span> 中填入秘钥Key：
+                <span class="url">{{ key }}</span
+                >；
+              </div>
+              <div>
+                5、
+                <span class="code">Trigger On</span>选择
+                <span class="select">Push Events</span>；
+              </div>
+              <div>
+                <span style="color: red">注意：</span>若项代码托管平台为 GitHub 时，在第 2
+                步中需要填入
+                <span class="url"
+                  >{{ $url }}/api/deploy/git?key={{ key ? key : "返回的key值" }}</span
+                >
+                地址。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+    </Modal>
   </div>
 </template>
 <script>
 import Decorate from "@/components/Decorate";
-import DeployTip from "@/components/DeployTip";
-import LogModal from "@/components/LogModal";
+import DeployTip from "@/components/DeployTip"; 
 export default {
   components: {
     Decorate,
     DeployTip,
-    LogModal,
   },
   data() {
     return {
-      modeType: "静态部署", //模式
+      modeType: "静态部署" ,//模式
       isProjectExit: false,
       isWwwExit: false,
       isLogModal: false,
       sideList: ["已连接到应用服务器，正在部署..."],
       socket: null,
       socketData: [],
-      portMessage: {},
+      portMessage: "",
 
-      queryTitle: "",
-      queryWww: "",
-      queryPort: "",
-
-      // title: "",
-      // www: "",
-      // port: "",
-      // proxy: [
-      //   {
-      //     rewrite: "",
-      //     target: "",
-      //   },
-      // ],
-      // dist: "",
-      // key: "",
-      // remark: "",
-      // git: "", //git 地址
-      // branch: "", //git 分支
-      // build: "", //部署命令
-      // install: "",
-      // isServer: "",
-      // router: "",
-
-      title: "测试项目",
-      www: "/textas",
+      title: "",
+      www: "",
       port: 8080,
       proxy: [
         {
-          rewrite: "text",
-          target: "/jjjjj",
+          rewrite: "",
+          target: "",
         },
       ],
-      dist: "dist",
-      remark: "hjvy",
+      dist: "",
+      key: "",
+      remark: "",
+      git: "", //git 地址
+      branch: "", //git 分支
+      build: "", //部署命令
+      install: "", //部署命令
 
-      git: "https://gitee.com/zlluGitHub/test-project.git", //git 地址
-      branch: "master", //git 分支
-      build: "npm run build", //部署命令
-      install: "cnpm i", //部署命令
+      // title: "测试项目",
+      // www: "/textas",
+      // port: 8080,
+      // proxy: [
+      //   {
+      //     rewrite: "text",
+      //     target: "/jjjjj",
+      //   },
+      // ],
+      // dist: "dist",
+      // remark: "hjvy",
+
+      // git: "https://gitee.com/zlluGitHub/test-project.git", //git 地址
+      // branch: "master", //git 分支
+      // build: "npm run build", //部署命令
+      // install: "cnpm i", //部署命令
     };
   },
-
+  watch: {
+    port(val) {
+      if (this.isIntNum(val)) {
+        this.$request.post("/swd/deploy/portIsOccupied", { port: val }).then((res) => {
+          if (res.data.data === 1) {
+            this.portMessage = {
+              code: 1,
+              message: `此服务端口【${val}】可用！`,
+            };
+          } else {
+            this.portMessage = res.data;
+          }
+        });
+      } else {
+        this.portMessage = {
+          code: 500,
+          message: "端口设置有误，请输入正整数！",
+        };
+      }
+    },
+  },
   created() {
     if (this.$route.query.bid) {
       this.$request
@@ -315,11 +354,6 @@ export default {
         .then((res) => {
           if (res.data.code === 200) {
             let data = res.data.data[0];
-
-            this.queryPort = data.port;
-            this.queryTitle = data.title;
-            this.queryWww = data.www;
-
             this.title = data.title;
             this.proxy = data.proxy;
             this.dist = data.dist;
@@ -331,217 +365,35 @@ export default {
             this.branch = data.branch; //git 分支
             this.build = data.build; //部署命令
             this.install = data.install; //部署命令
-            this.commitBid = data.commitBid;
-            this.isServer = data.isServer;
-            this.router = data.router;
           }
         });
     }
   },
   methods: {
     //拉取项目(自动部署)
-    handleAutoSubmit(mark) {
-      if (!this.title) {
-        this.$Modal.warning({
-          title: "系统提示",
-          content: "项目名称不得为空，请输入后再试！",
-        });
-        return;
-      }
-      if (!this.www) {
-        this.$Modal.warning({
-          title: "系统提示",
-          content: "部署目录不得为空，请输入后再试！",
-        });
-        return;
-      }
-      if (!this.port) {
-        this.$Modal.warning({
-          title: "系统提示",
-          content: "部署端口不得为空，请输入后再试！",
-        });
-        return;
-      }
-      if (!this.git) {
-        this.$Modal.warning({
-          title: "系统提示",
-          content: "Git 地址不得为空，请输入后再试！",
-        });
-        return;
-      }
-      if (!this.branch) {
-        this.$Modal.warning({
-          title: "系统提示",
-          content: "项目分支不得为空，请输入后再试！",
-        });
-        return;
-      }
-      if (!this.install) {
-        this.$Modal.warning({
-          title: "系统提示",
-          content: "安装依赖命令不得为空，请输入后再试！",
-        });
-        return;
-      }
-      if (!this.build) {
-        this.$Modal.warning({
-          title: "系统提示",
-          content: "打包命令不得为空，请输入后再试！",
-        });
-        return;
-      }
-      if (!this.dist) {
-        this.$Modal.warning({
-          title: "系统提示",
-          content: "打包目录不得为空，请输入后再试！",
-        });
-        return;
-      }
-
+    handleAutoSubmit() {
       let data = {
         title: this.title,
+        proxy: this.proxy,
+        dist: this.dist,
+        remark: this.remark,
+        git: this.git, //git 地址
         www: this.www,
         port: this.port,
-        git: this.git, //git 地址
         branch: this.branch ? this.branch : "master", //git 分支
         build: this.build, //部署命令
         install: this.install, //部署命令
-        dist: this.dist,
-        proxy: this.proxy,
-        key: this.key,
-        remark: this.remark,
-        commitBid: this.commitBid,
-        isServer: this.isServer,
-        router: this.router,
       };
 
-      if (mark === "deploy") {
-        this.createSocketServer(() => {
-          this.isLogModal = true;
-          if (this.$route.query.bid) {
-            data.bid = this.$route.query.bid;
-            this.$request.post("/swd/deploy/initReset", data).then((res) => {
-              if (res.data.code === 200) {
-                this.socketData.push({
-                  message: this.title + "项目部署成功！",
-                  time: this.$dateTime(),
-                });
-
-                this.$Modal.success({
-                  title: "系统提示",
-                  content: this.title + "项目部署成功！",
-                });
-                this.$router.push({ path: "/details", query: { bid: res.data.data } });
-              }
-            });
-          } else {
-            this.$request.post("/swd/deploy/init", data).then((res) => {
-              if (res.data.code === 200) {
-                this.socketData.push({
-                  message: this.title + "项目部署成功！",
-                  time: this.$dateTime(),
-                });
-                this.$Modal.success({
-                  title: "系统提示",
-                  content: this.title + "项目部署成功！",
-                });
-                 this.$router.push({ path: "/details", query: { bid: res.data.data } });
-              }
-            });
+      this.createSocketServer(() => {
+        this.isLogModal = true;
+        this.$request.post("/swd/deploy/init", data).then((res) => {
+          if (res.data.result) {
+            this.socketData.push(this.title + "项目部署成功！");
+            // this.$socket.close(); //关闭websocket
           }
         });
-      } else if (mark === "save") {
-        if (this.$route.query.bid) {
-          data.bid = this.$route.query.bid;
-          this.$request.post("/swd/deploy/updateInfo", data).then((res) => {
-            if (res.data.code === 200) {
-              this.$router.push({ path: "/details", query: { bid: data.bid } });
-            }
-          });
-        } else {
-          this.$request.post("/swd/deploy/saveInfo", data).then((res) => {
-            if (res.data.code === 200) {
-              this.$router.push({ path: "/details", query: { bid: res.data.data } });
-            }
-          });
-        }
-      }
-    },
-
-    // 判断端口是否可用
-    handleIsPortExit() {
-      if (this.isIntNum(this.port)) {
-        this.$request
-          .post("/swd/deploy/portIsOccupied", { port: this.port })
-          .then((res) => {
-            if (res.data.code === 200) {
-              if (res.data.data === 1) {
-                this.portMessage = {
-                  state: false,
-                  message: res.data.message,
-                };
-              } else {
-                if (this.queryPort) {
-                  if (this.queryPort === this.port) {
-                    this.portMessage = {
-                      state: false,
-                      message: res.data.message,
-                    };
-                  } else {
-                    this.portMessage = {
-                      state: true,
-                      message: res.data.message,
-                    };
-                  }
-                } else {
-                  this.portMessage = {
-                    state: true,
-                    message: res.data.message,
-                  };
-                }
-              }
-            }
-          });
-      } else {
-        this.portMessage = {
-          state: true,
-          message: "端口设置有误，请输入正整数！",
-        };
-      }
-    },
-    // 判断项目是否存在
-    handleIsProjectExit() {
-      this.$request.post("/swd/deploy/isProject", { title: this.title }).then((res) => {
-        if (res.data.code === 200) {
-          if (!this.queryTitle) {
-            this.isProjectExit = res.data.state;
-          } else {
-            if (this.queryTitle !== this.title) {
-              this.isProjectExit = res.data.state;
-            } else {
-              this.isProjectExit = false;
-            }
-          }
-        }
       });
-    },
-    // 判断项目www根目录是否存在
-    handleIsWwwExit() {
-      this.$request
-        .post("/swd/deploy/isWwwFolder", { title: this.title, www: this.www })
-        .then((res) => {
-          if (res.data.code === 200) {
-            if (!this.queryWww) {
-              this.isWwwExit = res.data.state;
-            } else {
-              if (this.queryWww !== this.www) {
-                this.isWwwExit = res.data.state;
-              } else {
-                this.isWwwExit = false;
-              }
-            }
-          }
-        });
     },
 
     // 添加代理
@@ -557,6 +409,7 @@ export default {
       }
     },
 
+     
     // handleZzcAutoSubmit() {
     //   this.$Message["warning"]({
     //     background: true,
@@ -581,7 +434,7 @@ export default {
       this.$store.commit("setUser", {});
       this.$router.push({ path: "/login" });
     },
-
+    
     isIntNum(val) {
       if (val * 1) {
         return true;
@@ -597,14 +450,12 @@ export default {
           /*创建客户端socket连接*/
           this.socket = new WebSocket("ws://152.136.101.31:8001");
           this.socket.onopen = () => {
-            this.socketData = [
-              { message: "已连接到应用服务器，正在部署...", time: this.$dateTime() },
-            ];
+            this.socketData = ["已连接到应用服务器，正在部署..."];
             console.log("WebSocket open"); //成功连接上Websocket
             callBack();
           };
           this.socket.onmessage = (e) => {
-            this.socketData.push({ message: e.data, time: this.$dateTime() });
+            this.socketData.push(e.data);
             console.log("message: " + e.data); //打印出服务端返回过来的数据
           };
         }
@@ -617,6 +468,7 @@ export default {
     }
     // }
   },
+ 
 };
 </script>
 <style lang="scss" scoped>
@@ -644,13 +496,12 @@ export default {
       border-color: #2d8cf0 #e1e4e8 transparent;
     }
   }
-
   .content {
     display: flex;
     justify-content: center;
     > section {
       width: 80%;
-      // margin-top: 20px;
+      margin-top: 20px;
       background: #fff;
       padding: 20px;
       border-radius: 5px;

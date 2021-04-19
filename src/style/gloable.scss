@@ -12,6 +12,16 @@ ol {
     list-style: none;
 }
 
+.breadcrumb {
+    display: flex;
+    justify-content: center;
+    .warp {
+        padding: 0 20px;
+        width: 80%;
+        margin-top: 25px;
+        margin-bottom: 10px;
+    }
+}
 
 .show-enter-active {
     transition: all 0.25s ease-in;

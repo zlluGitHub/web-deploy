@@ -21,14 +21,12 @@ let commitSchema = new Schema({
         type: String,
         default: ""
     },
+
     deployState: {
-        type: String,
-        default: ""
+        type: Object,
+        default: {}
     },
-    isServer: {
-        type: Boolean,
-        default: false
-    },
+    
     log: {
         type: Array,
         default: []
@@ -36,6 +34,10 @@ let commitSchema = new Schema({
     bid: {
         type: String,
         default: ""
+    },
+    hookPayload: {
+        type: Object,
+        default: {}
     }
 });
 

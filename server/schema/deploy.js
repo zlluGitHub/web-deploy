@@ -58,12 +58,12 @@ let editionSchema = new Schema({
         default: "no"
     },
     isAuto: { // 是否开启自动部署
-        type: String,
-        default: "no"
+        type: Boolean,
+        default: true
     },
-    router: { // 路由模式
+    router: { // 路由模式 hash history
         type: String,
-        default: "history"
+        default: "hash" 
     },
     isZip: { // zip压缩模式
         type: String,
@@ -73,10 +73,7 @@ let editionSchema = new Schema({
         type: String,
         default: "no"
     },
-    deployState: { //  部署状态
-        type: String,
-        default: ""
-    },
+   
     duration: { // 部署时长
         type: String,
         default: ""
@@ -84,6 +81,27 @@ let editionSchema = new Schema({
     key: { // 项目秘钥
         type: String,
         default: ""
+    }, 
+
+    deployState: { //  部署状态
+        type: Object,
+        default:{}
+    },
+    startTime: { 
+        type: String,
+        default: ""
+    }, 
+    endTime: { 
+        type: String,
+        default: ""
+    }, 
+    userId: { 
+        type: String,
+        default: ""
+    }, 
+    hookPayload: {
+        type: Object,
+        default: {}
     }
 });
 

@@ -128,36 +128,42 @@ module.exports = {
         });
     },
     exitState: (body, mark) => {
-        if (body) {
-            commitSchema.updateOne({ bid: body.bid }, body, (err, data) => {
-                if (err) {
-                    console.log(`项目状态【${body.deployState}】更新失败：`, err)
-                } else {
-                    console.log(`项目状态【${body.deployState}】更新成功！：`)
-                    if (global.connect.server) global.connect.server.close()
-                    global.connect = {
-                        conn: {},
-                        server: null,
-                    };
-                    if ((!mark) && someConditionNotMet()) {
-                        printUsageToStdout();
-                        process.exitCode = 1;
-                    }
 
+        if (body && body.bid && (typeof body.isServer === 'boolean')) {
+            deploySchema.updateOne({ bid: body.bid }, { isServer: body.isServer }, (err, data) => {
+                if (err) {
+                    console.log(`项目构建状态更新失败：`, err)
                 }
             })
-        } else {
-            if (global.connect.server) global.connect.server.close()
-            global.connect = {
-                conn: {},
-                server: null,
-            };
-            if ((!mark) && someConditionNotMet()) {
-                console.log(`构建程序成功退出！`)
-                printUsageToStdout();
-                process.exitCode = 1;
-            }
         }
+
+        if (body && body.commitBid) {
+            let query = {}
+            if (body.deployState) {
+                query.deployState = body.deployState
+            }
+            if (body.hookPayload) {
+                query.hookPayload = body.hookPayload
+            }
+            commitSchema.updateOne({ bid: body.commitBid }, query, (err, data) => {
+                if (err) {
+                    console.log(`项目构建状态更新失败：`, err)
+                }
+            })
+        }
+
+        console.log(`项目构建状态更新成功！`)
+        if (global.connect.server) global.connect.server.close()
+        global.connect = {
+            conn: {},
+            server: null,
+        };
+        if ((!mark) && someConditionNotMet()) {
+            console.log(`构建程序成功退出！`)
+            printUsageToStdout();
+            process.exitCode = 1;
+        }
+
     },
     saveCommit: (log, bid, projectId) => {
         let conn = global.connect.conn;
@@ -166,9 +172,23 @@ module.exports = {
                 startTime: tools.dateTime(),
                 bid: bid ? bid : tools.getUid(),
                 endTime: tools.dateTime(),
-                log: [log],
+                log,
                 projectId,
-                deployState: 'start',
+                deployState: {
+                    state: false,
+                    type: 'start'
+                },
+                hookPayload: {
+                    isExit: false,
+                    before: "",
+                    after: "",
+                    url: "",
+                    added: "",
+                    removed: "",
+                    modified: "",
+                    commitId: "",
+                    message: ""
+                },
                 isServer: false,
             }
             commitSchema.create(body, (err, data) => {
@@ -206,6 +226,18 @@ module.exports = {
                     reject('项目信息更新失败：' + err)
                 } else {
                     resolve(data)
+                }
+            })
+        });
+    },
+    getDeploy: (bid) => {
+        return new Promise((resolve, reject) => {
+            deploySchema.find({ bid }, (err, data) => {
+                if (err) {
+                    console.log('项目信息获取失败：', err)
+                    reject(err)
+                } else {
+                    resolve(data[0])
                 }
             })
         });
