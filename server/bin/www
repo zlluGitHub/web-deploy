@@ -32,9 +32,9 @@ global.appServer = {}; //存放服务实例
 // app.use(history({ verbose: true, index: '/index.html'}));
 // app.use(history());
 
-let bodyParser = require('body-parser');
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+// let bodyParser = require('body-parser');
+// app.use(bodyParser.json({ limit: '50mb' }));
+// app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 // app.use("/api",
 //     proxy.createProxyMiddleware({
@@ -54,6 +54,7 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use('/swd/deploy', require('../routes/deploy'));
 app.use('/swd/commit', require('../routes/commit'));
 app.use('/swd/git', require('../routes/webhook'));
+app.use('/swd/fileEdit', require('../routes/fileEdit'));
 
 app.use(express.static(path.join(__dirname, 'web')))
 

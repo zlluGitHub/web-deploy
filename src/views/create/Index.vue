@@ -230,8 +230,8 @@
           <Button type="primary" ghost @click.stop="handleAutoSubmit('save')"
             >提交保存</Button
           >
-          <Button type="primary" ghost @click.stop="handleBack">返回首页</Button>
-          <Button type="error" ghost @click.stop="handleClear">重置</Button>
+          <!-- <Button type="primary" ghost @click.stop="handleBack">返回首页</Button>
+          <Button type="error" ghost @click.stop="handleClear">重置</Button> -->
         </div>
         <!-- <div
           v-if="zzcAutoSubmit"
@@ -270,41 +270,43 @@ export default {
       queryWww: "",
       queryPort: "",
 
-      // title: "",
-      // www: "",
-      // port: "",
-      // proxy: [
-      //   {
-      //     rewrite: "",
-      //     target: "",
-      //   },
-      // ],
-      // dist: "",
-      // key: "",
-      // remark: "",
-      // git: "", //git 地址
-      // branch: "", //git 分支
-      // build: "", //部署命令
-      // install: "",
-      // isServer: "",
-      // router: "",
-
-      title: "测试项目",
-      www: "/textas",
-      port: 8080,
+      title: "",
+      www: "",
+      port: "",
       proxy: [
         {
-          rewrite: "text",
-          target: "/jjjjj",
+          rewrite: "",
+          target: "",
         },
       ],
-      dist: "dist",
-      remark: "hjvy",
-
-      git: "https://gitee.com/zlluGitHub/test-project.git", //git 地址
+      dist: "",
+      key: "",
+      remark: "",
+      git: "", //git 地址
       branch: "master", //git 分支
       build: "npm run build", //部署命令
-      install: "cnpm i", //部署命令
+      install: "cnpm i",
+
+
+      isServer: "",
+      router: "",
+
+      // title: "测试项目",
+      // www: "/textas",
+      // port: 8080,
+      // proxy: [
+      //   {
+      //     rewrite: "text",
+      //     target: "/jjjjj",
+      //   },
+      // ],
+      // dist: "dist",
+      // remark: "hjvy",
+
+      // git: "https://gitee.com/zlluGitHub/test-project.git", //git 地址
+      // branch: "master", //git 分支
+      // build: "npm run build", //部署命令
+      // install: "cnpm i", //部署命令
     };
   },
 

@@ -37,8 +37,14 @@ export default new Router({
           path: '/details',
           name: 'details',
           component: () => import('@/views/details/Index.vue'),
-        }
+        },
+       
       ]
+    },
+    {
+      path: '/CodeIde',
+      name: 'CodeIde',
+      component: () => import('@/views/CodeIde/Index.vue'),
     },
   ]
 })

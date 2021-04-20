@@ -198,7 +198,7 @@ router.post('/init', async (req, res, next) => {
                     type: 'start'
                 }, code: 500
             });
-        })
+        });
 
         await logger.saveCommit([
             {
@@ -605,6 +605,11 @@ router.post('/relyReset', async (req, res, next) => {
         shell.exit(1);
     } else {
 
+        await commitSchema.updateOne({ bid: body.commitBid }, { startTime: tools.dateTime() }, (err, data) => {
+            if (err) {
+                console.log(`项目构建状态更新失败：`, err)
+            }
+        })
         // await logger.saveCommit([
         //     {
         //         type: 'start',

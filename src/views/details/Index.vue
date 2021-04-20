@@ -90,18 +90,18 @@
           <Row>
             <Col span="12">
               <label>部署时长：</label>
-              <p>{{ projectData.duration }}</p>
+              <p>{{ projectData.duration }}秒</p>
             </Col>
             <Col span="12">
               <label>服务状态：</label>
-              <p>{{ projectData.isServer }}</p>
+              <p>{{ projectData.isServer?'已开启':'已关闭' }}</p>
             </Col>
           </Row>
 
           <Row>
             <Col span="12">
               <label>路由模式：</label>
-              <p>{{ projectData.router }}</p>
+              <p>{{ projectData.router }}模式</p>
             </Col>
             <Col span="12">
               <label>部署模式：</label>

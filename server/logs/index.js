@@ -138,7 +138,9 @@ module.exports = {
         }
 
         if (body && body.commitBid) {
-            let query = {}
+            let query = {
+                endTime: tools.dateTime(),
+            }
             if (body.deployState) {
                 query.deployState = body.deployState
             }
@@ -189,7 +191,6 @@ module.exports = {
                     commitId: "",
                     message: ""
                 },
-                isServer: false,
             }
             commitSchema.create(body, (err, data) => {
                 if (err) {
