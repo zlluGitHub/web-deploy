@@ -23,11 +23,7 @@
             @click="handlePower"
             >关闭所有服务</Button
           >
-          <Button
-            ghost
-            type="success" 
-            icon="md-add"
-            @click="handleRouter('/create')"
+          <Button ghost type="success" icon="md-add" @click="handleRouter('/create')"
             >创建新项目</Button
           >
         </div>
@@ -38,7 +34,8 @@
         <ul>
           <li v-for="(item, i) in projectData" :key="item.bid + i">
             <div class="item-header">
-              <div class="left">
+              <!-- 自动部署 -->
+              <div class="left" v-if="item.isStatic == '0'">
                 <span class="state">
                   <i
                     :style="{
@@ -56,18 +53,34 @@
                   <span>{{ item.isAuto ? "自动部署已开启" : "自动部署已暂停" }}</span>
                 </span>
               </div>
+              <!-- 静态部署 -->
+              <div class="left" v-else>
+                <span class="state">
+                  <i
+                    :style="{
+                      background: item.isServer ? '#2d8cf0' : 'red',
+                    }"
+                  ></i>
+                  <span v-if="item.port">{{
+                    item.isServer ? "服务运行中" : "服务已暂停"
+                  }}</span>
+                  <span v-else>暂无服务</span>
+                </span>
+              </div>
 
               <div class="right">
                 <Dropdown trigger="click">
                   <Icon type="md-more" size="18" />
                   <DropdownMenu slot="list">
-                    <DropdownItem @click.native="handleProt(item)"
+                    <DropdownItem @click.native="handleProt(item)" v-if="item.port"
                       >{{ item.isServer ? "暂停" : "开启" }}运行服务</DropdownItem
                     >
-                    <DropdownItem @click.native="handleAuto(item)"
+                    <DropdownItem
+                      @click.native="handleAuto(item)"
+                      v-if="item.isStatic === '0'"
                       >{{ item.isAuto ? "关闭" : "开启" }}自动部署</DropdownItem
                     >
-                    <DropdownItem @click.native="handleHistory(item)">{{
+                    <DropdownItem @click.native="handleHistory(item)" v-if="item.port">{{
                       item.router === "hash" ? "切换至History模式" : "切换至Hash模式"
                     }}</DropdownItem>
                   </DropdownMenu>
@@ -85,56 +98,53 @@
                 <Icon type="ios-star" size="26" v-else @click="handleStar(item.bid,'0')" />
             </div>-->
 
-            <h2 @click="handleRouter('/details', item.bid)">{{ item.title }}</h2>
+            <h2 @click="handleRouter('/details', item.bid, item.isStatic)">
+              {{ item.title }}
+            </h2>
 
             <p>
               <Icon type="ios-settings-outline" size="18" />
-              <span>{{ item.isStatic == "0" ? "静态部署" : "自动部署" }}</span>
+              <span>{{ item.isStatic == "0" ? "自动部署" : "静态部署" }}</span>
             </p>
             <p>
               <Icon type="ios-code-working" size="20" />
-              <span>History模式</span>
+              <span>{{ item.router }}模式</span>
             </p>
             <p>
               <Icon type="ios-time-outline" size="18" />
               <span>{{ item.time }}</span>
             </p>
-            <div class="description">{{ item.remark }}</div>
+            <div class="description">{{ item.remark ? item.remark : "暂无描述" }}</div>
             <div class="bottom-list">
-              <Tooltip
+              <Tooltip content="复制链接" placement="top" class="border-r-no">
+                <!-- <Tooltip
                 content="复制链接"
                 placement="top"
                 class="border-r-no"
                 v-clipboard:copy="item.href"
                 v-clipboard:success="onCopy"
                 v-clipboard:error="onError"
-              >
+              > -->
                 <Icon type="ios-link" size="20" />
               </Tooltip>
-              <Tooltip
-                content="删除"
-                placement="top"
-                class="border-r-no"
-                @click.native="handleDelete(item)"
-              >
-                <Icon type="ios-trash" size="20" />
+              <Tooltip content="删除" placement="top" class="border-r-no">
+                <Icon type="ios-trash" size="20" @click="handleDelete(item)" />
               </Tooltip>
 
-              <Tooltip
-                content="更新项目"
-                placement="top"
-                class="border-r-no"
-                @click.native="handleRouter('/create', item.bid)"
-              >
-                <Icon type="md-repeat" size="20" />
+              <Tooltip content="更新项目" placement="top" class="border-r-no">
+                <Icon
+                  type="md-repeat"
+                  size="20"
+                  @click="handleRouter('/create', item.bid, item.isStatic)"
+                />
                 <!-- <Icon type="md-add"/> -->
               </Tooltip>
-              <Tooltip
-                content="部署列表"
-                placement="top"
-                @click.native="handleRouter('/commitList', item.bid)"
-              >
-                <Icon type="ios-list-box-outline" size="20" />
+              <Tooltip content="部署列表" placement="top">
+                <Icon
+                  type="ios-list-box-outline"
+                  size="20"
+                  @click="handleRouter('/commitList', item.bid)"
+                />
               </Tooltip>
             </div>
           </li>
@@ -236,11 +246,13 @@ export default {
             if (res.data.code === 200) {
               this.refreshLoading = false;
               // this.serverData = res.data.data;
+              // console.log('asasas');
+
+              this.handleGetData();
               this.$Modal.success({
                 title: "系统提示",
                 content: "所有服务已重启成功！",
               });
-              this.handleGetData();
             }
           });
         },
@@ -256,11 +268,11 @@ export default {
             if (res.data.code === 200) {
               this.powerLoading = false;
               // this.serverData = res.data.data;
+              this.handleGetData();
               this.$Modal.success({
                 title: "系统提示",
                 content: "所有服务已关闭成功！",
               });
-              this.handleGetData();
             }
           });
         },
@@ -357,7 +369,7 @@ export default {
     // },
     // 单个端口操作
     handleProt(data) {
-      this.$Message.destroy();
+      // this.$Message.destroy();
       if (data.isServer) {
         this.$request
           .post("/swd/deploy/closeServer", {
@@ -423,7 +435,7 @@ export default {
         .post("/swd/deploy/updateInfo", { isAuto: data.isAuto, bid: data.bid })
         .then((res) => {
           // let message = data.isPort == "yes" ? data.port+"端口关闭成功！" :  data.port+"端口关闭失败！";
-          this.$Message.destroy();
+          // this.$Message.destroy();
           if (res.data.result) {
             this.$Modal.success({
               title: "系统提示",
@@ -458,7 +470,7 @@ export default {
       this.$request
         .post("/swd/deploy/history", data)
         .then((res) => {
-          this.$Message.destroy();
+          // this.$Message.destroy();
           if (res.data.code === 200) {
             this.$Modal.success({
               title: "系统提示",
@@ -466,8 +478,8 @@ export default {
             });
             this.handleGetData();
           } else {
-            this.$Message["error"]({
-              background: true,
+            this.$Modal.error({
+              title: "系统提示",
               content: data.title + content_error,
             });
           }
@@ -482,49 +494,65 @@ export default {
     //   this.keyInput = "";
     //   this.buttonDisabled = true;
     // },
-    handleDelModal() {
-      this.$Message.destroy();
-      this.$axios
-        .post(
-          "/api/deploy/edition/delete",
-          this.$qs.stringify({
-            key: this.keyInput,
-            vi: "1",
-            root: this.root,
-          })
-        )
-        .then((res) => {
-          if (res.data.result) {
-            this.$Message["success"]({
-              background: true,
-              content: "删除成功！",
-            });
-            this.isDelete = false;
-            this.handleCancel();
-            this.handleGetData();
-          } else {
-            this.$Message["error"]({
-              background: true,
-              content: "删除失败！",
-            });
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+    // handleDelModal() {
+    //   // this.$Message.destroy();
+    //   this.$axios
+    //     .post(
+    //       "/api/deploy/edition/delete",
+    //       this.$qs.stringify({
+    //         key: this.keyInput,
+    //         vi: "1",
+    //         root: this.root,
+    //       })
+    //     )
+    //     .then((res) => {
+    //       if (res.data.result) {
+    //         this.$Message["success"]({
+    //           background: true,
+    //           content: "删除成功！",
+    //         });
+    //         this.isDelete = false;
+    //         this.handleCancel();
+    //         this.handleGetData();
+    //       } else {
+    //         this.$Message["error"]({
+    //           background: true,
+    //           content: "删除失败！",
+    //         });
+    //       }
+    //     })
+    //     .catch(function (error) {
+    //       console.log(error);
+    //     });
+    // },
+
+    // 删除项目
+    handleDelete(data) {
+      this.$Modal.confirm({
+        title: "系统提示",
+        content: "<p>此项目删除后不可恢复，确定要删除有关该项目的所有内容吗？</p>",
+        onOk: () => {
+          this.powerLoading = true;
+          this.$request.post("/swd/deploy/deleteInfo", data).then((res) => {
+            if (res.data.code === 200) {
+              this.$Modal.success({
+                title: "系统提示",
+                content: data.title + "删除成功！",
+              });
+              this.handleGetData();
+            } else {
+              this.$Modal.error({
+                title: "系统提示",
+                content: data.title + "删除失败！",
+              });
+            }
+          });
+        },
+      });
     },
-    handleDelete(val) {
-      // if (this.user.name === "Admin") {
-      //   this.isToLogin = true;
-      // } else {
-      this.isDelete = true;
-      this.keyInput = val.key;
-      this.root = val.root;
-      // }
-    },
-    handleRouter(path, bid, data) {
+    handleRouter(path, bid, isStatic) {
       // this.$store.commit("setItemData", data);
-      this.$router.push({ path, query: { bid } });
+      this.$router.push({ path, query: { bid, isStatic } });
     },
     // handleHref(data) {
     //   let win = window.open();

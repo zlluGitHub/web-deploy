@@ -12,9 +12,16 @@ import 'font-awesome/css/font-awesome.css'
 import events from './utils'
 Vue.prototype.$mitt = events
 
+import VueClipboard from 'vue-clipboard2'
+Vue.use(VueClipboard)
+
 import request from './request/index.js'
 Vue.prototype.$request = request
 
+import qs from 'qs';
+Vue.prototype.$qs = qs
+// import uploader from "vue-simple-uploader";
+// Vue.use(uploader)
 // Vue.prototype.$socket = new WebSocket("ws://152.136.101.31:8001");
 // axios.defaults.withCredentials = true; //让ajax携带cookie
 // axios.interceptors.request.use(

@@ -8,9 +8,16 @@
         </div>
         <div class="operation-warp">
           <div>文件（12）</div>
-          <div><i class="fa fa-search"></i> <i class="fa fa-plus"></i></div>
+          <div class="search">
+            <i class="fa fa-search" @click="isFind = !isFind"></i>
+            <i class="fa fa-plus"></i>
+          </div>
         </div>
-        <Tree :data="treeData" @on-select-change="handleSelectChange">
+        <Tree
+          :data="treeData"
+          @on-select-change="handleSelectChange"
+          @on-contextmenu="handleContextMenu"
+        >
           <template slot="contextMenu">
             <DropdownItem @click.native="handleContextMenuEdit">编辑</DropdownItem>
             <DropdownItem @click.native="handleContextMenuDelete" style="color: #ed4014"
@@ -21,24 +28,53 @@
       </div>
       <div slot="right" class="right">
         <div class="ide-hedaer">
+          <!-- 保存当前文本 -->
+          <Tooltip content="保存当前文本" placement="bottom">
+            <i class="fa fa-save"></i>
+          </Tooltip>
+          <!-- 保存全部 -->
+          <Tooltip content="保存全部" placement="bottom">
+            <i class="fa fa-clipboard"></i>
+          </Tooltip>
+
           <i class="fa fa-undo"></i>
           <i class="fa fa-repeat"></i>
-
+          <!-- 行号 -->
           <Tooltip :content="showGutter ? '隐藏行号' : '显示行号'" placement="bottom">
             <i class="fa fa-outdent" @click="handleShowGutter"></i>
           </Tooltip>
-          <Dropdown @on-click="handleDropdown" class="dropdown">
-            <i class="fa fa-font"></i>
-            <DropdownMenu slot="list">
-              <DropdownItem
-                v-for="(item, i) in fontSizeArr"
-                :class="{ active: item === fontSize }"
-                :name="item"
-                :key="'e' + i"
-                >{{ item }}px</DropdownItem
-              >
-            </DropdownMenu>
-          </Dropdown>
+          <!-- 主题 -->
+          <Tooltip content="主题" placement="bottom">
+            <Dropdown @on-click="handleThemeDropdown" trigger="click" class="dropdown">
+              <i class="fa fa-magic"> <em class="fa fa-caret-down"></em></i>
+
+              <DropdownMenu slot="list">
+                <DropdownItem
+                  v-for="(item, i) in themeArr"
+                  :class="{ active: item === theme }"
+                  :name="item"
+                  :key="'e' + i"
+                  >{{ item }}</DropdownItem
+                >
+              </DropdownMenu>
+            </Dropdown>
+          </Tooltip>
+          <!-- 字体 -->
+          <Tooltip content="字体大小" placement="bottom">
+            <Dropdown @on-click="handleDropdown" class="dropdown" trigger="click">
+              <i class="fa fa-font"> <em class="fa fa-caret-down"></em></i>
+              <DropdownMenu slot="list">
+                <DropdownItem
+                  v-for="(item, i) in fontSizeArr"
+                  :class="{ active: item === fontSize }"
+                  :name="item"
+                  :key="'e' + i"
+                  >{{ item }}px</DropdownItem
+                >
+              </DropdownMenu>
+            </Dropdown>
+          </Tooltip>
+          <!-- 换行 -->
           <Tooltip :content="isWrap ? '关闭自动换行' : '开启自动换行'" placement="bottom">
             <i class="fa fa-exchange" @click="handleWrap"></i>
           </Tooltip>
@@ -65,7 +101,7 @@
             :lang="language"
             :theme="theme"
             width="100%"
-            height="800px"
+            height="600px"
             :options="{
               enableBasicAutocompletion: true,
               enableLiveAutocompletion: true,
@@ -86,7 +122,10 @@
               },
             ]"
           />
-          .
+          <!-- 替换 -->
+          <div class="replace-warp" v-if="isFind">
+            <Replace @on-click="handleReplaceOnClick" />
+          </div>
         </div>
       </div>
     </Split>
@@ -96,10 +135,12 @@
 <script>
 import Decorate from "@/components/Decorate";
 import AceEditor from "vuejs-ace-editor";
+import Replace from "./modules/Replace";
 export default {
   components: {
     Decorate,
     AceEditor,
+    Replace,
   },
   // props: {
   //   msg: String
@@ -111,9 +152,47 @@ export default {
       isWrap: false,
       fontSizeArr: [12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 30, 32],
       showGutter: true,
+      isFind: false,
       fontSize: 14,
       content: "",
       theme: "monokai", //monokai、mono_industrial
+      themeArr: [
+          "monokai",
+        // "ambiance",
+        // "chaos",
+        "chrome",
+        // "clouds_midnight",
+        // "clouds",
+        // "cobalt",
+        // "crimson_editor",
+        // "dawn",
+        // "dreamweaver",
+        "eclipse",
+        "github",
+        // "idle_fingers",
+        // "iplastic",
+        // "katzenmilch",
+        // "kr_theme",
+        // "kuroir",
+        // "merbivore_soft",
+        // "merbivore",
+        // "mono_industrial",
+      
+        // "pastel_on_dark",
+        // "solarized_dark",
+        // "solarized_light",
+        // "sqlserver",
+        // "terminal",
+        // "textmate",
+        // "tomorrow_night_blue",
+        // "tomorrow_night_bright",
+        // "tomorrow_night_eighties",
+        // "tomorrow_night",
+        // "tomorrow",
+        // "twilight",
+        // "vibrant_ink",
+        // "xcode",
+      ],
       language: "json", //json、java、javascript、html、scala、sql
       languageChange: {
         json: "json",
@@ -122,35 +201,19 @@ export default {
         vue: "html",
         scala: "scala",
         sql: "sql",
+        css: "css",
         sql: "java",
       },
 
-      treeData: [
-        {
-          title: "my-project",
-          expand: true,
-          children: [
-            {
-              title: "html",
-              expand: true,
-              children: [
-                {
-                  title: "index.html",
-                },
-                {
-                  title: "index.html",
-                },
-              ],
-            },
-          ],
-        },
-      ],
+      treeData: [],
     };
   },
   watch: {},
   created() {
+
+    // backups
     this.$request
-      .get("/swd/fileEdit/catalog", { params: { folder: "backups" } })
+      .get("/swd/fileEdit/catalog", { params: { folder: "www" } })
       .then((res) => {
         if (res.data.code === 200) {
           let data = res.data.data;
@@ -213,6 +276,17 @@ export default {
     handleDropdown(size) {
       this.fontSize = size;
     },
+    // 主题切换
+    handleThemeDropdown(theme) {
+      this.theme = theme;
+    },
+
+    // 替换事件
+    handleReplaceOnClick(mark) {
+      if (mark === "close") {
+        this.isFind = !this.isFind;
+      }
+    },
 
     // 遍历树结构
     loopTree(data, deep) {
@@ -244,17 +318,20 @@ export default {
     },
 
     editorInit: function () {
-      require("brace/ext/language_tools"); //language extension prerequsite...
-      require("brace/mode/html");
-      require("brace/mode/javascript"); //language
-      require("brace/mode/scala");
-      require("brace/mode/sql");
-      require("brace/mode/css");
-      require("brace/mode/json");
+      require("vuejs-ace-editor/node_modules/brace/ext/language_tools"); //language extension prerequsite...
+      require("vuejs-ace-editor/node_modules/brace/mode/html"); //language
+      require("vuejs-ace-editor/node_modules/brace/mode/javascript");
+      require("vuejs-ace-editor/node_modules/brace/mode/scala");
+      require("vuejs-ace-editor/node_modules/brace/mode/sql");
+      require("vuejs-ace-editor/node_modules/brace/mode/css");
+      require("vuejs-ace-editor/node_modules/brace/mode/json");
       // require("brace/mode/less");
-      require("brace/theme/monokai");
-      // require("brace/theme/mono_industrial");
-      // require("brace/snippets/javascript"); //snippet
+      require("vuejs-ace-editor/node_modules/brace/theme/monokai");
+      require("vuejs-ace-editor/node_modules/brace/theme/chrome");
+      require("vuejs-ace-editor/node_modules/brace/theme/eclipse");
+      require("vuejs-ace-editor/node_modules/brace/theme/github");
+      require("vuejs-ace-editor/node_modules/brace/theme/mono_industrial");
+      require("vuejs-ace-editor/node_modules/brace/snippets/javascript"); //snippet
     },
   },
 };
@@ -293,8 +370,11 @@ export default {
       align-items: center;
       border-bottom: 1px solid #eee;
       i {
-        margin-left: 5px;
+        margin-left: 10px;
         cursor: pointer;
+        &:hover {
+          color: #fe7300;
+        }
       }
     }
   }
@@ -317,6 +397,9 @@ export default {
       }
       .active {
         color: #fe7300;
+      }
+      .fa-caret-down {
+        margin-left: 3px;
       }
     }
     .file-scroll-bar {
@@ -346,6 +429,13 @@ export default {
     .content {
       // padding-top: 20px;
       background: #fff;
+      position: relative;
+      .replace-warp {
+        position: absolute;
+        top: 5px;
+        right: 50px;
+        z-index: 100;
+      }
     }
   }
   /deep/ .tree-icon {

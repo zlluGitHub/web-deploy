@@ -46,5 +46,10 @@ export default new Router({
       name: 'CodeIde',
       component: () => import('@/views/CodeIde/Index.vue'),
     },
+    {
+      path: '/upload',
+      name: 'Upload',
+      component: () => import('@/views/Upload/Index.vue'),
+    },
   ]
 })

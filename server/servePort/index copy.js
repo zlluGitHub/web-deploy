@@ -56,8 +56,7 @@ let openServer = (data, callBack) => {
         app.use(express.static(path.join(__dirname, '../../www/' + data.www)));
 
         let server = app.listen(data.port);
-
-        server.on('error', async (error) => {
+        await server.on('error', async (error) => {
             global.appServer[data.bid] = server;
             if (error.code === 'EADDRINUSE') {
                 let message = `项目${data.title}服务【${data.port}】早已启动！`
@@ -70,9 +69,11 @@ let openServer = (data, callBack) => {
                     // logger.exitProcess()
                 })
 
-                if (callBack) callBack(true, message)
+                if (callBack) await callBack(true, message)
                 resolve(true, message)
             } else {
+
+
                 let message = `项目${data.title}服务【${data.port}】启动失败，请检查端口是否重复！`
                 await logger.updateCommit([
                     {
@@ -87,11 +88,11 @@ let openServer = (data, callBack) => {
                     // logger.exitProcess()
                 })
 
-                if (callBack) callBack(false, message)
+                if (callBack) await callBack(false, message)
                 reject(false, message)
             }
         });
-        server.on('listening', async () => {
+        await server.on('listening', async () => {
             global.appServer[data.bid] = server;
             let message = `项目【${data.title}】服务【${data.port}】启动成功！`
             await logger.updateCommit({
@@ -100,7 +101,7 @@ let openServer = (data, callBack) => {
             }, data.commitBid).catch(err => {
                 // logger.exitProcess()
             })
-            if (callBack) callBack(true, message)
+            if (callBack) await callBack(true, message)
             resolve(true, message)
         });
     });
@@ -116,8 +117,8 @@ let closeServer = (data, callBack) => {
             }, data.commitBid).catch(err => {
                 // logger.exitProcess()
             })
-            if (callBack) callBack(true, message)
-            resolve(true, message)
+            if (callBack) await callBack(true, message)
+            await resolve(true, message)
         } else {
             killPort(data.port, 'tcp')
                 .then(async () => {
@@ -128,8 +129,8 @@ let closeServer = (data, callBack) => {
                     }, data.commitBid).catch(err => {
                         // logger.exitProcess()
                     })
-                    if (callBack) callBack(true, message)
-                    resolve(true, message)
+                    if (callBack) await callBack(true, message)
+                    await resolve(true, message)
                     // if (isRes) res.json({ message, result: true, code: 200 });
                 })
                 .catch(async error => {
@@ -146,8 +147,8 @@ let closeServer = (data, callBack) => {
                     ], data.commitBid).catch(err => {
                         // logger.exitProcess()
                     })
-                    if (callBack) callBack(false, message)
-                    reject(false, message)
+                    if (callBack) await callBack(false, message)
+                    await reject(false, message)
                 });
         }
     });
@@ -166,8 +167,8 @@ let portIsOccupied = (data, callBack) => {
                 }, data.commitBid).catch(err => {
                     // logger.exitProcess()
                 })
-                if (callBack) callBack(true, message)
-                resolve(true, message)
+                if (callBack)await callBack(true, message)
+                await resolve(true, message)
             });
 
             server.on('error', async (err) => {
@@ -185,8 +186,8 @@ let portIsOccupied = (data, callBack) => {
                 ], data.commitBid).catch(err => {
                     // logger.exitProcess()
                 })
-                if (callBack) callBack(false, message)
-                reject(false, message)
+                if (callBack)await callBack(false, message)
+                await reject(false, message)
             });
 
         } catch (err) {
@@ -204,8 +205,8 @@ let portIsOccupied = (data, callBack) => {
                 ], data.commitBid).catch(err => {
                     // logger.exitProcess()
                 })
-                if (callBack) callBack(false, message)
-                reject(false, message)
+                if (callBack)await callBack(false, message)
+                await reject(false, message)
             } else {
                 let message = `服务端口【${data.port}】异常，请检查后重试！`
                 if (data.commitBid) await logger.updateCommit([
@@ -220,30 +221,30 @@ let portIsOccupied = (data, callBack) => {
                 ], data.commitBid).catch(err => {
                     // logger.exitProcess()
                 })
-                if (callBack) callBack(false, message)
-                reject(false, message)
+                if (callBack)await callBack(false, message)
+                await reject(false, message)
             }
         }
     })
 }
 
-// let restartPort = (body, callBack) => {
-//     return new Promise(async (resolve, reject) => {
-//         await portIsOccupied(body).catch(async () => {
-//             await closeServer(body).catch(error => {
-//                 if (callBack) callBack(false, error)
-//                 reject(error)
-//             })
-//         })
-//         await openServer(body).then(() => {
-//             if (callBack) callBack(true)
-//             resolve(true)
-//         }).catch((error) => {
-//             if (callBack) callBack(false, error)
-//             reject(error)
-//         })
-//     })
-// }
+let restartPort = (body, callBack) => {
+    return new Promise(async (resolve, reject) => {
+        await portIsOccupied(body).catch(async () => {
+            await closeServer(body).catch(error => {
+                if (callBack) callBack(false, error)
+                reject(error)
+            })
+        })
+        await openServer(body).then(() => {
+            if (callBack) callBack(true)
+            resolve(true)
+        }).catch((error) => {
+            if (callBack) callBack(false, error)
+            reject(error)
+        })
+    })
+}
 
 
-module.exports = { openServer, portIsOccupied, closeServer }
+module.exports = { openServer, portIsOccupied, closeServer, restartPort }

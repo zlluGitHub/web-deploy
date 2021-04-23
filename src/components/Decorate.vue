@@ -91,7 +91,7 @@
         height: 44px;
         margin-top: -22px;
         margin-left: -22px;
-        top: 97.8537%;
+        top: 76.8537%;
         left: 75%;
       "
     ></span>
@@ -145,7 +145,7 @@ export default {
   position: relative;
   background: #fff;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  // overflow: hidden;
   display: flex;
   justify-content: center;
   .decorate {

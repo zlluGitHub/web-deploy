@@ -55,8 +55,8 @@ module.exports = {
                 state: false,
                 type: 'clone'
             }
-            await res.json({ message: resTip, state: deployState, code: 500 });
-            await logger.exitState({
+            res.json({ message: resTip, state: deployState, code: 500 });
+            logger.exitState({
                 commitBid,
                 deployState,
             })
@@ -137,8 +137,8 @@ module.exports = {
                 state: false,
                 type: 'install'
             }
-            await res.json({ message: resTip, state: deployState, code: 500 });
-            await logger.exitState({
+            res.json({ message: resTip, state: deployState, code: 500 });
+            logger.exitState({
                 commitBid,
                 deployState,
             })
@@ -194,8 +194,8 @@ module.exports = {
                 state: false,
                 type: 'build'
             }
-            await res.json({ message: resTip, state: deployState, code: 500 });
-            await logger.exitState({
+            res.json({ message: resTip, state: deployState, code: 500 });
+            logger.exitState({
                 commitBid,
                 deployState,
             })
@@ -253,8 +253,8 @@ module.exports = {
                 state: false,
                 type: 'deploy'
             }
-            await res.json({ message: resTip, state: deployState, code: 500 });
-            await logger.exitState({
+            res.json({ message: resTip, state: deployState, code: 500 });
+            logger.exitState({
                 commitBid,
                 deployState,
             })
@@ -308,8 +308,8 @@ module.exports = {
                 state: false,
                 type: 'build'
             }
-            await res.json({ message: resTip, state: deployState, code: 500 });
-            await logger.exitState({
+            res.json({ message: resTip, state: deployState, code: 500 });
+            logger.exitState({
                 commitBid,
                 deployState,
             })
@@ -366,8 +366,8 @@ module.exports = {
                 state: false,
                 type: 'deploy'
             }
-            await res.json({ message: resTip, state: deployState, code: 500 });
-            await logger.exitState({
+            res.json({ message: resTip, state: deployState, code: 500 });
+            logger.exitState({
                 commitBid,
                 deployState,
             })
@@ -428,8 +428,8 @@ module.exports = {
                 state: false,
                 type: 'deploy'
             }
-            await res.json({ message: resTip, state: deployState, code: 500 });
-            await logger.exitState({
+            res.json({ message: resTip, state: deployState, code: 500 });
+            logger.exitState({
                 commitBid,
                 deployState,
             })
@@ -492,8 +492,8 @@ module.exports = {
                 state: false,
                 type: 'clone'
             }
-            await res.json({ message: resTip, state: deployState, code: 500 });
-            await logger.exitState({
+            res.json({ message: resTip, state: deployState, code: 500 });
+            logger.exitState({
                 commitBid,
                 deployState,
             })
@@ -554,8 +554,8 @@ module.exports = {
                 state: false,
                 type: 'clone'
             }
-            await res.json({ message: resTip, state: deployState, code: 500 });
-            await logger.exitState({
+            res.json({ message: resTip, state: deployState, code: 500 });
+            logger.exitState({
                 commitBid,
                 deployState,
             })

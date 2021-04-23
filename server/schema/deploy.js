@@ -63,7 +63,7 @@ let editionSchema = new Schema({
     },
     router: { // 路由模式 hash history
         type: String,
-        default: "hash" 
+        default: "History" 
     },
     isZip: { // zip压缩模式
         type: String,
@@ -71,7 +71,7 @@ let editionSchema = new Schema({
     },
     isStatic: { // 是否静态服务
         type: String,
-        default: "no"
+        default: "0"
     },
    
     duration: { // 部署时长

@@ -15,7 +15,7 @@
             <Icon type="ios-list-box-outline" size="20" />项目列表
           </MenuItem>
 
-          <MenuItem name="4" to="/profile" v-if="user.mark !== 'oauth'">
+          <MenuItem name="4" to="/profile">
             <Icon type="ios-person" size="24" />个人中心
           </MenuItem>
           <!-- <MenuItem name="5" @click.native="handleRouterLog">
@@ -105,7 +105,10 @@ export default {
       inputVal: "",
       password: "",
       isOpen: false,
-      user: {},
+      user: {
+        url:"",
+        name:""
+      },
     };
   },
   // watch: {
@@ -114,7 +117,7 @@ export default {
   //   }
   // },
   mounted() {
-    this.user = this.$store.state.variable.info;
+    // this.user = this.$store.state.variable.info;
     // this.$event.on("inputClear", val => {
     //   this.inputVal = val;
     // });

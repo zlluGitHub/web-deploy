@@ -81,9 +81,6 @@
  deploy:部署成功
 */
 
-
-
-
 const commitSchema = require("../schema/commit");
 const deploySchema = require("../schema/deploy");
 const tools = require("../public/javascripts/tools");
@@ -242,6 +239,31 @@ module.exports = {
                 }
             })
         });
-    }
+    },
+    deleteDeploy: (body) => {
+        return new Promise((resolve, reject) => {
+            deploySchema.deleteMany(body, (err, data) => {
+                if (err) {
+                    console.log('项目信息删除失败：', err)
+                    reject(err)
+                } else { 
+                    resolve(data)
+                }
+            })
+        });
+    },
+    deleteCommit: (body) => {
+        return new Promise((resolve, reject) => {
+            commitSchema.deleteMany(body, (err, data) => {
+                if (err) {
+                    console.log('日志信息删除失败：', err)
+                    reject(err)
+                } else { 
+                    resolve(data)
+                }
+            })
+        });
+    },
+
 
 }

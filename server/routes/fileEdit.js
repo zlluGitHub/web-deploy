@@ -2,10 +2,12 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const router = express.Router();
+const multer = require('multer');
 
 //读取目录结构
 router.get('/catalog', async (req, res, next) => {
     let { folder } = req.query;
+    
     if (folder === 'backups' || folder === 'www') {
         const getCatalog = (dir) => {
             let filesNameArr = []
@@ -61,7 +63,7 @@ router.get('/catalog', async (req, res, next) => {
         }
 
         let dir = path.join(__dirname, `../../${folder}`)
-
+        
         res.json({ data: getCatalog(dir), message: "请求成功！", code: 200 });
     } else {
         res.json({ data: null, message: "无权访问！", code: 200 });
@@ -80,5 +82,37 @@ router.get('/content', async (req, res, next) => {
         }
     });
 });
+
+// 上传文件
+// { dest: url } 
+const writeFileRecursive = function (path, buffer, callback) {
+    let lastPath = path.substring(0, path.lastIndexOf("/"));
+    fs.mkdir(lastPath, { recursive: true }, (err) => {
+        if (err) return callback(err);
+        fs.writeFile(path, buffer, function (err) {
+            if (err) return callback(err);
+            return callback(null);
+        });
+    });
+}
+ 
+router.post('/add', multer().single('file'), (req, res, next) => {
+    let wwwName = req.get('www-name');
+    let relativePath = req.get('webkitRelativePath');
+    relativePath = relativePath ? './www/' + wwwName + '/' + relativePath.slice(relativePath.indexOf('/'), relativePath.length) : './www/' + wwwName + '/' + req.file.originalname
+
+    let fileData = req.file.buffer.toString();
+
+    writeFileRecursive(relativePath, fileData, (err) => {
+        if (err) {
+            res.json({ code: 500, message: req.file.originalname + "文件写入失败！" });
+            console.error(err)
+        } else {
+            res.json({ code: 200, message: req.file.originalname + "文件写入成功！" });
+            console.log(req.file.originalname + "文件写入成功！")
+        };
+    });
+});
+
 
 module.exports = router;

@@ -61,7 +61,7 @@ axios.interceptors.response.use(
         // Do something with response error
         // Message.destroy()
         LoadingBar.error();
-        Notice.error({
+        Modal.error({
             title: "系统提示",
             desc: "数据请求失败，请检查网络是否连接正常！",
         });

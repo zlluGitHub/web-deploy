@@ -2,7 +2,7 @@
   <div class="tip-warp">
     <h3>
       <Icon type="ios-help-circle-outline" size="18" />
-      <span @click="handleHelp" class="active">关联 Git 仓库</span>
+      <span class="active">关联 Git 仓库</span>
     </h3>
     <div class="content">
       <div>1、打开git：项目仓库 -> Settings -> Webhooks -> Add webhook</div>
@@ -18,13 +18,13 @@
       </div>
       <div>
         4、
-        <span v-if="isOk">
+        <!-- <span v-if="isOk">
           在
           <span class="code">Secret</span> 中填入秘钥Key：
           <span class="url">{{ key }}</span
           >；
-        </span>
-        <span v-else>
+        </span> -->
+        <span>
           在
           <span class="code">Secret</span> 中填入部署成功后返回的 Key 值。
         </span>
@@ -38,10 +38,18 @@
         <span style="color: red">注意：</span>若项代码托管平台为GitHub时，在第 2
         步中需要填入
         <span class="url"
-          >{{ $url }}/api/deploy/git?key={{ key ? key : "返回的key值" }}</span
+          > /api/deploy/git?key={{ "返回的key值" }}</span
         >
         地址。
       </div>
+      <!-- <div>
+        <span style="color: red">注意：</span>若项代码托管平台为GitHub时，在第 2
+        步中需要填入
+        <span class="url"
+          >{{ $url }}/api/deploy/git?key={{ key ? key : "返回的key值" }}</span
+        >
+        地址。
+      </div> -->
     </div>
   </div>
 </template>

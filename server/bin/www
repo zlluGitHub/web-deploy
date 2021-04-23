@@ -6,13 +6,17 @@ const http = require('http');
 const fs = require('fs');
 const config = require('../config.json');
 const mongoose = require('mongoose');
-
-// require('express-async-errors');
+/**
+ * 事件池(事件管理器)
+ * 通过事件监听传值
+ */
+const mitt = require('mitt')
+global.onEvent = mitt();
 
 global.ws = require("nodejs-websocket")
 global.connect = {
-    conn: {},
-    server: null,
+  conn: {},
+  server: null,
 };
 
 global.appServer = {}; //存放服务实例
@@ -32,9 +36,9 @@ global.appServer = {}; //存放服务实例
 // app.use(history({ verbose: true, index: '/index.html'}));
 // app.use(history());
 
-// let bodyParser = require('body-parser');
-// app.use(bodyParser.json({ limit: '50mb' }));
-// app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+let bodyParser = require('body-parser');
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 // app.use("/api",
 //     proxy.createProxyMiddleware({
