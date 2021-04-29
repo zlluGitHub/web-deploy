@@ -171,22 +171,39 @@ let portIsOccupied = (data, callBack) => {
             });
 
             server.on('error', async (err) => {
-                // if (err.code === 'EADDRINUSE') { // 端口已经被使用
-                let message = `此服务端口【${data.port}】已被占用，请更换其他端口！`
-                if (data.commitBid) await logger.updateCommit([
-                    {
-                        type: 'port',
-                        message
-                    },
-                    {
-                        type: 'port',
-                        message: err
-                    }
-                ], data.commitBid).catch(err => {
-                    // logger.exitProcess()
-                })
-                if (callBack) callBack(false, message)
-                reject(false, message)
+                if (err.code === 'EADDRINUSE') { // 端口已经被使用
+                    let message = `此服务端口【${data.port}】已被占用，请更换其他端口！`
+                    if (data.commitBid) await logger.updateCommit([
+                        {
+                            type: 'port',
+                            message
+                        },
+                        {
+                            type: 'port',
+                            message: err
+                        }
+                    ], data.commitBid).catch(err => {
+                        // logger.exitProcess()
+                    })
+                    if (callBack) callBack(false, message)
+                    reject(false, message)
+                } else { 
+                    let message = `此服务端口开启发生错误，开启失败！`
+                    if (data.commitBid) await logger.updateCommit([
+                        {
+                            type: 'port',
+                            message
+                        },
+                        {
+                            type: 'port',
+                            message: err
+                        }
+                    ], data.commitBid).catch(err => {
+                        // logger.exitProcess()
+                    })
+                    if (callBack) callBack(false, message)
+                    reject(false, message)
+                }
             });
 
         } catch (err) {

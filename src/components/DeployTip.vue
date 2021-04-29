@@ -9,7 +9,7 @@
       <div>
         2、在
         <span class="code">Target URL</span> 中填入
-        <span class="url">{{ $url }}/api/deploy/git</span> 地址
+        <span class="url">{{ url }}/swd/git/webhook</span> 地址
       </div>
       <div>
         3、
@@ -34,25 +34,44 @@
         <span class="code">Trigger On</span>选择
         <span class="select">Push Events</span>
       </div>
-      <div>
-        <span style="color: red">注意：</span>若项代码托管平台为GitHub时，在第 2
-        步中需要填入
-        <span class="url"
-          > /api/deploy/git?key={{ "返回的key值" }}</span
-        >
-        地址。
-      </div>
       <!-- <div>
         <span style="color: red">注意：</span>若项代码托管平台为GitHub时，在第 2
         步中需要填入
         <span class="url"
-          >{{ $url }}/api/deploy/git?key={{ key ? key : "返回的key值" }}</span
+          > /swd/git/webhook?key={{ "返回的key值" }}</span
         >
         地址。
       </div> -->
+      <div>
+        <span style="color: red">注意：</span>若项代码托管平台为GitHub时，在第 2
+        步中需要填入
+        <span class="url"
+          >{{ url }}/api/deploy/git?key={{ key ? key : "返回的key值" }}</span
+        >
+        地址。
+      </div>
     </div>
   </div>
 </template>
+<script>
+export default {
+  data() {
+    return {
+      key: "",
+      url: "",
+    };
+  },
+  mounted() {
+   this.url = window.location.origin
+  },
+  methods: {
+    handleShell() {
+      this.$event.emit("isShell", true);
+    },
+  },
+};
+</script>
+
 <style lang="scss" scoped>
 .tip-warp {
   position: absolute;
@@ -83,7 +102,7 @@
     border-radius: 4px;
     padding: 20px;
     margin: 10px;
-    width: 390px;
+    width: 420px;
     > div {
       font-size: 12px;
       color: #515a6e;

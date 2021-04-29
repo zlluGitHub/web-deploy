@@ -1,4 +1,5 @@
-
+const fs = require('fs');
+const path = require('path');
 // 获取当前时间
 function dateTime() {
     let date = new Date();
@@ -128,4 +129,18 @@ function exitProcess() {
     }
 }
 
-module.exports = { dateTime, getUid, checkImgType, setPage, random, dateTimeSeconds, exitProcess };
+/**
+ *生成多层目录 
+ */
+ function mkdirsSync(dirname) {  
+    //console.log(dirname);  
+    if (fs.existsSync(dirname)) {  
+        return true;  
+    } else {  
+        if (mkdirsSync(path.dirname(dirname))) {  
+            fs.mkdirSync(dirname);  
+            return true;  
+        }  
+    }  
+}  
+module.exports = { dateTime, getUid, checkImgType, setPage, random, dateTimeSeconds, exitProcess, mkdirsSync };

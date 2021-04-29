@@ -20,6 +20,7 @@
         <label> <i class="star">*</i>部署目录： </label>
         <Input
           v-model="www"
+          :disabled="$route.query.bid"
           @on-blur="handleIsWwwExit"
           placeholder="例如：dist"
           class="put-warp"
@@ -242,7 +243,7 @@ export default {
       install: "cnpm i",
 
       isServer: "",
-      router: "",
+      router: "history",
 
       // title: "测试项目",
       // www: "/textas",
@@ -372,11 +373,16 @@ export default {
       };
 
       if (mark === "deploy") {
+        this.$Message.loading({
+          content: "正在部署中，请稍后...",
+          duration: 0,
+        });
         this.createSocketServer(() => {
           this.isLogModal = true;
           if (this.$route.query.bid) {
             data.bid = this.$route.query.bid;
             this.$request.post("/swd/deploy/initReset", data).then((res) => {
+              this.$Message.destroy();
               if (res.data.code === 200) {
                 this.socketData.push({
                   message: this.title + "项目部署成功！",
@@ -387,11 +393,12 @@ export default {
                   title: "系统提示",
                   content: this.title + "项目部署成功！",
                 });
-                this.$router.push({ path: "/details", query: { bid: res.data.data } });
+                this.$router.push({ path: "/gynamicDetails", query: { bid: res.data.data } });
               }
             });
           } else {
             this.$request.post("/swd/deploy/init", data).then((res) => {
+              this.$Message.destroy();
               if (res.data.code === 200) {
                 this.socketData.push({
                   message: this.title + "项目部署成功！",
@@ -401,7 +408,7 @@ export default {
                   title: "系统提示",
                   content: this.title + "项目部署成功！",
                 });
-                this.$router.push({ path: "/details", query: { bid: res.data.data } });
+                this.$router.push({ path: "/gynamicDetails", query: { bid: res.data.data } });
               }
             });
           }
@@ -411,13 +418,13 @@ export default {
           data.bid = this.$route.query.bid;
           this.$request.post("/swd/deploy/updateInfo", data).then((res) => {
             if (res.data.code === 200) {
-              this.$router.push({ path: "/details", query: { bid: data.bid } });
+              this.$router.push({ path: "/gynamicDetails", query: { bid: data.bid } });
             }
           });
         } else {
           this.$request.post("/swd/deploy/saveInfo", data).then((res) => {
             if (res.data.code === 200) {
-              this.$router.push({ path: "/details", query: { bid: res.data.data } });
+              this.$router.push({ path: "/gynamicDetails", query: { bid: res.data.data } });
             }
           });
         }

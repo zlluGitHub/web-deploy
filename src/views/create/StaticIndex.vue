@@ -20,6 +20,7 @@
         <label> <i class="star">*</i>部署目录： </label>
         <Input
           v-model="www"
+          :disabled="$route.query.bid"
           @on-blur="handleIsWwwExit"
           placeholder="例如：dist"
           class="put-warp"
@@ -55,7 +56,7 @@
           <!-- <span v-else class="isExNo">{{ portMessage.message }}</span> -->
         </div>
       </div>
-      <div class="list-item" v-if="!$route.query.bid">
+      <div class="list-item">
         <label>选择文件：</label>
         <!--   <Upload
           class="put-warp"
@@ -96,7 +97,7 @@
               multiple
               webkitdirectory
               type="drag"
-               action="/"
+              action="/"
               :show-upload-list="false"
               :before-upload="handleBeforeUpload"
             >
@@ -143,9 +144,7 @@
         <DeployTip />
       </div> -->
       <div class="button-footer">
-        <Button type="success" ghost @click="handleAutoSubmit">{{
-          $route.query.bid ? "提交修改" : "提交部署"
-        }}</Button>
+        <Button type="success" ghost @click="handleAutoSubmit">{{ "提交部署" }}</Button>
         <Button type="error" v-if="!$route.query.bid" ghost @click.stop="handleResetData"
           >重置</Button
         >
@@ -179,7 +178,7 @@ export default {
       update: true, //刷新作用
       fileNumber: 0,
 
-      modeType: "0", //模式
+      bid: "",
       isProjectExit: false,
       isWwwExit: false,
       isLogModal: false,
@@ -193,6 +192,7 @@ export default {
       queryPort: "",
 
       title: "",
+      commitBid: "",
       www: "",
       port: "",
       remark: "",
@@ -204,44 +204,41 @@ export default {
 
   created() {
     if (this.$route.query.bid) {
-      this.$request
-        .get("/swd/deploy/get", { params: { bid: this.$route.query.bid } })
-        .then((res) => {
-          if (res.data.code === 200) {
-            let data = res.data.data[0];
+      this.bid = this.$route.query.bid;
+      this.$request.get("/swd/deploy/get", { params: { bid: this.bid } }).then((res) => {
+        if (res.data.code === 200) {
+          let data = res.data.data[0];
 
-            this.queryPort = data.port;
-            this.queryTitle = data.title;
-            this.queryWww = data.www;
+          this.queryPort = data.port;
+          this.queryTitle = data.title;
+          this.queryWww = data.www;
 
-            this.title = data.title;
-            this.remark = data.remark;
-            this.www = data.www;
-            this.port = data.port;
+          this.title = data.title;
+          this.remark = data.remark;
+          this.www = data.www;
+          this.port = data.port;
+          // this.commitBid = data.commitBid;
 
-            this.commitBid = data.commitBid;
-            this.isServer = data.isServer;
-            this.router = data.router;
-          }
-        });
+          this.router = data.router;
+        }
+      });
     }
   },
   methods: {
     // 文件件上传
     handleBeforeUpload(file) {
-      console.log(file);
       file.state = false;
       this.file.push(file);
       return false;
     },
-    handleUploadFile() {
-      this.loadingStatus = true;
-      setTimeout(() => {
-        this.file = [];
-        this.loadingStatus = false;
-        this.$Message.success("Success");
-      }, 1500);
-    },
+    // handleUploadFile() {
+    //   this.loadingStatus = true;
+    //   setTimeout(() => {
+    //     this.file = [];
+    //     this.loadingStatus = false;
+    //     this.$Message.success("Success");
+    //   }, 1500);
+    // },
     // 删除文件
     handleDeleteFile(i) {
       this.file.splice(i, 1);
@@ -283,44 +280,26 @@ export default {
         www: this.www,
         port: this.port,
         remark: this.remark,
+        // commitBid: this.commitBid,
         isStatic: "1",
       };
 
+      this.$Message.loading({
+        content: "正在构建中，请稍后...",
+        duration: 0,
+      });
+
       this.createSocketServer(() => {
         this.isLogModal = true;
-        if (this.$route.query.bid) {
-          data.bid = this.$route.query.bid;
-          this.$request.post("/swd/deploy/initStatic", data).then((res) => {
-            if (res.data.code === 200) {
-              this.handleAddFile();
-              // this.socketData.push({
-              //   message: this.title + "项目部署成功！",
-              //   time: this.$dateTime(),
-              // });
+        data.bid = this.$route.query.bid;
 
-              // this.$Modal.success({
-              //   title: "系统提示",
-              //   content: this.title + "项目部署成功！",
-              // });
-              // this.$router.push({ path: "/details", query: { bid: res.data.data } });
-            }
-          });
-        } else {
-          this.$request.post("/swd/deploy/initStatic", data).then((res) => {
-            if (res.data.code === 200) {
-              this.handleAddFile();
-              // this.socketData.push({
-              //   message: this.title + "项目部署成功！",
-              //   time: this.$dateTime(),
-              // });
-              // this.$Modal.success({
-              //   title: "系统提示",
-              //   content: this.title + "项目部署成功！",
-              // });
-              // this.$router.push({ path: "/details", query: { bid: res.data.data } });
-            }
-          });
-        }
+        this.$request.post("/swd/deploy/initStatic", data).then((res) => {
+          if (res.data.code === 200) {
+            this.commitBid = res.data.data.commitBid;
+            this.bid = res.data.data.bid;
+            this.handleAddFile();
+          }
+        });
       });
     },
 
@@ -335,6 +314,7 @@ export default {
             .post("/swd/fileEdit/add", formData, {
               headers: {
                 "www-name": this.www,
+                "commit-bid": this.commitBid,
                 webkitRelativePath: item.webkitRelativePath,
               },
             })
@@ -365,6 +345,7 @@ export default {
             });
         });
       } else {
+        this.$Message.destroy();
         this.$Modal.success({
           title: "系统提示",
           content: this.title + "项目部署成功！",
@@ -373,19 +354,31 @@ export default {
           message: this.title + "项目部署成功！",
           time: this.$dateTime(),
         });
+        this.$router.push({ path: "/staticIndexDetails", query: { bid: this.bid } });
       }
     },
     deployIsSesses(i) {
       if (this.fileNumber === this.file.length - 1) {
-        this.$Modal.success({
-          title: "系统提示",
-          content: this.title + "项目部署成功！",
+        let data = {
+          title: this.title,
+          www: this.www,
+          bid: this.bid,
+          commitBid: this.commitBid,
+        };
+        this.$request.post("/swd/deploy/deployReduction", data).then((res) => {
+          this.$Message.destroy();
+          if (res.data.code === 200) {
+            this.$Modal.success({
+              title: "系统提示",
+              content: this.title + "项目部署成功！",
+            });
+            this.socketData.push({
+              message: this.title + "项目部署成功！",
+              time: this.$dateTime(),
+            });
+            this.$router.push({ path: "/staticIndexDetails", query: { bid: this.bid } });
+          }
         });
-        this.socketData.push({
-          message: this.title + "项目部署成功！",
-          time: this.$dateTime(),
-        });
-        // this.$router.push({ path: "/details", query: { bid: res.data.data } });
       } else {
         this.fileNumber++;
       }

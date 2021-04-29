@@ -8,16 +8,20 @@
           <!-- <Input v-model="value14" placeholder="Enter something..." clearable style="width: 100px" /> -->
           <MenuItem name="1" to="/"> <Icon type="md-cube" size="18" />工作台 </MenuItem>
 
-          <MenuItem name="2" to="/CodeIde">
-            <Icon type="md-add" size="20" />在线IDE
+          <MenuItem name="2" to="/create">
+            <Icon type="md-add" size="20" />创建项目
           </MenuItem>
-          <MenuItem name="3" to="/projectmanage">
-            <Icon type="ios-list-box-outline" size="20" />项目列表
-          </MenuItem>
-
-          <MenuItem name="4" to="/profile">
+             <MenuItem name="4" to="/system">
             <Icon type="ios-person" size="24" />个人中心
           </MenuItem>
+          <MenuItem name="7" to="/CodeIde">
+            <Icon type="md-add" size="20" />在线IDE
+          </MenuItem>
+          <!-- <MenuItem name="3" to="/projectmanage">
+            <Icon type="ios-list-box-outline" size="20" />项目列表
+          </MenuItem> -->
+
+       
           <!-- <MenuItem name="5" @click.native="handleRouterLog">
             <Icon type="ios-list-box-outline" size="20" />日志列表
           </MenuItem> -->

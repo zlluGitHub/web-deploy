@@ -33,9 +33,13 @@
           <template slot-scope="{ row }" slot="deploy">
             <!-- {{ row.user ? row.user : "管理员" }} -->
             <p v-if="row.bid === projectData.commitBid" class="deploy-state">
-              <i class="ok"></i><span>已部署</span>
+              <!-- <i class="ok"></i> -->
+              <span>已部署</span>
             </p>
-            <p v-else class="deploy-state"><i class="no"></i><span>未部署</span></p>
+            <p v-else class="deploy-state">
+              <!-- <i class="no"></i> -->
+              <span>未部署</span>
+            </p>
           </template>
 
           <template slot-scope="{ row }" slot="structure">
@@ -64,7 +68,11 @@
                 >个
               </span>
             </p>
-            <span v-else>< ----- 空 ----- ></span>
+            <p v-else class="file-change">
+              <span>修改<em>☀</em>个、 </span>
+              <span>新增<em>☀</em>个、 </span>
+              <span>刪除<em>☀</em>个 </span>
+            </p>
             <!-- 1 个文件修改, 2个文件新增(+), 66 个文件删除(-) -->
           </template>
 
@@ -79,13 +87,19 @@
           </template>
           <template slot-scope="{ row }" slot="action">
             <div class="button-action">
-              <Button type="primary" size="small" @click="handleInitReset(row)"
+              <Button
+                type="primary"
+                size="small"
+                @click="handleInitReset(row)"
+                v-if="row.bid !== projectData.commitBid"
                 >部署</Button
               >
               <Button @click="handleShowLog(row)" type="warning" size="small"
                 >日志</Button
               >
-              <Button @click="handleUrl(row)" type="error" size="small">变动</Button>
+              <Button v-if="row.isExit" @click="handleUrl(row)" type="error" size="small"
+                >变动</Button
+              >
             </div>
           </template>
         </Table>
@@ -143,7 +157,7 @@ export default {
 
         {
           title: "构建情况",
-          width: 250,
+          width: 255,
           slot: "fileChange",
         },
         // {
@@ -282,18 +296,38 @@ export default {
             this.isLogModal = true;
             this.projectData.hookPayload = row.hookPayload;
             this.projectData.commitBid = row.bid;
-            this.$request.post("/swd/deploy/relyReset", this.projectData).then((res) => {
-              if (res.data.code === 200) {
-                this.$Modal.success({
-                  title: "系统提示",
-                  content: res.data.message,
+
+            if (this.$route.query.isStatic === "0") {
+              this.$request
+                .post("/swd/deploy/relyReset", this.projectData)
+                .then((res) => {
+                  if (res.data.code === 200) {
+                    this.$Modal.success({
+                      title: "系统提示",
+                      content: res.data.message,
+                    });
+                    this.$router.push({
+                      path: "/gynamicDetails",
+                      query: { bid: this.projectData.bid, isStatic: 0 },
+                    });
+                  }
                 });
-                this.$router.push({
-                  path: "/details",
-                  query: { bid: this.projectData.bid },
+            } else if (this.$route.query.isStatic === "1") {
+              this.$request
+                .post("/swd/deploy/initReductionReset", this.projectData)
+                .then((res) => {
+                  if (res.data.code === 200) {
+                    this.$Modal.success({
+                      title: "系统提示",
+                      content: res.data.message,
+                    });
+                    this.$router.push({
+                      path: "/staticIndexDetails",
+                      query: { bid: this.projectData.bid, isStatic: 1 },
+                    });
+                  }
                 });
-              }
-            });
+            }
           });
         },
       });
@@ -391,6 +425,8 @@ export default {
     color: red;
   }
   .button-action {
+    display: flex;
+    justify-content: center;
     button {
       margin: 0 5px;
     }

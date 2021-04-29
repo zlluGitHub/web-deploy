@@ -20,6 +20,8 @@ Vue.prototype.$request = request
 
 import qs from 'qs';
 Vue.prototype.$qs = qs
+
+// Vue.prototype.$url = window.location.origin
 // import uploader from "vue-simple-uploader";
 // Vue.use(uploader)
 // Vue.prototype.$socket = new WebSocket("ws://152.136.101.31:8001");

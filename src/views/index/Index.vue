@@ -23,9 +23,9 @@
             @click="handlePower"
             >关闭所有服务</Button
           >
-          <Button ghost type="success" icon="md-add" @click="handleRouter('/create')"
+          <!-- <Button ghost type="success" icon="md-add" @click="handleRouter('/create')"
             >创建新项目</Button
-          >
+          > -->
         </div>
       </Decorate>
     </div>
@@ -42,7 +42,7 @@
                       background: item.isServer ? '#2d8cf0' : 'red',
                     }"
                   ></i>
-                  <span>{{ item.isServer ? "服务运行中" : "服务已暂停" }}</span>
+                  <span>{{ item.isServer ? "服务已开启" : "服务已关闭" }}</span>
                 </span>
                 <span class="state auto">
                   <i
@@ -50,7 +50,7 @@
                       background: item.isAuto ? '#2d8cf0' : 'red',
                     }"
                   ></i>
-                  <span>{{ item.isAuto ? "自动部署已开启" : "自动部署已暂停" }}</span>
+                  <span>{{ item.isAuto ? "部署已开启" : "部署已暂停" }}</span>
                 </span>
               </div>
               <!-- 静态部署 -->
@@ -61,10 +61,8 @@
                       background: item.isServer ? '#2d8cf0' : 'red',
                     }"
                   ></i>
-                  <span v-if="item.port">{{
-                    item.isServer ? "服务运行中" : "服务已暂停"
-                  }}</span>
-                  <span v-else>暂无服务</span>
+                  <span v-if="item.port">{{ item.isServer ? "服务已开启" : "服务已关闭" }}</span>
+                  <span v-else>静态服务</span>
                 </span>
               </div>
 
@@ -98,7 +96,15 @@
                 <Icon type="ios-star" size="26" v-else @click="handleStar(item.bid,'0')" />
             </div>-->
 
-            <h2 @click="handleRouter('/details', item.bid, item.isStatic)">
+            <h2
+              @click="
+                handleRouter(
+                  item.isStatic == '0' ? '/gynamicDetails' : '/staticIndexDetails',
+                  item.bid,
+                  item.isStatic
+                )
+              "
+            >
               {{ item.title }}
             </h2>
 
@@ -116,34 +122,49 @@
             </p>
             <div class="description">{{ item.remark ? item.remark : "暂无描述" }}</div>
             <div class="bottom-list">
-              <Tooltip content="复制链接" placement="top" class="border-r-no">
-                <!-- <Tooltip
+              <!--<Tooltip content="复制链接" placement="top" class="border-r-no">
+               <Tooltip
                 content="复制链接"
                 placement="top"
                 class="border-r-no"
                 v-clipboard:copy="item.href"
                 v-clipboard:success="onCopy"
                 v-clipboard:error="onError"
-              > -->
+              > 
                 <Icon type="ios-link" size="20" />
-              </Tooltip>
+              </Tooltip>-->
               <Tooltip content="删除" placement="top" class="border-r-no">
-                <Icon type="ios-trash" size="20" @click="handleDelete(item)" />
+                <Icon type="ios-trash-outline" size="20" @click="handleDelete(item)" />
               </Tooltip>
 
               <Tooltip content="更新项目" placement="top" class="border-r-no">
+                <!-- <Icon type="ios-create-outline" /> -->
                 <Icon
-                  type="md-repeat"
+                  type="ios-create-outline"
                   size="20"
                   @click="handleRouter('/create', item.bid, item.isStatic)"
                 />
                 <!-- <Icon type="md-add"/> -->
               </Tooltip>
-              <Tooltip content="部署列表" placement="top">
+              <Tooltip content="部署列表" placement="top" class="border-r-no">
+                <!-- <Icon type="ios-list" /> -->
+                <Icon
+                  type="ios-list"
+                  size="26"
+                  @click="handleRouter('/commitList', item.bid, item.isStatic)"
+                />
+              </Tooltip>
+              <Tooltip content="项目详情" placement="top">
+                <!-- <Icon type="ios-paper-outline" /> -->
                 <Icon
                   type="ios-list-box-outline"
                   size="20"
-                  @click="handleRouter('/commitList', item.bid)"
+                  @click="
+                    handleRouter(
+                      item.isStatic == '0' ? '/gynamicDetails' : '/staticIndexDetails',
+                      item.bid
+                    )
+                  "
                 />
               </Tooltip>
             </div>
@@ -436,21 +457,13 @@ export default {
         .then((res) => {
           // let message = data.isPort == "yes" ? data.port+"端口关闭成功！" :  data.port+"端口关闭失败！";
           // this.$Message.destroy();
-          if (res.data.result) {
+          if (res.data.code === 200) {
             this.$Modal.success({
               title: "系统提示",
               content: data.title + content_success,
             });
             this.handleGetData();
-          } else {
-            this.$Message["error"]({
-              background: true,
-              content: data.title + content_error,
-            });
           }
-        })
-        .catch(function (error) {
-          console.log(error);
         });
     },
 
@@ -532,19 +545,18 @@ export default {
         title: "系统提示",
         content: "<p>此项目删除后不可恢复，确定要删除有关该项目的所有内容吗？</p>",
         onOk: () => {
-          this.powerLoading = true;
+          this.$Message.loading({
+            content: "正在删除中，请稍后...",
+            duration: 0,
+          });
           this.$request.post("/swd/deploy/deleteInfo", data).then((res) => {
+            this.$Message.destroy();
             if (res.data.code === 200) {
               this.$Modal.success({
                 title: "系统提示",
                 content: data.title + "删除成功！",
               });
               this.handleGetData();
-            } else {
-              this.$Modal.error({
-                title: "系统提示",
-                content: data.title + "删除失败！",
-              });
             }
           });
         },
@@ -582,6 +594,7 @@ export default {
   .header {
     .button-warp {
       margin-top: 20px;
+
       button {
         margin-left: 20px;
       }
@@ -611,6 +624,8 @@ export default {
             .state {
               top: 18px;
               left: 20px;
+              font-size: 12px;
+               margin-right: 18px;
               i {
                 padding: 5px;
                 border-radius: 100%;
@@ -722,6 +737,10 @@ export default {
         }
       }
     }
+  }
+  /deep/ .ivu-tooltip-rel{
+    display: flex;
+    align-items: center;
   }
   .page {
     background: #fff;

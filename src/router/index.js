@@ -34,9 +34,19 @@ export default new Router({
           component: () => import('@/views/commitList/Index.vue'),
         },
         {
-          path: '/details',
-          name: 'details',
-          component: () => import('@/views/details/Index.vue'),
+          path: '/staticIndexDetails',
+          name: 'staticIndexDetails',
+          component: () => import('@/views/details/StaticIndex.vue'),
+        },
+        {
+          path: '/gynamicDetails',
+          name: 'gynamicDetails',
+          component: () => import('@/views/details/Gynamic.vue'),
+        },
+        {
+          path: '/system',
+          name: 'system',
+          component: () => import('@/views/system/Index.vue'),
         },
        
       ]

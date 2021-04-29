@@ -167,9 +167,10 @@ module.exports = {
     saveCommit: (log, bid, projectId) => {
         let conn = global.connect.conn;
         return new Promise((resolve, reject) => {
+            bid = bid ? bid : tools.getUid()
             let body = {
                 startTime: tools.dateTime(),
-                bid: bid ? bid : tools.getUid(),
+                bid,
                 endTime: tools.dateTime(),
                 log,
                 projectId,
@@ -185,7 +186,7 @@ module.exports = {
                     added: "",
                     removed: "",
                     modified: "",
-                    commitId: "",
+                    commitId: bid,
                     message: ""
                 },
             }
@@ -246,7 +247,7 @@ module.exports = {
                 if (err) {
                     console.log('项目信息删除失败：', err)
                     reject(err)
-                } else { 
+                } else {
                     resolve(data)
                 }
             })
@@ -258,7 +259,7 @@ module.exports = {
                 if (err) {
                     console.log('日志信息删除失败：', err)
                     reject(err)
-                } else { 
+                } else {
                     resolve(data)
                 }
             })

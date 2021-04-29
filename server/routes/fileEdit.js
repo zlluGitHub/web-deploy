@@ -98,8 +98,9 @@ const writeFileRecursive = function (path, buffer, callback) {
  
 router.post('/add', multer().single('file'), (req, res, next) => {
     let wwwName = req.get('www-name');
+    let commitBid = req.get('commit-bid');
     let relativePath = req.get('webkitRelativePath');
-    relativePath = relativePath ? './www/' + wwwName + '/' + relativePath.slice(relativePath.indexOf('/'), relativePath.length) : './www/' + wwwName + '/' + req.file.originalname
+    relativePath = relativePath ? `./backups/${wwwName}/${commitBid}/` + relativePath.slice(relativePath.indexOf('/'), relativePath.length) : `./backups/${wwwName}/${commitBid}/` + req.file.originalname
 
     let fileData = req.file.buffer.toString();
 
