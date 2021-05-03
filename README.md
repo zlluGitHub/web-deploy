@@ -1,4 +1,4 @@
-<p align="center"><a href="http://swd.zhenglinglu.cn" target="_blank"><img width="160"src="https://zllugithub.github.io/web-deploy/images/logo.png"></a></p>
+<p align="center"><a href="http://swd.zhenglinglu.cn" target="_blank"><img width="160"src="./images/logo.png"></a></p>
 
 <!-- # Web Deploy 前端自动化部署平台 -->
 <h1 align="center">Web Deploy 前端自动化部署平台</h1>
@@ -28,7 +28,7 @@ Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动�
 【✔】支持部署项目的 history/hash 访问模式（已完成）
 
 ## 简易示意图
-![image](https://zllugithub.github.io/web-deploy/images/20200626121718.jpg)
+![image](./images/20200626121718.jpg)
 
 ## 快速开始配置环境
 
@@ -86,48 +86,17 @@ mv mongodb-linux-x86_64-rhel70-4.0.1 mongodbserver
 ````
 参考资料：[linux 下 mongodb 的安装及配置](http://zhenglinglu.cn/web/mongodb_az/)
 
-## 快速安装平台
-### 安装方法
-#### 1、方法一
-下载完成之后打开 swd-server 根目录下的 `config.json` 文件，填写配置项。
-````bash
-git clone https://github.com/zlluGitHub/swd-server.git
-````
-快速运行
-````bash
-cd web-deploy/bin
-node ./www 
-````
-若运行没有问题，则可以使用 `pm2` 使进程常驻后台
-````bash
-cd web-deploy/bin
-pm2 start ./www --name="web-deploy"
-````
-
-#### 2、方法二
-`swd-cli` 脚手架为 Web Deploy 平台构建工具，在这里类似 `vue-cli`
-````bash
-npm install swd-cli -g
-````
-判断是否安装成功
-````bash
-swd -v
-````
-若出现版本号，则安装成功，然后构建 Web Deploy 平台
-````bash
-swd install web-deploy
-````
-其中 web-deploy 为项目存放的文件夹，可以随意命名。
-快速运行
-````bash
-cd web-deploy/bin
-node ./www 
-````
-若运行没有问题，则可以使用 `pm2` 使进程常驻后台
-````bash
-cd web-deploy/bin
-pm2 start ./www --name="web-deploy"
-````
+## 快速安装使用
+以 Linux CentOS 7 为例
+```bash
+git clone https://github.com/zlluGitHub/web-deploy.git
+node ./server/www
+```
+或者使用 pm2 使进程常驻后台
+```bash
+git clone https://github.com/zlluGitHub/web-deploy.git
+pm2 start ./server/www --name=web-deploy
+```
 ### 配置文件 config.json 说明
 ```json
 {
@@ -220,65 +189,6 @@ pm2 start ./www --name="web-deploy"
 | name  | `github` 账号名称（只有 `github` 需要此配置） |
 根据自身需求添加对应第三方配置即可。
  
-## 安装示意图
-以 Linux CentOS 7 为例
-![image](https://zllugithub.github.io/web-deploy/images/20200627070846.jpg)
-
-## 快速构建项目模板
-### 使用 swt 构建项目模板
-安装 `swt-cli` 后 `swt` 命令即可使用，可通过此命令快速构建与 web deploy 平台配套的 `Vue` 项目模板。
-其中 `my-template` 为需要构建的项目名称，可随意更改。
-````bash
-swt install my-template
-````
-### 所包含的安装包
-````json
-{
-  "dependencies": {
-    "axios": "^0.21.1",
-    "compression": "^1.7.4",
-    "core-js": "^3.6.5",
-    "express-async-errors": "^3.1.1",
-    "font-awesome": "^4.7.0",
-    "kill-port": "^1.6.1",
-    "mitt": "^2.1.0",
-    "mongoose": "^5.12.3",
-    "multer": "^1.4.2",
-    "nodejs-websocket": "^1.7.2",
-    "nodemailer": "^6.6.0",
-    "register-service-worker": "^1.7.1",
-    "shelljs": "^0.8.4",
-    "view-design": "^4.5.0",
-    "vue": "^2.6.11",
-    "vue-router": "^3.2.0",
-    "vue-simple-uploader": "^0.7.6",
-    "vue2-code-editor": "0.0.6",
-    "vuex": "^3.4.0"
-  },
-  "devDependencies": {
-    "@vue/cli-plugin-babel": "~4.5.0",
-    "@vue/cli-plugin-eslint": "~4.5.0",
-    "@vue/cli-plugin-pwa": "~4.5.0",
-    "@vue/cli-plugin-router": "~4.5.0",
-    "@vue/cli-plugin-vuex": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
-    "@vue/eslint-config-prettier": "^6.0.0",
-    "babel-eslint": "^10.1.0",
-    "compression-webpack-plugin": "^4.0.1",
-    "eslint": "^6.7.2",
-    "eslint-plugin-prettier": "^3.3.1",
-    "eslint-plugin-vue": "^6.2.2",
-    "lib-flexible": "^0.3.2",
-    "node-sass": "^4.13.1",
-    "prettier": "^2.2.1",
-    "sass-loader": "^8.0.2",
-    "vue-template-compiler": "^2.6.11",
-    "webpack-bundle-analyzer": "^4.4.0"
-  }
-}
-````
-### 目录结构示意图
-![image](https://zllugithub.github.io/web-deploy/images/20200627073035.jpg)
 
 ## 项目部署说明
 ### 静态部署
@@ -290,7 +200,7 @@ swt install my-template
 5、填写项目的部署摘要内容；
 6、点击提交部署即可；
 
-![image](https://zllugithub.github.io/web-deploy/images/20200625145530.jpg)
+<!-- ![image](./images/20200625145530.jpg) -->
 
 ### 自动化部署
 1、填写（选择）项目名称；
@@ -303,56 +213,56 @@ swt install my-template
 8、填写项目的部署摘要内容；
 9、点击提交部署即可；
 
-![image](https://zllugithub.github.io/web-deploy/images/20200705161150.jpg)
+<!-- ![image](./images/20200705161150.jpg) -->
 
 注意：此部署方式部署时间会根据项目的大小而不同，请耐心等待即可，另外，部署成功之后会返回一个 key 值，此 key 值将用于关联Git，且只会出现一次。
 
-![image](https://zllugithub.github.io/web-deploy/images/key_20200706125626.jpg)
+<!-- ![image](./images/key_20200706125626.jpg) -->
 
 ### 关联 Git 实现自动部署
 #### 关联 gitea 
 1、配置 webhook 相关钩子链接，打开 gitea 找到需要部署的项目仓库 -> Settings -> Webhooks -> Add webhook；
 
-![image](https://zllugithub.github.io/web-deploy/images/b_20200705163216.jpg)
+![image](./images/b_20200705163216.jpg)
 
 2、填入相关配置信息
 
-![image](https://zllugithub.github.io/web-deploy/images/b_20200705164219.jpg)
+![image](./images/b_20200705164219.jpg)
 
 3、点击 Add Webhook 配置成功
 
-![image](https://zllugithub.github.io/web-deploy/images/b_20200705164637.jpg)
+![image](./images/b_20200705164637.jpg)
 
 #### 关联 gitlab
 1、由于仓库的公开程度是 Private 需将其设置成 Public，打开 gitlab 找到需要部署的项目仓库 -> Settings -> General
 
-![image](https://zllugithub.github.io/web-deploy/images/l_20200705172837.jpg)
+![image](./images/l_20200705172837.jpg)
 
 2、配置 webhook 相关钩子链接，打开 gitlab 找到需要部署的项目仓库 -> Settings -> Integrations；
 
-![image](https://zllugithub.github.io/web-deploy/images/l_20200705172359.jpg)
+![image](./images/l_20200705172359.jpg)
 
 3、填入相关配置信息
 
-![image](https://zllugithub.github.io/web-deploy/images/l_20200705171905.jpg)
+![image](./images/l_20200705171905.jpg)
 
 4、点击 Add Webhook 配置成功
 
-![image](https://zllugithub.github.io/web-deploy/images/l_20200705172240.jpg)
+![image](./images/l_20200705172240.jpg)
 
 #### 关联 github 
 1、配置 webhook 相关钩子链接，打开 github 找到需要部署的项目仓库 -> Settings -> Webhooks -> Add webhook；
 
-![image](https://zllugithub.github.io/web-deploy/images/g_20200705165340.jpg)
+![image](./images/g_20200705165340.jpg)
 
 2、填入相关配置信息
 
-![image](https://zllugithub.github.io/web-deploy/images/g_20200705170758.jpg)
+![image](./images/g_20200705170758.jpg)
 
 3、点击 Add Webhook 配置成功
 
-![image](https://zllugithub.github.io/web-deploy/images/g_20200705171043.jpg)
+![image](./images/g_20200705171043.jpg)
 
 ## 彩蛋
 
-![image](https://zllugithub.github.io/web-deploy/images/index.jpg)
+![image](./images/index.jpg)

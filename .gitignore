@@ -4,6 +4,7 @@ backups/*
 /www
 /src
 /backups
+web-deploy.zip
 # local env files
 .env.local
 .env.*.local
