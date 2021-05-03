@@ -27,7 +27,7 @@ router.get('/get', (req, res, next) => {
     })
 
     let p2 = new Promise((resolve, reject) => {
-        commitSchema.find().count((err, count) => {
+        commitSchema.find(filter).count((err, count) => {
             if (err) {
                 reject(err)
             } else {

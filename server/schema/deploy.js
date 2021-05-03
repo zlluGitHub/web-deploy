@@ -61,6 +61,10 @@ let editionSchema = new Schema({
         type: Boolean,
         default: true
     },
+    gzip: { // 是否开启gzip
+        type: Boolean,
+        default: true
+    },
     router: { // 路由模式 hash history
         type: String,
         default: "History" 

@@ -11,9 +11,12 @@ const logger = require('../logs/index.js');
 const server = require('../servePort');
 // const exitProcess = require('../process');
 const net = require('net');
-const command = require('../command/index.js');
+// const command = require('../command/index.js');
+const database = require('../database/index.js');
 // const socket = require('../websocket/index.js');
 // const socketServer = require('../websocket/index.js');
+
+// init:第一次部署  resetInit：重新部署    install：重新安装依赖  build：重新打包部署
 
 // 项目初始化
 deploySchema.find({}, (err, data) => {
@@ -21,53 +24,36 @@ deploySchema.find({}, (err, data) => {
         console.log(err);
     } else {
         data.forEach(item => {
-            // commitSchema.find({ bid: item.commitBid }, (err, commit) => {
-            //     if (err) {
-            //         console.log(err);
-            //     } else {
             if (item.isServer) {
-                server.openServer(item, (state, mes) => {
+                server.openServer(item, async (state, mes) => {
                     if (state) {
                         let message = `${item.title}项目重启成功！`
-                        logger.updateCommit({
-                            type: 'deploy',
-                            state: true,
-                            message
-                        }, item.commitBid).catch(err => {
-                            // logger.exitProcess()
-                        })
+                        await logger.setlog({
+                            bid: item.commitBid,
+                            log: { message }
+                        }, false)
 
                     } else {
                         let message = `${item.title}项目重启失败！`
-                        logger.updateCommit({
-                            type: 'deploy',
-                            state: false,
-                            message
-                        }, item.commitBid).catch(err => {
-                            // logger.exitProcess()
-                        })
-
+                        await logger.setlog({
+                            bid: item.commitBid,
+                            log: { message }
+                        }, false)
                     }
                 })
             }
-
-            //     }
-            // });
         })
     }
 })
 
+
 router.post('/openSocket', (req, res, next) => {
-
-    server.portIsOccupied({
-        port: '8001'
-    }, (state, message) => {
-        if (!state) {
-            console.log(`正在释放【${8001}】端口...`)
-            global.connect.server.close()
-            console.log('webSocket 服务正在重启中...')
-        }
-
+    server.tryUsePort(8001, port => {
+        // if (!state) {
+        //     console.log(`正在释放【${8001}】端口...`)
+        //     global.connect.server.close()
+        //     console.log('webSocket 服务正在重启中...')
+        // }
         global.connect.server = global.ws.createServer(conn => {
             global.connect.conn = conn;
             conn.on('connect', (code) => {
@@ -82,14 +68,20 @@ router.post('/openSocket', (req, res, next) => {
                 console.log("Connection error")
                 // conn.sendText("webSocket 服务错误！")
             })
-        }).listen(8001);
+        }).listen(port);
+        let time = setTimeout(() => {
+            if (global.connect.server) global.connect.server.close();
+            global.connect.server = null
+            clearTimeout(time)
+        }, 1000 * 60 * 5)
         res.json({ message: "webSocket 服务已链接！", result: true, code: 200 });
-    }).catch(() => { })
+    })
 });
 
-
-// socket(conn => {
-
+// router.post('/closeSocket', (req, res, next) => {
+//     if (global.connect.server) global.connect.server.close();
+//     res.json({ message: "webSocket 服务已关闭！", code: 200 });
+// });
 
 // 获取项目
 router.get('/get', async (req, res, next) => {
@@ -117,7 +109,7 @@ router.get('/get', async (req, res, next) => {
     })
 
     let p2 = new Promise((resolve, reject) => {
-        deploySchema.find().count(function (err, count) {
+        deploySchema.find(filter).count((err, count) => {
             if (err) {
                 reject(err)
             } else {
@@ -176,103 +168,131 @@ router.get('/get', async (req, res, next) => {
     })
 });
 
-
-
-
-
-
-//项目动态部署（git）
-router.post('/init', async (req, res, next) => {
+//webHook部署
+router.post('/init', async (req, res) => {
     let body = req.body;
 
     body.commitBid = tools.getUid();
     body.bid = tools.getUid();
-    body.time = tools.dateTime();
-    body.isServer = false
 
     if (!shell.which('git')) {
         res.json({ message: "Git 命令不存在，请安装后再试！", result: false, code: 500 });
         shell.exit(1);
     } else {
 
-        await logger.saveDeploy(body).catch(err => {
-            // 结束进程
-
-            res.json({
-                message: err, state: {
-                    state: false,
-                    type: 'start'
-                }, code: 500
-            });
-        });
-
-        await logger.saveCommit([
-            {
-                type: 'start',
-                time: tools.dateTime(),
-                message: `准备构建${body.title}项目,请稍后...`
-            }
-        ], body.commitBid, body.bid).catch(async err => {
-            await res.json({
-                message: err, state: {
-                    state: false,
-                    type: 'start'
-                }, code: 500
-            });
-
+        await database.saveDeploy(body, res).then(() => {
+            console.log(`项目【${body.title}】信息创建成功！`)
         })
 
+        await database.saveCommit({
+            bid: body.commitBid,
+            projectId: body.bid,
+            activeType: 'init'
+        }, res).then(() => {
+            console.log(`项目【${body.title}】日志信息创建成功！`)
+        })
+
+        // 开始创建
+        await logger.setlog({
+            bid: body.commitBid,
+            log: {
+                message: `开始准备构建【${body.title}】项目，请稍后...`
+            }
+        }, true, res)
+
+
+        // 任务流开始 
         await workflow.initProject(body, res);
 
-        await server.openServer(body).then(async () => {
-            let message = `项目【${body.title}】已构建完成，请访问【${body.port}】端口即可访问！`
-            await logger.updateCommit([
-                {
-                    type: 'port',
-                    message
+        // 开始部署
+        await logger.setlog({
+            log: {
+                message: '开始配置项目运行服务环境相关信息，请稍后...',
+            },
+            deployState: {
+                state: 0,
+                type: 'deploy'
+            },
+            bid: body.commitBid
+        }, true, res)
+
+
+        if (body.port) {
+
+            // 判断端口是否开启
+            // await server.portIsOccupied(body, null, res).catch(async () => {
+            //     await server.closeServer(body, null, res)
+            // })
+            let portState = await server.portInUse(body.port);
+            if (portState instanceof Error) {
+                await server.closeServer(body, null, res)
+            }
+
+            // 开启服务 
+            await server.openServer(body, null, res).then(async () => {
+
+                await database.updateDeploy({
+                    bid: body.bid,
+                    isServer: true
+                }, res)
+
+                let message = `构建完成，请访问（${body.port}）端口即可访问！`;
+                let deployState = {
+                    state: 1,
+                    type: 'deploy'
                 }
-            ], body.commitBid).catch(err => {
-                // logger.exitState()
+
+                await logger.setlog({
+                    log: {
+                        message,
+                    },
+                    deployState,
+                    bid: body.commitBid
+                }, true, res)
+
+                res.json({ message, key: body.bid, state: deployState, code: 200 });
+            }).catch(async (err) => {
+
+                await database.updateDeploy({
+                    bid: body.bid,
+                    isServer: false
+                }, res)
+
+                let message = `项目【${body.title}】已构建失败！`;
+                let deployState = {
+                    state: 2,
+                    type: 'deploy'
+                }
+                await logger.setlog({
+                    log: {
+                        message,
+                    },
+                    deployState,
+                    bid: body.commitBid
+                }, true, res)
+                res.json({ message: err, state: deployState, code: 500 });
             })
+        } else {
+            let message = `项目【${body.title}】已构建完成！`;
             let deployState = {
-                state: true,
-                type: 'port'
+                state: 1,
+                type: 'deploy'
             }
 
-            await logger.exitState({
-                bid: body.bid,
-                commitBid: body.commitBid,
+            await logger.setlog({
+                log: {
+                    message,
+                },
                 deployState,
-                isServer: true,
-            }, 'noExit')
-            res.json({ message, data: body.bid, code: 200 });
+                bid: body.commitBid
+            }, true, res)
 
-        }).catch(async err => {
-            let message = `项目【${body.title}】构建失败！`
-            await logger.updateCommit({
-                type: 'port',
-                message
-            }, body.commitBid).catch(err => {
-                // logger.exitProcess()
-            })
-
-            let deployState = {
-                state: false,
-                type: 'port'
-            }
-
-            await logger.exitState({
-                bid: body.bid,
-                commitBid: body.commitBid,
-                deployState,
-                isServer: false,
-            }, 'noExit')
-            await res.json({ message, state: deployState, code: 500 });
-        })
+            res.json({ message, key: body.bid, state: deployState, code: 200 });
+        }
     }
 });
 
-//项目重新部署(自动部署)
+//webHook重新部署更新
 router.post('/initReset', async (req, res, next) => {
     let body = req.body;
 
@@ -283,112 +303,115 @@ router.post('/initReset', async (req, res, next) => {
         res.json({ message: "Git 命令不存在，请安装后再试！", code: 500 });
         shell.exit(1);
     } else {
-        await logger.saveCommit([
-            {
-                type: 'start',
-                time: tools.dateTime(),
-                message: `准备构建${body.title}项目,请稍后...`
-            }
-        ], body.commitBid, body.bid).catch(async err => {
-            await res.json({
-                message: err, state: {
-                    state: false,
-                    type: 'start'
-                }, code: 500
-            });
 
+        await database.updateDeploy(body, res).then(() => {
+            console.log(`项目【${body.title}】信息更新成功！`)
         })
 
-        await logger.updateDeploy(body).catch(async err => {
-            await logger.updateCommit(
-                {
-                    type: 'start',
-                    message: err
-                }, body.commitBid).catch(err => {
-                    // logger.exitState()
-                })
-            let deployState = {
-                state: false,
-                type: 'start'
-            }
-            await logger.exitState({ commitBid: body.commitBid, deployState })
-            res.json({ message: err, state: deployState, code: 500 });
+        await database.saveCommit({
+            bid: body.commitBid,
+            projectId: body.bid,
+            activeType: 'resetInit'
+        }, res).then(() => {
+            console.log(`项目【${body.title}】日志信息创建成功！`)
         })
 
+        // 开始创建
+        await logger.setlog({
+            bid: body.commitBid,
+            log: {
+                message: `开始准备构建【${body.title}】项目，请稍后...`
+            }
+        }, true, res)
+
+
+        // 任务流开始 
         await workflow.initProject(body, res);
 
+
+        await logger.setlog({
+            log: {
+                message: '开始配置项目运行服务环境相关信息，请稍后...',
+            },
+            deployState: {
+                state: 0,
+                type: 'deploy'
+            },
+            bid: body.commitBid
+        }, true, res)
+
+
         if (body.port) {
-            await server.closeServer(body).catch(err => {
-                // logger.exitState()
-            })
 
-            await server.openServer(body).then(async () => {
-                let message = `项目【${body.title}】已构建完成，请访问【${body.port}】端口即可访问！`
-                await logger.updateCommit([
-                    {
-                        type: 'port',
-                        message
-                    }
-                ], body.commitBid).catch(err => {
-                    // logger.exitState()
-                })
-                let deployState = {
-                    state: true,
-                    type: 'port'
-                }
-
-                await logger.exitState({
-                    bid: body.bid,
-                    commitBid: body.commitBid,
-                    deployState,
-                    isServer: true,
-                }, 'noExit')
-                res.json({ message, data: body.bid, code: 200 });
-
-            }).catch(async err => {
-                let message = `项目【${body.title}】构建失败！`
-                await logger.updateCommit({
-                    type: 'port',
-                    message
-                }, body.commitBid).catch(err => {
-                    // logger.exitProcess()
-                })
-
-                let deployState = {
-                    state: false,
-                    type: 'port'
-                }
-
-                await logger.exitState({
-                    bid: body.bid,
-                    commitBid: body.commitBid,
-                    deployState,
-                    isServer: false,
-                }, 'noExit')
-                await res.json({ message, state: deployState, code: 500 });
-            })
-        } else {
-            let message = `项目【${body.title}】已构建完成！`
-            await logger.updateCommit([
-                {
-                    type: 'port',
-                    message
-                }
-            ], body.commitBid).catch(err => {
-                // logger.exitState()
-            })
-            let deployState = {
-                state: true,
-                type: 'port'
+            // 判断端口是否开启
+            // await server.portIsOccupied(body, null, res).catch(async () => {
+            //     await server.closeServer(body, null, res)
+            // })
+            let portState = await server.portInUse(body.port);
+            if (portState instanceof Error) {
+                await server.closeServer(body, null, res)
             }
 
-            await logger.exitState({
-                bid: body.bid,
-                commitBid: body.commitBid,
+            // 开启服务 
+            await server.openServer(body, null, res).then(async () => {
+
+                await database.updateDeploy({
+                    bid: body.bid,
+                    isServer: true
+                }, res)
+
+                let message = `项目【${body.title}】已构建完成，请访问（${body.port}）端口即可访问！`;
+                let deployState = {
+                    state: 1,
+                    type: 'deploy'
+                }
+
+                await logger.setlog({
+                    log: {
+                        message,
+                    },
+                    deployState,
+                    bid: body.commitBid
+                }, true, res)
+
+                res.json({ message, key: body.bid, state: deployState, code: 200 });
+            }).catch(async (err) => {
+
+                await database.updateDeploy({
+                    bid: body.bid,
+                    isServer: false
+                }, res)
+
+                let message = `项目【${body.title}】已构建失败！`;
+                let deployState = {
+                    state: 2,
+                    type: 'deploy'
+                }
+                await logger.setlog({
+                    log: {
+                        message,
+                    },
+                    deployState,
+                    bid: body.commitBid
+                }, true, res)
+                res.json({ message: err, state: deployState, code: 500 });
+            })
+        } else {
+            let message = `项目【${body.title}】已构建完成！`;
+            let deployState = {
+                state: 1,
+                type: 'deploy'
+            }
+
+            await logger.setlog({
+                log: {
+                    message,
+                },
                 deployState,
-                isServer: true,
-            }, 'noExit')
-            res.json({ message, data: body.bid, code: 200 });
+                bid: body.commitBid
+            }, true, res)
+
+            res.json({ message, key: body.bid, state: deployState, code: 200 });
         }
     }
 });
@@ -417,66 +440,40 @@ router.post('/relyInstall', async (req, res, next) => {
         shell.exit(1);
     } else {
 
-        await logger.saveCommit([
-            {
-                type: 'start',
-                time: tools.dateTime(),
-                message: `准备构建${body.title}项目,请稍后...`
+        await database.updateDeploy({
+            bid: body.bid,
+            commitBid: body.commitBid
+        }, res).then(() => {
+            console.log(`项目【${body.title}】信息更新成功！`)
+        })
+
+        await database.saveCommit({
+            bid: body.commitBid,
+            projectId: body.bid,
+            activeType: 'install'
+        }, res).then(() => {
+            console.log(`项目【${body.title}】日志信息创建成功！`)
+        })
+
+        // 开始创建
+        await logger.setlog({
+            bid: body.commitBid,
+            log: {
+                message: `项目${body.title}依赖正在重新安装中，请稍后...`
             }
-        ], body.commitBid, body.bid).catch(async err => {
-            await res.json({
-                message: err, state: {
-                    state: false,
-                    type: 'start'
-                }, code: 500
-            });
+        }, true, res)
 
-        })
-
-        await logger.updateDeploy(body).catch(async err => {
-            await logger.updateCommit(
-                {
-                    type: 'install',
-                    message: err
-                }, body.commitBid).catch(err => {
-                    // logger.exitState()
-                })
-            let deployState = {
-                state: false,
-                type: 'install'
-            }
-            await logger.exitState({ commitBid: body.commitBid, deployState })
-            await res.json({ message: err, state: deployState, code: 500 });
-        })
-
-
-        await logger.updateCommit({
-            type: 'install',
-            message: `项目${body.title}依赖正在重新安装中，请稍后...！`
-        }, body.commitBid).catch(err => {
-            // logger.exitProcess()
-        })
+        // 任务流开始 
         await workflow.initRely(body, res);
 
-        let message = `项目${body.title}依赖已重新安装，项目更新部署成功！`
-        await logger.updateCommit({
-            type: 'deploy',
-            message
-        }, body.commitBid).catch(err => {
-            // logger.exitProcess()
-        })
+        await logger.setlog({
+            log: {
+                message: `项目${body.title}依赖已重新安装，项目更新部署成功！`,
+            },
+            bid: body.commitBid
+        }, true, res)
 
-        let deployState = {
-            state: true,
-            type: 'port'
-        }
-
-        await logger.exitState({
-            bid: body.bid,
-            commitBid: body.commitBid,
-            deployState,
-        }, 'noExit')
-        await res.json({ message, data: body.bid, code: 200 });
+        await res.json({ message: `项目${body.title}依赖已重新安装，项目更新部署成功！`, data: body.bid, code: 200 });
     }
 });
 
@@ -490,68 +487,39 @@ router.post('/relyBuild', async (req, res, next) => {
         res.json({ message: "Git 命令不存在，请安装后再试！", result: false, code: 500 });
         shell.exit(1);
     } else {
+        await database.updateDeploy({
+            bid: body.bid,
+            commitBid: body.commitBid
+        }, res).then(() => {
+            console.log(`项目【${body.title}】信息更新成功！`)
+        })
+        await database.saveCommit({
+            bid: body.commitBid,
+            projectId: body.bid,
+            activeType: 'build'
+        }, res).then(() => {
+            console.log(`项目【${body.title}】日志信息创建成功！`)
+        })
 
-        await logger.saveCommit([
-            {
-                type: 'start',
-                time: tools.dateTime(),
-                message: `准备构建${body.title}项目,请稍后...`
+        // 开始创建
+        await logger.setlog({
+            bid: body.commitBid,
+            log: {
+                message: `项目${body.title}正在重新打包中，请稍后...`
             }
-        ], body.commitBid, body.bid).catch(async err => {
-            await res.json({
-                message: err, state: {
-                    state: false,
-                    type: 'start'
-                }, code: 500
-            });
+        }, true, res)
 
-        })
-
-        await logger.updateDeploy(body).catch(async err => {
-            await logger.updateCommit(
-                {
-                    type: 'build',
-                    message: err
-                }, body.commitBid).catch(err => {
-                    // logger.exitState()
-                })
-            let deployState = {
-                state: false,
-                type: 'build'
-            }
-            await logger.exitState({ commitBid: body.commitBid, deployState })
-            await res.json({ message: err, state: deployState, code: 500 });
-        })
-
-        await logger.updateCommit({
-            type: 'build',
-            message: `项目${body.title}正在重新打包中，请稍后...！`
-        }, body.commitBid).catch(err => {
-            // logger.exitProcess()
-        })
-
+        // 任务流开始 
         await workflow.initBuild(body, res);
 
-        let message = `项目${body.title}已重新打包完成，项目更新部署成功！`
+        await logger.setlog({
+            log: {
+                message: `项目${body.title}已重新打包完成，项目更新部署成功！`
+            },
+            bid: body.commitBid
+        }, true, res)
 
-        await logger.updateCommit({
-            type: 'build',
-            message
-        }, body.commitBid).catch(err => {
-            // logger.exitProcess()
-        })
-
-        let deployState = {
-            state: true,
-            type: 'port'
-        }
-
-        await logger.exitState({
-            commitBid: body.commitBid,
-            deployState,
-        }, 'noExit')
-
-        await res.json({ message, data: body.bid, code: 200 });
+        await res.json({ message: `项目${body.title}已重新打包完成，项目更新部署成功！`, data: body.bid, code: 200 });
     }
 });
 
@@ -568,320 +536,39 @@ router.post('/relyReset', async (req, res, next) => {
         shell.exit(1);
     } else {
 
-        await commitSchema.updateOne({ bid: body.commitBid }, { startTime: tools.dateTime() }, (err, data) => {
-            if (err) {
-                console.log(`项目构建状态更新失败：`, err)
-            }
+        await database.updateDeploy({
+            bid: body.bid,
+            commitBid: body.commitBid
+        }, res).then(() => {
+            console.log(`项目【${body.title}】信息更新成功！`)
         })
-        // await logger.saveCommit([
-        //     {
-        //         type: 'start',
-        //         time: tools.dateTime(),
-        //         message: `准备构建${body.title}项目，请稍后...`
-        //     }
-        // ], body.commitBid, body.bid).catch(async err => {
-        //     logger.exitState()
+        // await database.saveCommit({
+        //     bid: body.commitBid,
+        //     projectId: body.bid,
+        //     activeType: 'build'
+        // }, res).then(() => {
+        //     console.log(`项目【${body.title}】日志信息创建成功！`)
         // })
-        await logger.updateCommit(
-            {
-                type: 'start',
-                time: tools.dateTime(),
+
+        // 开始创建
+        await logger.setlog({
+            bid: body.commitBid,
+            log: {
                 message: `准备构建${body.title}项目，请稍后...`
-            }, body.commitBid).catch(err => {
-                // logger.exitState()
-            })
-
-
-        await logger.updateDeploy({ bid: body.bid, commitBid: body.commitBid, time: body.time }).catch(async err => {
-            await logger.updateCommit(
-                {
-                    type: 'start',
-                    message: err
-                }, body.commitBid).catch(err => {
-                    // logger.exitState()
-                })
-            let deployState = {
-                state: false,
-                type: 'start'
             }
-            await logger.exitState({ commitBid: body.commitBid, deployState })
-            await res.json({ message: err, state: deployState, code: 500 });
-        })
+        }, true, res)
 
+        // 任务流开始 
+        await workflow.initCommitReset(body, res);
 
-        await workflow.initReset(body, res);
+        await logger.setlog({
+            log: {
+                message: `项目${body.title}项目更新部署成功！`
+            },
+            bid: body.commitBid
+        }, true, res)
 
-        let message = `项目${body.title}已构建成功！`
-        await logger.updateCommit({
-            type: 'port',
-            message
-        }, body.commitBid).catch(err => {
-            // logger.exitProcess()
-        })
-
-        let deployState = {
-            state: true,
-            type: 'port'
-        }
-
-        await logger.exitState({
-            commitBid: body.commitBid,
-            deployState
-        }, 'noExit')
-        res.json({ message, data: body.bid, code: 200 });
-    }
-
-});
-
-//项目静态部署
-router.post('/initStatic', async (req, res, next) => {
-    let body = req.body;
-
-    body.commitBid = tools.getUid();
-    body.time = tools.dateTime();
-    body.isServer = false
-    body.isStatic = '1'
-
-    if (body.bid) {
-        await logger.saveCommit([
-            {
-                type: 'start',
-                time: tools.dateTime(),
-                message: `准备构建${body.title}项目目录信息,请稍后...`
-            }
-        ], body.commitBid, body.bid).catch(err => { })
-        await logger.updateDeploy(body).catch(err => { });
-    } else {
-
-        body.bid = tools.getUid();
-        await logger.saveCommit([
-            {
-                type: 'start',
-                time: tools.dateTime(),
-                message: `准备构建${body.title}项目目录信息,请稍后...`
-            }
-        ], body.commitBid, body.bid).catch(err => { })
-        await logger.saveDeploy(body).catch(err => { });
-    }
-    // await command.backupsWww(body, res)
-
-
-    let message = `准备上传【${body.title}】项目文件，请稍后...`
-    await logger.updateCommit({
-        type: 'port',
-        message
-    }, body.commitBid).catch(err => {
-        // logger.exitProcess()
-    })
-
-    let deployState = {
-        state: false,
-        type: 'port'
-    }
-    await logger.exitState({
-        bid: body.bid,
-        commitBid: body.commitBid,
-        deployState,
-        isServer: false,
-    }, 'noExit')
-    res.json({
-        message, data: {
-            bid: body.bid,
-            commitBid: body.commitBid,
-        }, code: 200
-    });
-});
-
-//项目静态部署将文件转到www文件夹下
-router.post('/deployReduction', async (req, res, next) => {
-    let body = req.body;
-
-    await logger.updateCommit({
-        type: 'port',
-        message: `准备将项目文件移动到部署根目录,请稍后...`
-    }, body.commitBid).catch(err => {
-        // logger.exitProcess()
-    })
-
-
-    await command.deleteRoot(body.bid, body.title, body.www, body.commitBid, res)
-    tools.mkdirsSync(path.join(__dirname, '../../www/' + body.www))
-    await command.mvReductionWww(body, res)
-    await logger.updateDeploy(body).catch(err => { });
-
-
-    if (body.port) {
-        await server.closeServer(body).catch(err => {
-            // logger.exitState()
-        })
-
-        await server.openServer(body).then(async () => {
-            let message = `项目【${body.title}】已构建完成，请访问【${body.port}】端口即可访问！`
-            await logger.updateCommit([
-                {
-                    type: 'port',
-                    message
-                }
-            ], body.commitBid).catch(err => {
-                // logger.exitState()
-            })
-            let deployState = {
-                state: true,
-                type: 'port'
-            }
-
-            await logger.exitState({
-                bid: body.bid,
-                commitBid: body.commitBid,
-                deployState,
-                isServer: true,
-            }, 'noExit')
-            res.json({ message, data: body.bid, code: 200 });
-
-        }).catch(async err => {
-            let message = `项目【${body.title}】构建失败！`
-            await logger.updateCommit({
-                type: 'port',
-                message
-            }, body.commitBid).catch(err => {
-                // logger.exitProcess()
-            })
-
-            let deployState = {
-                state: false,
-                type: 'port'
-            }
-
-            await logger.exitState({
-                bid: body.bid,
-                commitBid: body.commitBid,
-                deployState,
-                isServer: false,
-            }, 'noExit')
-            await res.json({ message, state: deployState, code: 500 });
-        })
-
-    } else {
-        let message = `【${body.title}】项目运行环境构建完成！`
-        await logger.updateCommit({
-            type: 'port',
-            message
-        }, body.commitBid).catch(err => {
-            // logger.exitProcess()
-        })
-
-        let deployState = {
-            state: true,
-            type: 'port'
-        }
-        await logger.exitState({
-            bid: body.bid,
-            commitBid: body.commitBid,
-            deployState,
-            isServer: true,
-        }, 'noExit')
-        res.json({ message, data: body.bid, code: 200 });
-    }
-});
-
-
-
-//项目重新部署(静态部署指定版本)
-router.post('/initReductionReset', async (req, res, next) => {
-    let body = req.body;
-    // body.oldCommitBid = body.commitBid
-    // body.commitBid = tools.getUid();
-
-    body.time = tools.dateTime();
-    body.isServer = false
-    body.isStatic = '1'
-
-
-    await logger.updateCommit({
-        type: 'build',
-        message: `准备重新构建${body.title}项目,请稍后...`
-    }, body.commitBid).catch(err => {
-        // logger.exitProcess()
-    })
-
- 
-    await command.deleteRoot(body.bid, body.title, body.www, body.commitBid, res)
-    tools.mkdirsSync(path.join(__dirname, '../../www/' + body.www))
-    await command.mvReductionWww(body, res)
-    await logger.updateDeploy(body).catch(err => { });
-
-
-    if (body.port) {
-        await server.closeServer(body).catch(err => {
-            // logger.exitState()
-        })
-
-        await server.openServer(body).then(async () => {
-            let message = `项目【${body.title}】已构建完成，请访问【${body.port}】端口即可访问！`
-            await logger.updateCommit([
-                {
-                    type: 'port',
-                    message
-                }
-            ], body.commitBid).catch(err => {
-                // logger.exitState()
-            })
-            let deployState = {
-                state: true,
-                type: 'port'
-            }
-
-            await logger.exitState({
-                bid: body.bid,
-                commitBid: body.commitBid,
-                deployState,
-                isServer: true,
-            }, 'noExit')
-            res.json({ message, data: body.bid, code: 200 });
-
-        }).catch(async err => {
-            let message = `项目【${body.title}】构建失败！`
-            await logger.updateCommit({
-                type: 'port',
-                message
-            }, body.commitBid).catch(err => {
-                // logger.exitProcess()
-            })
-
-            let deployState = {
-                state: false,
-                type: 'port'
-            }
-
-            await logger.exitState({
-                bid: body.bid,
-                commitBid: body.commitBid,
-                deployState,
-                isServer: false,
-            }, 'noExit')
-            await res.json({ message, state: deployState, code: 500 });
-        })
-
-    } else {
-        let message = `【${body.title}】项目运行环境构建完成！`
-        await logger.updateCommit({
-            type: 'port',
-            message
-        }, body.commitBid).catch(err => {
-            // logger.exitProcess()
-        })
-
-        let deployState = {
-            state: true,
-            type: 'port'
-        }
-        await logger.exitState({
-            bid: body.bid,
-            commitBid: body.commitBid,
-            deployState,
-            isServer: true,
-        }, 'noExit')
-        res.json({ message, data: body.bid, code: 200 });
+        await res.json({ message: `项目${body.title}项目更新部署成功！`, data: body.bid, code: 200 });
     }
 
 });
@@ -905,57 +592,39 @@ router.post('/updateInfo', (req, res, next) => {
 //删除项目信息
 router.post('/deleteInfo', async (req, res, next) => {
     let body = req.body;
-    let startIndex = body.git.lastIndexOf('/');
-    let endIndex = body.git.lastIndexOf('.');
-    let projectName = body.git.slice(startIndex + 1, endIndex);
 
-    if (body.port && body.isServer) {
-        await server.closeServer(body, (state, mes) => {
+    if (body.projectPort) {
+        let portState = await server.portInUse(body.port);
+        if (portState instanceof Error) {
+            await server.closeServer(body, null, res)
+        }
+        global.appServer[body.bid] = null;
+    }
 
+    if (body.projectInfo) {
+        await database.deleteDeploy({ bid: body.bid }, res).then(() => {
+            console.log(`项目【${body.title}】信息删除成功！`)
+        })
+        await database.deleteCommit({ bid: body.bid }, res).then(() => {
+            console.log(`项目【${body.title}】所有日志信息删除成功！`)
         })
     }
 
-    logger.deleteDeploy({ bid: body.bid }).then(async () => {
-
-        console.log(body.title + "项目删除成功！");
-
-        await logger.deleteCommit({ projectId: body.bid }).catch(err => {
-            // logger.exitProcess()
-        })
-
-        let result = shell.exec(`rm -rf ./${projectName}`, {
-            cwd: path.join(__dirname, '../../backups'),
+    if (body.projectBackups) {
+        let result = await shell.exec(`rm -rf ./${body.www}`, {
+            cwd: path.join(__dirname, `../../backups`),
         })
         console.log(result.stdout);
         console.log(result.stderr);
 
-        result = shell.exec(`rm -rf ./${body.www}`, {
+        result = await shell.exec(`rm -rf ./${body.www}`, {
             cwd: path.join(__dirname, '../../www'),
         })
         console.log(result.stdout);
         console.log(result.stderr);
+    }
 
-        res.json({ message: body.title + "项目删除成功！", code: 200 });
-    }).catch(() => {
-        res.json({ message: body.title + "项目删除失败！", code: 500 });
-    })
-
-
-    // deploySchema.deleteMany({ bid: body.bid }, (err, data) => {
-    //     if (err) {
-    //         console.log('错误信息：', err);
-    //     } else {
-    //         console.log(body.title + "项目删除成功！");
-    //     };
-    // });
-    // commitSchema.deleteMany({ bid: body.commitBid }, (err, data) => {
-    //     if (err) {
-    //         console.log('错误信息：', err);
-    //     } else {
-    //         console.log(body.title + "项目日志删除成功！");
-    //     };
-    // });
-    // res.json({ message: body.title + "项目删除成功！", code: 200 });
+    res.json({ message: body.title + "项目删除成功！", code: 200 });
 });
 
 //新增项目信息
@@ -1015,8 +684,6 @@ router.post('/saveInfo', async (req, res, next) => {
         }, 'noExit')
         res.json({ message, bid: body.bid, code: 500 });
     });
-
-
 });
 
 //切换路由模式
@@ -1025,156 +692,159 @@ router.post('/history', async (req, res, next) => {
     body.time = tools.dateTime();
 
     let message = '正在切换路由模式，请稍后...'
-
-    await logger.updateCommit({
-        type: 'router',
-        message
-    }, body.commitBid).catch(err => {
-        // logger.exitProcess()
-    })
+    await logger.setlog({
+        log: {
+            message
+        },
+        bid: body.commitBid
+    }, true, res)
 
     if (body.port && body.isServer) {
 
-        await server.closeServer(body, async (state, mes) => {
+        let portState = await server.portInUse(body.port);
+        if (portState instanceof Error) {
+            await server.closeServer(body, null, res)
+        }
 
-        })
-        await server.openServer(body, async (state, mes) => {
-            if (state) {
-                message = body.title + `项目路由已成功切换至${body.router}模式！`
-                await logger.updateCommit({
-                    type: 'router',
-                    message
-                }, body.commitBid).catch(err => {
-                    // logger.exitProcess()
-                })
+        // 开启服务 
+        await server.openServer(body, null, res).then(async () => {
 
-                await logger.updateDeploy(body).catch(err => {
-                    // logger.exitProcess()
-                })
-                let deployState = {
-                    state: true,
-                    type: 'port'
-                }
-                await logger.exitState({
-                    commitBid: body.commitBid,
-                    deployState,
-                }, 'noExit')
-                res.json({ message, state: deployState, code: 200 });
+            await database.updateDeploy({
+                bid: body.bid,
+                isServer: true
+            }, res)
 
-            } else {
-                message = `${body.title}项目路由切换失败！`
-                await logger.updateCommit({
-                    type: 'router',
-                    message
-                }, body.commitBid).catch(err => {
-                    // logger.exitProcess()
-                })
-                let deployState = {
-                    state: false,
-                    type: 'port'
-                }
-                await logger.exitState({
-                    commitBid: body.commitBid,
-                    deployState,
-                }, 'noExit')
-                res.json({ message, state: deployState, code: 500 });
+            let message = `项目${body.title}路由已成功切换至${body.router}模式！`;
+            let deployState = {
+                state: 1,
+                type: 'deploy'
             }
+            await logger.setlog({
+                log: {
+                    message,
+                },
+                deployState,
+                bid: body.commitBid
+            }, true, res)
+
+            res.json({ message, state: deployState, code: 200 });
+        }).catch(async (err) => {
+
+            await database.updateDeploy({
+                bid: body.bid,
+                isServer: false
+            }, res)
+
+            let message = `项目${body.title}路由模式切换失败！`;
+            let deployState = {
+                state: 2,
+                type: 'deploy'
+            }
+            await logger.setlog({
+                log: {
+                    message,
+                },
+                deployState,
+                bid: body.commitBid
+            }, true, res)
+            res.json({ message: err, state: deployState, code: 500 });
         })
 
     } else {
-        message = body.title + `项目路由已成功切换至${body.router}模式！`
-        await logger.updateCommit({
-            type: 'router',
-            message
-        }, body.commitBid).catch(err => {
-            // logger.exitProcess()
-        })
+        await database.updateDeploy({
+            bid: body.bid,
+            isServer: true
+        }, res)
 
-        await logger.updateDeploy(body).catch(err => {
-            // logger.exitProcess()
-        })
+        let message = `项目${body.title}路由已成功切换至${body.router}模式！`;
         let deployState = {
-            state: true,
-            type: 'port'
+            state: 1,
+            type: 'deploy'
         }
-        await logger.exitState({
-            commitBid: body.commitBid,
+        await logger.setlog({
+            log: {
+                message,
+            },
             deployState,
-        }, 'noExit')
+            bid: body.commitBid
+        }, true, res)
+
         res.json({ message, state: deployState, code: 200 });
     }
 });
 
 
 //关闭服务端口
-router.post('/closeServer', (req, res, next) => {
+router.post('/closeServer', async (req, res, next) => {
     let body = req.body;
-    server.closeServer(body, async (state, message) => {
-        if (state) {
-            await logger.updateCommit(
-                {
-                    type: 'port',
-                    state: false,
-                    message
-                }
-                , body.commitBid)
-            // 改变部署状态
-            await logger.exitState({
-                bid: body.bid,
-                isServer: false,
-            }, 'noExit')
 
-            res.json({ message, data: body.bid, code: 200 });
-        } else {
-            let message = `${body.title}服务关闭失败，请重试！`
-            await logger.updateCommit(
-                {
-                    type: 'port',
-                    message
-                }, body.commitBid).catch(err => {
-                    // logger.exitProcess()
-                })
+    await logger.setlog({
+        log: {
+            message: '正在关闭' + body.port + '端口服务，请稍后...',
+        },
+        bid: body.commitBid
+    }, false, res)
 
-            res.json({ message, code: 500 });
-        }
-    })
+    let portState = await server.portInUse(body.port);
+    if (portState instanceof Error) {
+
+        console.log(`项目【${body.title}】服务端口（${body.port}）已启用`);
+
+        await server.closeServer(body, async (state, message) => {
+            if (state) {
+                await database.updateDeploy({
+                    bid: body.bid,
+                    isServer: false
+                }, res)
+
+                res.json({ message, data: body.bid, code: 200 });
+            } else {
+                res.json({ message, code: 500 });
+            }
+        })
+
+    } else {
+        let message = `项目【${body.title}】服务端口（${body.port}）早已关闭`
+        console.log(message);
+        await database.updateDeploy({
+            bid: body.bid,
+            isServer: false
+        }, res)
+        res.json({ message, data: body.bid, code: 200 });
+    }
 
 });
 
 //开启服务端口
-router.post('/openServer', (req, res, next) => {
+router.post('/openServer', async (req, res, next) => {
     let body = req.body;
-    server.openServer(body, async (state, mes) => {
-        if (state) {
-            let message = `项目【${body.title}】服务端口【${body.port}】已开启成功！`
-            await logger.updateCommit(
-                {
-                    type: 'port',
-                    message
-                }, body.commitBid).catch(err => {
-                    // logger.exitProcess()
-                })
-            // 改变部署状态
-            await logger.exitState({
-                bid: body.bid,
-                isServer: true,
-            }, 'noExit')
+    await logger.setlog({
+        log: {
+            message: '正在开启' + body.port + '端口服务，请稍后...',
+        },
+        bid: body.commitBid
+    }, false, res)
 
+    let portState = await server.portInUse(body.port);
+    if (portState instanceof Error) {
+        await server.closeServer(body, null, res)
+    }
+    await server.openServer(body, async (state, message) => {
+        if (state) {
+            await database.updateDeploy({
+                bid: body.bid,
+                isServer: true
+            }, res)
             res.json({ message, data: body.bid, code: 200 });
-            console.log(message);
         } else {
-            let message = `项目${body.title}服务端口【${body.port}】开启失败，请重试！`
-            await logger.updateCommit(
-                {
-                    type: 'port',
-                    message
-                }, body.commitBid).catch(err => {
-                    // logger.exitProcess()
-                })
+            await database.updateDeploy({
+                bid: body.bid,
+                isServer: false
+            }, res)
             res.json({ message, code: 500 });
-            console.log(message);
         }
     })
+
 });
 
 //检测端口是否被占用
@@ -1262,15 +932,29 @@ router.post('/openAllServer', (req, res, next) => {
             for (let index = 0; index < data.length; index++) {
                 if (data[index].port) {
                     result.all++;
-                    await server.openServer(data[index]).catch(() => {
-                        result.error++
-                    })
-                    await logger.updateDeploy({ bid: data[index].bid, isServer: true }).then(() => {
-                        result.success++
-                        console.log(`${data[index].title}项目开启状态更新成功！`);
-                    }).catch(err => {
-                        result.error++
-                        console.log(`${data[index].title}项目开启状态更新失败！`);
+
+                    // 判断端口是否开启
+                    let portState = await server.portInUse(data[index].port);
+                    if (portState instanceof Error) {
+                        await server.closeServer(data[index], null, res)
+                    }
+                    // 开启端口
+                    await server.openServer(data[index], async (state, message) => {
+                        if (state) {
+                            await database.updateDeploy({
+                                bid: data[index].bid,
+                                isServer: true
+                            }, res)
+                            result.success++
+                            console.log(`${data[index].title}项目开启状态更新成功！`);
+                        } else {
+                            await database.updateDeploy({
+                                bid: data[index].bid,
+                                isServer: false
+                            }, res)
+                            result.error++
+                            console.log(`${data[index].title}项目开启状态更新失败！`);
+                        }
                     })
                 }
             }
@@ -1299,13 +983,25 @@ router.post('/closeAllServer', (req, res, next) => {
                     await server.closeServer(data[index]).catch(() => {
                         result.error++
                     })
-                    await logger.updateDeploy({ bid: data[index].bid, isServer: false }).then(() => {
+
+                    await database.updateDeploy({
+                        bid: data[index].bid,
+                        isServer: false
+                    }, res).then(() => {
                         result.success++
-                        console.log(`${data[index].title}项目关闭状态更新成功！`);
+                        console.log(`项目${data[index].title}服务关闭状态更新成功！`);
                     }).catch(err => {
                         result.error++
-                        console.log(`${data[index].title}项目关闭状态更新失败！`);
+                        console.log(`项目${data[index].title}服务关闭状态更新失败！`);
                     })
+
+                    // await logger.updateDeploy({ bid: data[index].bid, isServer: false }).then(() => {
+                    //     result.success++
+                    //     console.log(`项目${data[index].title}服务关闭状态更新成功！`);
+                    // }).catch(err => {
+                    //     result.error++
+                    //     console.log(`项目${data[index].title}服务关闭状态更新失败！`);
+                    // })
                 }
             }
 
@@ -1314,4 +1010,243 @@ router.post('/closeAllServer', (req, res, next) => {
     })
 })
 
+//项目静态部署
+router.post('/initStatic', async (req, res, next) => {
+    let body = req.body;
+
+    body.commitBid = tools.getUid();
+    body.time = tools.dateTime();
+    body.isServer = false
+    body.isStatic = '1'
+
+    if (body.bid) {
+        await database.updateDeploy(body, res).then(() => {
+            console.log(`项目${body.title}信息更新成功！`)
+        })
+    } else {
+        body.bid = tools.getUid();
+        await database.saveDeploy(body, res).then(() => {
+            console.log(`项目【${body.title}】信息创建成功！`)
+        })
+    }
+
+    if ((!body.port) && global.appServer[data.bid]) {
+        global.appServer[data.bid].close();
+    }
+
+    await database.saveCommit({
+        bid: body.commitBid,
+        projectId: body.bid
+    }, res).then(() => {
+        console.log(`准备构建 ${body.title} 项目目录信息，请稍后...`)
+    })
+
+    await tools.mkdirsSync(path.join(__dirname, `../../backups/${body.www}/${body.commitBid}`))
+
+    let message = `准备上传 ${body.title} 项目文件，请稍后...`
+
+    await logger.setlog({
+        log: {
+            message,
+        },
+        bid: body.commitBid
+    }, true, res)
+
+    res.json({ message, data: body, code: 200 });
+});
+
+//项目静态部署将文件转到www文件夹下
+router.post('/deployReduction', async (req, res, next) => {
+    let body = req.body;
+
+    await logger.setlog({
+        log: {
+            message: `准备将项目文件移动到部署根目录,请稍后...`
+        },
+        bid: body.commitBid
+    }, true, res)
+
+    // 任务流开始 
+    await workflow.initCommitReset(body, res);
+
+    // await command.deleteRoot(body.bid, body.title, body.www, body.commitBid, res)
+    // tools.mkdirsSync(path.join(__dirname, '../../www/' + body.www))
+    // await logger.updateDeploy(body).catch(err => { });
+    // await command.mvReductionWww(body, res)
+
+    if (body.port) {
+
+        // 判断端口是否开启
+        // await server.portIsOccupied(body, null, res).catch(async () => {
+        //     await server.closeServer(body, null, res)
+        // })
+        let portState = await server.portInUse(body.port);
+        if (portState instanceof Error) {
+            await server.closeServer(body, null, res)
+        }
+
+        // 开启服务 
+        await server.openServer(body, null, res).then(async () => {
+
+            await database.updateDeploy({
+                bid: body.bid,
+                isServer: true
+            }, res)
+
+            let message = `项目【${body.title}】已构建完成，请访问（${body.port}）端口即可访问！`;
+            let deployState = {
+                state: 1,
+                type: 'deploy'
+            }
+
+            await logger.setlog({
+                log: {
+                    message,
+                },
+                deployState,
+                bid: body.commitBid
+            }, true, res)
+
+            res.json({ message, state: deployState, code: 200 });
+        }).catch(async (err) => {
+
+            await database.updateDeploy({
+                bid: body.bid,
+                isServer: false
+            }, res)
+
+            let message = `项目【${body.title}】已构建失败！`;
+            let deployState = {
+                state: 2,
+                type: 'deploy'
+            }
+            await logger.setlog({
+                log: {
+                    message,
+                },
+                deployState,
+                bid: body.commitBid
+            }, true, res)
+            res.json({ message: err, state: deployState, code: 500 });
+        })
+    } else {
+        let message = `项目【${body.title}】已构建完成！`;
+        let deployState = {
+            state: 1,
+            type: 'deploy'
+        }
+
+        await logger.setlog({
+            log: {
+                message,
+            },
+            deployState,
+            bid: body.commitBid
+        }, true, res)
+
+        res.json({ message, state: deployState, code: 200 });
+    }
+});
+
+
+
+// //项目重新部署(静态部署指定版本)
+// router.post('/initReductionReset', async (req, res, next) => {
+//     let body = req.body;
+//     // body.oldCommitBid = body.commitBid
+//     // body.commitBid = tools.getUid();
+
+//     body.time = tools.dateTime();
+//     body.isServer = false
+//     body.isStatic = '1'
+
+
+//     await logger.updateCommit({
+//         type: 'build',
+//         message: `准备重新构建${body.title}项目,请稍后...`
+//     }, body.commitBid).catch(err => {
+//         // logger.exitProcess()
+//     })
+
+
+//     await command.deleteRoot(body.bid, body.title, body.www, body.commitBid, res)
+//     tools.mkdirsSync(path.join(__dirname, '../../www/' + body.www))
+//     await command.mvReductionWww(body, res)
+//     await logger.updateDeploy(body).catch(err => { });
+
+
+//     if (body.port) {
+//         await server.closeServer(body).catch(err => {
+//             // logger.exitState()
+//         })
+
+//         await server.openServer(body).then(async () => {
+//             let message = `项目【${body.title}】已构建完成，请访问【${body.port}】端口即可访问！`
+//             await logger.updateCommit([
+//                 {
+//                     type: 'port',
+//                     message
+//                 }
+//             ], body.commitBid).catch(err => {
+//                 // logger.exitState()
+//             })
+//             let deployState = {
+//                 state: true,
+//                 type: 'port'
+//             }
+
+//             await logger.exitState({
+//                 bid: body.bid,
+//                 commitBid: body.commitBid,
+//                 deployState,
+//                 isServer: true,
+//             }, 'noExit')
+//             res.json({ message, data: body.bid, code: 200 });
+
+//         }).catch(async err => {
+//             let message = `项目【${body.title}】构建失败！`
+//             await logger.updateCommit({
+//                 type: 'port',
+//                 message
+//             }, body.commitBid).catch(err => {
+//                 // logger.exitProcess()
+//             })
+
+//             let deployState = {
+//                 state: false,
+//                 type: 'port'
+//             }
+
+//             await logger.exitState({
+//                 bid: body.bid,
+//                 commitBid: body.commitBid,
+//                 deployState,
+//                 isServer: false,
+//             }, 'noExit')
+//             await res.json({ message, state: deployState, code: 500 });
+//         })
+
+//     } else {
+//         let message = `【${body.title}】项目运行环境构建完成！`
+//         await logger.updateCommit({
+//             type: 'port',
+//             message
+//         }, body.commitBid).catch(err => {
+//             // logger.exitProcess()
+//         })
+
+//         let deployState = {
+//             state: true,
+//             type: 'port'
+//         }
+//         await logger.exitState({
+//             bid: body.bid,
+//             commitBid: body.commitBid,
+//             deployState,
+//             isServer: true,
+//         }, 'noExit')
+//         res.json({ message, data: body.bid, code: 200 });
+//     }
+
+// });
 module.exports = router;

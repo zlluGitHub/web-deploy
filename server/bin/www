@@ -4,8 +4,9 @@ const app = express()
 const path = require('path')
 const http = require('http');
 const fs = require('fs');
-const config = require('../config.json');
+const config = require('../../config.json');
 const mongoose = require('mongoose');
+ 
 /**
  * 事件池(事件管理器)
  * 通过事件监听传值
@@ -20,21 +21,17 @@ global.connect = {
 };
 
 global.appServer = {}; //存放服务实例
-// global.socket = require('../websocket/index.js');
+
 // let proxy = require("http-proxy-middleware");
-
-
-// app.get('/', function (req, res) {
-//   res.send('hello world')
-// })
-
-// app.use(function (req, res) {
-//   res.send('Hello')
-// })
+ 
 // // 解决刷新页面后 页面404
-// let history = require('connect-history-api-fallback');
+let history = require('connect-history-api-fallback');
 // app.use(history({ verbose: true, index: '/index.html'}));
-// app.use(history());
+app.use(history());
+
+// 启用 gzip
+let compression = require('compression')
+app.use(compression());
 
 let bodyParser = require('body-parser');
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -59,18 +56,20 @@ app.use('/swd/deploy', require('../routes/deploy'));
 app.use('/swd/commit', require('../routes/commit'));
 app.use('/swd/git', require('../routes/webhook'));
 app.use('/swd/fileEdit', require('../routes/fileEdit'));
+app.use('/swd/person/oauth', require('../routes/oauth'));
+app.use('/swd/person/user', require('../routes/user'));
 
-app.use(express.static(path.join(__dirname, 'web')))
+app.use(express.static(path.join(__dirname, '../../dist')))
 
 //解决跨域
-app.all('*', function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Content-Type,Content-Length, Authorization,Origin,Accept,X-Requested-With');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-  // res.header('X-Powered-By', '3.2.1');
-  // res.header('Content-Type', 'application/json;charset=utf-8');
-  next();
-});
+// app.all('*', function (req, res, next) {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header('Access-Control-Allow-Headers', 'Content-Type,Content-Length, Authorization,Origin,Accept,X-Requested-With');
+//   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+//   // res.header('X-Powered-By', '3.2.1');
+//   // res.header('Content-Type', 'application/json;charset=utf-8');
+//   next();
+// });
 
 // 创建服务
 let server = http.createServer(app);

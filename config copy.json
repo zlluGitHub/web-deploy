@@ -1,0 +1,37 @@
+{
+    "database": {
+        "port": "27019",
+        "ip": "152.136.101.31"
+    },
+    "port": 3006,
+    "oauth": {
+        "github": {
+            "state": true,
+            "client_ID": "597827f3b2327150f3d7",
+            "client_Secret": "e9a3d245b0842f4a1d619234ff00c3bdfd8382a0",
+            "authorize_url":"https://github.com/login/oauth/authorize",
+            "access_token_url": "https://github.com/login/oauth/access_token",
+            "user_info_url": "https://api.github.com/user",
+            "name": "zlluGitHub"
+        },
+        "gitee": {
+            "state": true,
+            "headers": {
+                "User-Agent": "zlluGitHub"
+            },
+            "client_ID": "f8747cff265598b49d5490eec1b922e362c99a332e2ba5592124af3a98884464",
+            "client_Secret": "70a6aa2f40d2f744236457652d57f2c7220735097d5ab61a0c8ffa569f67f218",
+            "authorize_url":"https://gitee.com/oauth/authorize",
+            "access_token_url": "https://gitee.com/oauth/token",
+            "user_info_url": "https://gitee.com/api/v5/user"
+        },
+        "gitlab": {
+            "state": true,
+            "client_ID": "390ffc00b6b1cb0dbcf34951a155d13a38ff2155b6ce711db91ade467a31974e",
+            "client_Secret": "5da6c3d5f2c06b60cd13fce3ffb5ca178f6d12e9407e072282468ecb602d5c60",
+            "authorize_url":"http://10.0.88.41:8888/oauth/authorize",
+            "access_token_url": "http://10.0.88.41:8888/oauth/token",
+            "user_info_url": "http://10.0.88.41:8888/api/v4/user"
+        }
+    }
+}

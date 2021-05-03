@@ -1,270 +1,62 @@
-
-// let log4js = require("log4js");
-// log4js.configure({
-//     appenders: {
-//         fileout: {
-//             type: "file",
-//             filename: './server/logs/file/zll.log',//您要写入日志文件的路径
-//         },
-//         datafileout: {
-//             type: "dateFile",
-//             filename: './server/logs/file/zll.log',
-//             pattern: ".yyyy-MM-dd-hh-mm-ss-SSS.log"
-//         },
-//         consoleout: { type: "console" },
-//     },
-//     categories: {
-//         default: { appenders: ["fileout", "consoleout"], level: "debug" },
-//         anything: { appenders: ["consoleout"], level: "debug" }
-//     }
-// });
-// // 设置日志记录级别，记录当前级别及以后 ALL < TRACE < DEBUG < INFO < WARN < ERROR < FATAL < MARK < OFF
-// // log.level = 'error'
-
-// let logger = log4js.getLogger('anything');
-// logger.info('result.stderr')
-
-// module.exports = logger
-
-/*
-  基本使用
- */
-// const winston = require('winston');
-// const path = require('path');
-// const transportConsole = new winston.transports.Console({
-//     json: false,
-//     timestamp: true,
-//     prettyPrint: true,
-//     colorize: true,
-//     level: 'debug'
-// });
-// const transportFileDebug = new winston.transports.File({
-//     filename: path.join(__dirname, './file/index.log'),
-//     json: true,
-//     level: 'debug'
-// });
-
-// const logger = winston.createLogger({
-//     levels: {
-//         error: 0,
-//         warn: 1,
-//         info: 2,
-//         debug: 3,
-//     },
-//     transports: [
-//         transportConsole,
-//         transportFileDebug
-//     ],
-//     exceptionHandlers: [
-//         transportConsole,
-//         transportFileDebug
-//     ],
-//     exitOnError: false
-// });
-
-// winston.addColors({
-//     debug: 'blue',
-//     info: 'green',
-//     warn: 'yellow',
-//     error: 'red'
-// });
-
-// logger.debug('debug message');
-// logger.info('info message');
-// logger.warn('warn message');
-// logger.error('error message');
-
-/*
- clone:开始构建
- install:初始化
- build:打包
- deploy:部署成功
-*/
-
 const commitSchema = require("../schema/commit");
-const deploySchema = require("../schema/deploy");
 const tools = require("../public/javascripts/tools");
 module.exports = {
-    updateCommit: (log, bid) => {
+    setlog: (body, isSend, res) => {
         return new Promise((resolve, reject) => {
             let conn = global.connect.conn;
-            commitSchema.find({ bid }, async (err, data) => {
+            commitSchema.find({ bid: body.commitBid ? body.commitBid : body.bid }, (err, data) => {
                 if (err) {
-                    console.log('日志信息检索失败：', err);
-                    if (conn.sendText) conn.sendText("日志信息检索失败！");
-                    if (conn.sendText) conn.sendText(err);
-                    reject('日志信息检索失败：' + err)
+                    console.log(err);
+                    if (conn.sendText && isSend) conn.sendText(err);
+                    if (res) res.json({
+                        message: err, code: 500
+                    });
+                    console.log(`构建程序成功退出！`)
+                    process.exitCode = 1;
                 } else {
                     let logConent = data[0].log;
-                    if (Array.isArray(log)) {
-                        log.forEach(item => {
+                    if (Array.isArray(body.log)) {
+                        body.log.forEach(item => {
                             item.time = tools.dateTime()
                             console.log(item.message);
-                            if (conn.sendText) conn.sendText(item.message);
+                            if (conn.sendText && isSend) conn.sendText(item.message);
                         })
-                        logConent = [...logConent, ...log]
+                        logConent = [...logConent, ...body.log]
                     } else {
-                        log.time = tools.dateTime()
-                        logConent = [...logConent, log]
-                        console.log(log.message);
-                        if (conn.sendText) conn.sendText(log.message);
+                        body.log.time = tools.dateTime()
+                        logConent = [...logConent, body.log]
+                        console.log(body.log.message);
+                        if (conn.sendText && isSend) conn.sendText(body.log.message);
                     }
-
-                    commitSchema.updateOne({ bid }, { $set: { endTime: tools.dateTime(), log: logConent } }, (err, data) => {
+                    body.log = logConent;
+                    if (body.deployState) {
+                        body.deployState = { ...data[0].deployState, ...body.deployState }
+                    }
+                    body.endTime = tools.dateTime();
+                    commitSchema.updateOne({ bid: body.bid }, body, (err, data) => {
                         if (err) {
-                            console.log('日志信息更新失败：', err);
-                            if (conn.sendText) conn.sendText("日志信息更新失败！");
-                            if (conn.sendText) conn.sendText(err);
-                            reject('日志信息更新失败：' + err)
+                            console.log(err);
+                            if (conn.sendText && isSend) conn.sendText(err);
+                            if (res) res.json({
+                                message: err, code: 500
+                            });
+                            console.log(`构建程序成功退出！`)
+                            process.exitCode = 1;
+
                         } else {
-                            resolve(data)
+                            resolve();
                         }
                     });
                 }
             });
         });
     },
-    exitState: (body, mark) => {
-
-        if (body && body.bid && (typeof body.isServer === 'boolean')) {
-            deploySchema.updateOne({ bid: body.bid }, { isServer: body.isServer }, (err, data) => {
-                if (err) {
-                    console.log(`项目构建状态更新失败：`, err)
-                }
-            })
-        }
-
-        if (body && body.commitBid) {
-            let query = {
-                endTime: tools.dateTime(),
-            }
-            if (body.deployState) {
-                query.deployState = body.deployState
-            }
-            if (body.hookPayload) {
-                query.hookPayload = body.hookPayload
-            }
-            commitSchema.updateOne({ bid: body.commitBid }, query, (err, data) => {
-                if (err) {
-                    console.log(`项目构建状态更新失败：`, err)
-                }
-            })
-        }
-
-        console.log(`项目构建状态更新成功！`)
-        if (global.connect.server) global.connect.server.close()
-        global.connect = {
-            conn: {},
-            server: null,
-        };
-        if ((!mark) && someConditionNotMet()) {
+    exitProcess: () => {
+        // 如何正确设置退出码，同时让进程正常退出。
+        if (someConditionNotMet()) {
             console.log(`构建程序成功退出！`)
             printUsageToStdout();
             process.exitCode = 1;
         }
-
-    },
-    saveCommit: (log, bid, projectId) => {
-        let conn = global.connect.conn;
-        return new Promise((resolve, reject) => {
-            bid = bid ? bid : tools.getUid()
-            let body = {
-                startTime: tools.dateTime(),
-                bid,
-                endTime: tools.dateTime(),
-                log,
-                projectId,
-                deployState: {
-                    state: false,
-                    type: 'start'
-                },
-                hookPayload: {
-                    isExit: false,
-                    before: "",
-                    after: "",
-                    url: "",
-                    added: "",
-                    removed: "",
-                    modified: "",
-                    commitId: bid,
-                    message: ""
-                },
-            }
-            commitSchema.create(body, (err, data) => {
-                if (err) {
-                    console.log('日志信息保存失败：', err)
-                    if (conn.sendText) conn.sendText(err);
-                    reject('日志信息保存失败：' + err)
-                } else {
-                    resolve(data)
-                }
-            });
-        });
-    },
-    saveDeploy: (body) => {
-        let conn = global.connect.conn;
-        return new Promise((resolve, reject) => {
-            deploySchema.create(body, (err, data) => {
-                if (err) {
-                    console.log('项目信息保存失败：', err)
-                    if (conn.sendText) conn.sendText(err);
-                    reject('项目信息保存失败：' + err)
-                } else {
-                    resolve(data)
-                }
-            })
-        });
-    },
-    updateDeploy: (body) => {
-        let conn = global.connect.conn;
-        return new Promise((resolve, reject) => {
-            deploySchema.updateOne({ bid: body.bid }, body, (err, data) => {
-                if (err) {
-                    console.log('项目信息更新失败：', err)
-                    if (conn.sendText) conn.sendText(err);
-                    reject('项目信息更新失败：' + err)
-                } else {
-                    resolve(data)
-                }
-            })
-        });
-    },
-    getDeploy: (bid) => {
-        return new Promise((resolve, reject) => {
-            deploySchema.find({ bid }, (err, data) => {
-                if (err) {
-                    console.log('项目信息获取失败：', err)
-                    reject(err)
-                } else {
-                    resolve(data[0])
-                }
-            })
-        });
-    },
-    deleteDeploy: (body) => {
-        return new Promise((resolve, reject) => {
-            deploySchema.deleteMany(body, (err, data) => {
-                if (err) {
-                    console.log('项目信息删除失败：', err)
-                    reject(err)
-                } else {
-                    resolve(data)
-                }
-            })
-        });
-    },
-    deleteCommit: (body) => {
-        return new Promise((resolve, reject) => {
-            commitSchema.deleteMany(body, (err, data) => {
-                if (err) {
-                    console.log('日志信息删除失败：', err)
-                    reject(err)
-                } else {
-                    resolve(data)
-                }
-            })
-        });
-    },
-
-
+    }
 }

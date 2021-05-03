@@ -1,22 +1,15 @@
 {
     "database": {
-        "port": "27019",
-        "ip": "152.136.101.31"
+        "port": "27017",
+        "ip": "127.0.0.1"
     },
     "port": 3006,
-    "email": {
-        "state": true,
-        "host": "smtp.163.com",
-        "port": 465,
-        "from": "",
-        "password": "",
-        "subject": ""
-    },
     "oauth": {
         "github": {
             "state": false,
             "client_ID": "",
             "client_Secret": "",
+            "authorize_url":"",
             "access_token_url": "https://github.com/login/oauth/access_token",
             "user_info_url": "https://api.github.com/user",
             "name": ""
@@ -28,6 +21,7 @@
             "headers": {
                 "User-Agent": ""
             },
+            "authorize_url":"",
             "access_token_url": "https://gitee.com/oauth/token",
             "user_info_url": "https://gitee.com/api/v5/user"
         },
@@ -35,6 +29,7 @@
             "state": false,
             "client_ID": "",
             "client_Secret": "",
+            "authorize_url":"",
             "access_token_url": "",
             "user_info_url": ""
         }

@@ -21,6 +21,10 @@ let commitSchema = new Schema({
         type: String,
         default: ""
     },
+    activeType: {
+        type: String,
+        default: ""
+    },
 
     deployState: {
         type: Object,

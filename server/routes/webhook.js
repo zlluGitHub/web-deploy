@@ -5,62 +5,26 @@ const router = express.Router();
 const tools = require("../public/javascripts/tools");
 const logger = require("../logs/index");
 const workflow = require('../workflow');
+const database = require('../database/index.js');
 
 
-
-router.post('/webhook', async (req, res, next) => {
+router.post('/webhook', (req, res, next) => {
     let resBody = req.body; //Gitea
     let key = req.get('X-Gitee-Token'); //gitlab 
+    database.getDeploy(key).then(async body => {
+        console.log(body);
+        if (body && body.isAuto) {
 
-    await logger.getDeploy(key).then(async body => {
-        body.commitBid = tools.getUid();
-        body.time = tools.dateTime();
-        if (body.isAuto) {
+            body.commitBid = tools.getUid();
+            body.time = tools.dateTime();
 
-            await logger.saveCommit([
-                {
-                    type: 'start',
-                    time: tools.dateTime(),
-                    message: `准备构建${body.title}项目,请稍后...`
-                }
-            ], body.commitBid, body.bid).catch(async err => {
-                logger.exitState()
+            await database.updateDeploy(body).then(() => {
+                console.log(`项目【${body.title}】信息更新成功！`)
             })
 
-            await logger.updateDeploy(body).catch(async err => {
-                await logger.updateCommit(
-                    {
-                        type: 'start',
-                        message: err
-                    }, body.commitBid).catch(err => {
-                        // logger.exitState()
-                    })
-                let deployState = {
-                    state: false,
-                    type: 'start'
-                }
-                await logger.exitState({ commitBid: body.commitBid, deployState })
-                await res.json({ message: err, state: deployState, code: 500 });
-            })
-
-            await workflow.initWebhook(body, res);
-
-            let message = `项目${body.title}已构建成功！`
-            await logger.updateCommit({
-                type: 'port',
-                message
-            }, body.commitBid).catch(err => {
-                // logger.exitProcess()
-            })
-
-            let deployState = {
-                state: true,
-                type: 'port'
-            }
-
-            await logger.exitState({
-                commitBid: body.commitBid,
-                deployState,
+            await database.saveCommit({
+                bid: body.commitBid,
+                projectId: body.bid,
                 hookPayload: {
                     isExit: true,
                     before: resBody.before,
@@ -71,17 +35,52 @@ router.post('/webhook', async (req, res, next) => {
                     modified: resBody.commits[0].modified,
                     commitId: resBody.after,
                     message: resBody.commits[0].message
+                },
+                activeType: 'gitHook'
+            }).then(() => {
+                console.log(`项目【${body.title}】日志信息创建成功！`)
+            })
+
+            // 开始创建
+            await logger.setlog({
+                bid: body.commitBid,
+                log: {
+                    message: `开始准备构建【${body.title}】项目，请稍后...`
                 }
-            }, 'noExit')
+            }, true)
+
+            // 任务流开始 
+            await workflow.initWebhook(body, res);
+
+            await logger.setlog({
+                log: {
+                    message: '开始配置项目运行服务环境相关信息，请稍后...',
+                },
+                deployState: {
+                    state: 0,
+                    type: 'deploy'
+                },
+                bid: body.commitBid
+            }, true)
+
+            let message = `项目【${body.title}】已构建完成！`;
+            let deployState = {
+                state: 1,
+                type: 'deploy'
+            }
+
+            await logger.setlog({
+                log: {
+                    message,
+                },
+                deployState,
+                bid: body.commitBid
+            }, true)
 
         }
-
-        res.json({ message, state: deployState, code: 200 });
-
-    }).catch(err => {
-        res.json({ message: err, code: 500 });
     })
 
+    res.json({ code: 200 });
 });
 
 module.exports = router;

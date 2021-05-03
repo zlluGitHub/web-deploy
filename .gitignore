@@ -2,7 +2,9 @@
 node_modules
 /dist
 backups/*
-www/*
+/www
+/src
+/backups
 # local env files
 .env.local
 .env.*.local

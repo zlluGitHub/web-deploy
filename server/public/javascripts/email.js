@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const config = require('../../config.json');
+const config = require('../../../config.json');
 // 参数：发件人，收件人，主题，正文（支持html格式）
 function sendMail(tos, msg) {
     let from = config.email.from;
