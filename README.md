@@ -8,8 +8,8 @@
 ## 简述
 Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动化部署平台，相较于强大的 Jenkins 配置更加简单、使用更加方便快捷！支持发布版本回滚、各种 Web 的跨域部署等，目前此平台支持静态资源、 Vue、React 项目部署。若有任何疑问欢迎在  [Issues](https://github.com/zlluGitHub/web-deploy/issues)  留言一起讨论。本项目将持续更新中...  ٩(๑>◡<๑)۶ 
 - 演示地址：[http://swd.zhenglinglu.cn](http://swd.zhenglinglu.cn)
-- GitHub：[https://github.com/zlluGitHub/swd-server](https://github.com/zlluGitHub/swd-server)
-- 说明文档：[https://zllugithub.github.io/web-deploy/](https://zllugithub.github.io/web-deploy/)
+- GitHub：[https://github.com/zlluGitHub/web-deploy](https://github.com/zlluGitHub/web-deploy)
+<!-- - 说明文档：[https://zllugithub.github.io/web-deploy/](https://zllugithub.github.io/web-deploy/) -->
 
 ## 主要技术栈
 - 前端：Vue（全家桶）、font-awesome、view-design
@@ -29,6 +29,34 @@ Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动�
 
 ## 简易示意图
 ![image](./images/20200626121718.jpg)
+
+## 部分截图
+
+- 登录部分
+
+![image](./images/9.png)
+
+- 首页部分
+
+![image](./images/6.png)
+
+- 自动部署
+
+![image](./images/7.png)
+
+- 静态部署
+
+![image](./images/8.png)
+
+- 部署列表
+
+![image](./images/4.png)
+
+- 部署日志部分
+
+![image](./images/2.png)
+
+![image](./images/3.png)
 
 ## 快速开始配置环境
 
@@ -200,7 +228,7 @@ pm2 start ./server/www --name=web-deploy
 5、填写项目的部署摘要内容；
 6、点击提交部署即可；
 
-<!-- ![image](./images/20200625145530.jpg) -->
+![image](./images/8.png)
 
 ### 自动化部署
 1、填写（选择）项目名称；
@@ -213,11 +241,11 @@ pm2 start ./server/www --name=web-deploy
 8、填写项目的部署摘要内容；
 9、点击提交部署即可；
 
-<!-- ![image](./images/20200705161150.jpg) -->
+![image](./images/7.png)
 
-注意：此部署方式部署时间会根据项目的大小而不同，请耐心等待即可，另外，部署成功之后会返回一个 key 值，此 key 值将用于关联Git，且只会出现一次。
+注意：此部署方式部署时间会根据项目的大小而不同，请耐心等待即可，另外，部署成功之后会返回一个 key 值，此 key 值将用于关联Git。
 
-<!-- ![image](./images/key_20200706125626.jpg) -->
+![image](./images/5.png)
 
 ### 关联 Git 实现自动部署
 #### 关联 gitea 
@@ -263,6 +291,3 @@ pm2 start ./server/www --name=web-deploy
 
 ![image](./images/g_20200705171043.jpg)
 
-## 彩蛋
-
-![image](./images/index.jpg)
