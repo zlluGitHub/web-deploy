@@ -3,11 +3,11 @@ const CompressionPlugin = require("compression-webpack-plugin")
 module.exports = {
   pwa: {
     iconPaths: {
-      favicon32: './ico.png',
-      favicon16: './ico.png',
-      appleTouchIcon: './ico.png',
-      maskIcon: './ico.png',
-      msTileImage: './ico.png'
+      favicon32: 'ico.png',
+      favicon16: 'ico.png',
+      appleTouchIcon: 'ico.png',
+      maskIcon: 'ico.png',
+      msTileImage: 'ico.png'
     }
   },
   configureWebpack: config => {
