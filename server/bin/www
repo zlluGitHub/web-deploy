@@ -81,8 +81,7 @@ server.on('listening', function () {
   console.log("server listening at " + config.port + ' port');
 });
 
-
-mongoose.connect(`mongodb://${config.database.ip}:${config.database.port}/SimpleDesign`, { useNewUrlParser: true, useUnifiedTopology: true }, err => {
+mongoose.connect(`mongodb://${config.database.username}:${config.database.password}@${config.database.ip}:${config.database.port}/SimpleDesign`, { useNewUrlParser: true, useUnifiedTopology: true }, err => {
   if (err) {
     console.log('Connection Error:' + err);
   } else {

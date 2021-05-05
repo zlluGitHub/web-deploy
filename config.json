@@ -1,7 +1,9 @@
 {
     "database": {
         "port": "27017",
-        "ip": "127.0.0.1"
+        "ip": "127.0.0.1",
+        "username": "",
+        "password": ""
     },
     "port": 3006,
     "oauth": {
@@ -9,7 +11,7 @@
             "state": false,
             "client_ID": "",
             "client_Secret": "",
-            "authorize_url":"",
+            "authorize_url": "",
             "access_token_url": "https://github.com/login/oauth/access_token",
             "user_info_url": "https://api.github.com/user",
             "name": ""
@@ -21,7 +23,7 @@
             "headers": {
                 "User-Agent": ""
             },
-            "authorize_url":"",
+            "authorize_url": "",
             "access_token_url": "https://gitee.com/oauth/token",
             "user_info_url": "https://gitee.com/api/v5/user"
         },
@@ -29,7 +31,7 @@
             "state": false,
             "client_ID": "",
             "client_Secret": "",
-            "authorize_url":"",
+            "authorize_url": "",
             "access_token_url": "",
             "user_info_url": ""
         }
