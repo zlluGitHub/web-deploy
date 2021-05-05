@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "vue-cli-service serve",
-    "build": "vue-cli-service build && node ./webpack.js",
+    "build:web": "vue-cli-service build",
+    "build:server": "node ./webpack.js",
     "server": "supervisor -i node_modules ./server/bin/www",
     "analyzer": "cross-env use_analyzer=true vue-cli-service build",
     "lint": "vue-cli-service lint"
