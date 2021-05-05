@@ -6,7 +6,7 @@ const http = require('http');
 const fs = require('fs');
 const config = require('../../config.json');
 const mongoose = require('mongoose');
- 
+
 /**
  * 事件池(事件管理器)
  * 通过事件监听传值
@@ -23,7 +23,7 @@ global.connect = {
 global.appServer = {}; //存放服务实例
 
 // let proxy = require("http-proxy-middleware");
- 
+
 // // 解决刷新页面后 页面404
 let history = require('connect-history-api-fallback');
 // app.use(history({ verbose: true, index: '/index.html'}));
@@ -81,7 +81,8 @@ server.on('listening', function () {
   console.log("server listening at " + config.port + ' port');
 });
 
-mongoose.connect(`mongodb://${config.database.username}:${config.database.password}@${config.database.ip}:${config.database.port}/SimpleDesign`, { useNewUrlParser: true, useUnifiedTopology: true }, err => {
+let auth = (config.database.username && config.database.password) ? `${config.database.username}:${config.database.password}@` : ""
+mongoose.connect(`mongodb://${auth}${config.database.ip}:${config.database.port}/SimpleDesign`, { useNewUrlParser: true, useUnifiedTopology: true }, err => {
   if (err) {
     console.log('Connection Error:' + err);
   } else {
