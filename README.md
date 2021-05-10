@@ -1,5 +1,4 @@
-<p align="center"><a href="javascript:void(0);" target="_blank"><img width="160"src="./images/logo.png"></a></p>
-<!-- <p align="center"><a href="http://swd.zhenglinglu.cn" target="_blank"><img width="160"src="./images/logo.png"></a></p> -->
+<p align="center"><a href="http://swd.zhenglinglu.cn" target="_blank"><img width="160"src="./images/logo.png"></a></p>
 
 <!-- # Web Deploy 前端自动化部署平台 -->
 <h1 align="center">Web Deploy 前端自动化部署平台</h1>
@@ -8,9 +7,8 @@
 
 ## 简述
 Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动化部署平台，相较于强大的 Jenkins 配置更加简单、使用更加方便快捷！支持发布版本回滚、各种 Web 的跨域部署等，目前此平台支持静态资源、 Vue、React 项目部署。若有任何疑问欢迎在  [Issues](https://github.com/zlluGitHub/web-deploy/issues)  留言一起讨论。本项目将持续更新中...  ٩(๑>◡<๑)۶ 
-<!-- - 演示地址：[http://swd.zhenglinglu.cn](http://swd.zhenglinglu.cn) -->
+- 演示地址：[http://swd.zhenglinglu.cn](http://swd.zhenglinglu.cn)
 - GitHub：[https://github.com/zlluGitHub/web-deploy](https://github.com/zlluGitHub/web-deploy)
-- Gitee：[https://gitee.com/zlluGitHub/web-deploy](https://gitee.com/zlluGitHub/web-deploy)
 <!-- - 说明文档：[https://zllugithub.github.io/web-deploy/](https://zllugithub.github.io/web-deploy/) -->
 
 ## 主要技术栈
@@ -128,12 +126,12 @@ mv mongodb-linux-x86_64-rhel70-4.0.1 mongodbserver
 以 Linux CentOS 7 为例
 ```bash
 git clone https://github.com/zlluGitHub/web-deploy.git
-node ./server/www
+node ./lib/www
 ```
 或者使用 pm2 使进程常驻后台
 ```bash
 git clone https://github.com/zlluGitHub/web-deploy.git
-pm2 start ./server/www --name=web-deploy
+pm2 start ./lib/www --name=web-deploy
 ```
 ### 配置文件 config.json 说明
 ```json
