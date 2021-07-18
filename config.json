@@ -1,5 +1,6 @@
 {
     "database": {
+        "name": "web_deploy",
         "port": "27017",
         "ip": "127.0.0.1",
         "username": "",
