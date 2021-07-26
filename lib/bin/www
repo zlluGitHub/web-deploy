@@ -6,16 +6,16 @@ const http = require('http');
 const fs = require('fs-extra')
 const config = require('../../config.json');
 const mongoose = require('mongoose');
-const createError = require('http-errors'); 
-
+const createError = require('http-errors');
 global.ws = require("nodejs-websocket")
 global.connect = {
   conn: {},
   server: null,
 };
 
-global.appServer = {}; //存放服务实例
+global.appServer = {}; 
 
+// 解决刷新页面后 页面404
 let history = require('connect-history-api-fallback');
 app.use(history());
 
@@ -36,7 +36,6 @@ app.use('/swd/person/oauth', require('../routes/oauth'));
 app.use('/swd/person/user', require('../routes/user'));
 
 app.use(express.static(path.join(__dirname, '../../dist')))
-
 app.use(function (req, res, next) {
   let error = createError(404);
   next(error);
@@ -57,8 +56,6 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.json(result);
 });
-
-
 
 // 创建服务
 let server = http.createServer(app);
