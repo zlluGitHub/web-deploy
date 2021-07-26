@@ -113,7 +113,7 @@ node -v
 npm -v
 ````
 若出现版本号则安装成功！
-参考资料：[CentOS 7上安装 Node.js 的 4 种方法（包含npm）](http://zhenglinglu.cn/node/node_i_linux/)
+参考资料：[CentOS 7上安装 Node.js 的 4 种方法（包含npm）](http://zhenglinglu.cn/artical?bid=5bda9b07-5810-4c51-aad1-8121e22c3858&pwd=%2Fnode)
 #### 安装cnpm
 ````bash
 npm install cnpm -g --registry=https://r.npm.taobao.org
@@ -128,7 +128,7 @@ npm install -g pm2
 ````bash
 git -v
 ````
-若出现版本号则安装成功！参考资料：[Linux（centos7）下 pm2 的安装步骤及问题总结](http://zhenglinglu.cn/web/linux_pm2/)
+若出现版本号则安装成功！参考资料：[Linux（centos7）下 pm2 的安装步骤及问题总结](http://zhenglinglu.cn/artical?bid=1c5089d6-c82b-4253-9201-52600d6006e1&pwd=%2Fweb)
 
 #### 安装 MongoDB
 ````bash
@@ -139,7 +139,7 @@ tar xzvf mongodb-linux-x86_64-rhel70-4.0.1.tgz
 //重命名
 mv mongodb-linux-x86_64-rhel70-4.0.1 mongodbserver
 ````
-参考资料：[linux 下 mongodb 的安装及配置](http://zhenglinglu.cn/web/mongodb_az/)
+参考资料：[linux 下 mongodb 的安装及配置](http://zhenglinglu.cn/artical?bid=da0e9ecf-0560-4588-8278-97ed88847549&pwd=%2Fmongodb)
 
 ## 快速安装使用
 以 Linux CentOS 7 为例
