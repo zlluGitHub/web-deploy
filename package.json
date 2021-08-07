@@ -6,6 +6,7 @@
     "server": "node ./lib/bin/www"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "compressing": "^1.5.1",
     "compression": "^1.7.4",
     "connect-history-api-fallback": "^1.6.0",
@@ -19,6 +20,8 @@
     "nodejs-websocket": "^1.7.2",
     "nodemailer": "^6.6.0",
     "request": "^2.88.2",
-    "shelljs": "^0.8.4"
+    "shelljs": "^0.8.4",
+    "silly-datetime": "^0.1.2",
+    "uuid": "^8.3.2"
   }
 }
