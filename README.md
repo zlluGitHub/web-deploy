@@ -1,4 +1,4 @@
-<p align="center"><a href="http://swd.zhenglinglu.cn" target="_blank"><img width="160"src="https://zllugithub.github.io/web-deploy/images/logo.png"></a></p>
+<p align="center"><a href="http://swd.zhenglinglu.cn" target="_blank"><img width="160"src="https://gitee.com/zlluGitHub/gene-tree/raw/master/images/logo.png"></a></p>
 
 <!-- # Web Deploy 前端自动化部署平台 -->
 <h1 align="center">Web Deploy 前端自动化部署平台</h1>
@@ -28,7 +28,7 @@ Web Deploy 前端自动化部署平台，一个专门部署 Web 前端的自动�
 【✔】支持部署项目的 history/hash 访问模式（已完成）
 
 ## 简易示意图
-![image](https://zllugithub.github.io/web-deploy/images/20200626121718.jpg)
+![image](https://gitee.com/zlluGitHub/gene-tree/raw/master/images/20200626121718.jpg)
 
 ## 快速开始配置环境
 
@@ -233,7 +233,7 @@ pm2 start ./bin/www --name="web-deploy"
  
 ## 安装示意图
 以 Linux CentOS 7 为例
-![image](https://zllugithub.github.io/web-deploy/images/20200627070846.jpg)
+![image](https://gitee.com/zlluGitHub/gene-tree/raw/master/images/20200627070846.jpg)
 
 ## 快速构建项目模板
 ### 使用 swt 构建项目模板
@@ -244,7 +244,7 @@ swt install my-template
 ````
 
 ### 目录结构示意图
-![image](https://zllugithub.github.io/web-deploy/images/20200627073035.jpg)
+![image](https://gitee.com/zlluGitHub/gene-tree/raw/master/images/20200627073035.jpg)
 
 ## 项目部署说明
 ### 静态部署
@@ -256,7 +256,7 @@ swt install my-template
 5、填写项目的部署摘要内容；
 6、点击提交部署即可；
 
-![image](https://zllugithub.github.io/web-deploy/images/20200625145530.jpg)
+![image](https://gitee.com/zlluGitHub/gene-tree/raw/master/images/20200625145530.jpg)
 
 ### 自动化部署
 1、填写（选择）项目名称；
@@ -269,56 +269,56 @@ swt install my-template
 8、填写项目的部署摘要内容；
 9、点击提交部署即可；
 
-![image](https://zllugithub.github.io/web-deploy/images/20200705161150.jpg)
+![image](https://gitee.com/zlluGitHub/gene-tree/raw/master/images/20200705161150.jpg)
 
 注意：此部署方式部署时间会根据项目的大小而不同，请耐心等待即可，另外，部署成功之后会返回一个 key 值，此 key 值将用于关联Git，且只会出现一次。
 
-![image](https://zllugithub.github.io/web-deploy/images/key_20200706125626.jpg)
+![image](https://gitee.com/zlluGitHub/gene-tree/raw/master/images/key_20200706125626.jpg)
 
 ### 关联 Git 实现自动部署
 #### 关联 gitea 
 1、配置 webhook 相关钩子链接，打开 gitea 找到需要部署的项目仓库 -> Settings -> Webhooks -> Add webhook；
 
-![image](https://zllugithub.github.io/web-deploy/images/b_20200705163216.jpg)
+![image](https://gitee.com/zlluGitHub/gene-tree/raw/master/images/b_20200705163216.jpg)
 
 2、填入相关配置信息
 
-![image](https://zllugithub.github.io/web-deploy/images/b_20200705164219.jpg)
+![image](https://gitee.com/zlluGitHub/gene-tree/raw/master/images/b_20200705164219.jpg)
 
 3、点击 Add Webhook 配置成功
 
-![image](https://zllugithub.github.io/web-deploy/images/b_20200705164637.jpg)
+![image](https://gitee.com/zlluGitHub/gene-tree/raw/master/images/b_20200705164637.jpg)
 
 #### 关联 gitlab
 1、由于仓库的公开程度是 Private 需将其设置成 Public，打开 gitlab 找到需要部署的项目仓库 -> Settings -> General
 
-![image](https://zllugithub.github.io/web-deploy/images/l_20200705172837.jpg)
+![image](https://gitee.com/zlluGitHub/gene-tree/raw/master/images/l_20200705172837.jpg)
 
 2、配置 webhook 相关钩子链接，打开 gitlab 找到需要部署的项目仓库 -> Settings -> Integrations；
 
-![image](https://zllugithub.github.io/web-deploy/images/l_20200705172359.jpg)
+![image](https://gitee.com/zlluGitHub/gene-tree/raw/master/images/l_20200705172359.jpg)
 
 3、填入相关配置信息
 
-![image](https://zllugithub.github.io/web-deploy/images/l_20200705171905.jpg)
+![image](https://gitee.com/zlluGitHub/gene-tree/raw/master/images/l_20200705171905.jpg)
 
 4、点击 Add Webhook 配置成功
 
-![image](https://zllugithub.github.io/web-deploy/images/l_20200705172240.jpg)
+![image](https://gitee.com/zlluGitHub/gene-tree/raw/master/images/l_20200705172240.jpg)
 
 #### 关联 github 
 1、配置 webhook 相关钩子链接，打开 github 找到需要部署的项目仓库 -> Settings -> Webhooks -> Add webhook；
 
-![image](https://zllugithub.github.io/web-deploy/images/g_20200705165340.jpg)
+![image](https://gitee.com/zlluGitHub/gene-tree/raw/master/images/g_20200705165340.jpg)
 
 2、填入相关配置信息
 
-![image](https://zllugithub.github.io/web-deploy/images/g_20200705170758.jpg)
+![image](https://gitee.com/zlluGitHub/gene-tree/raw/master/images/g_20200705170758.jpg)
 
 3、点击 Add Webhook 配置成功
 
-![image](https://zllugithub.github.io/web-deploy/images/g_20200705171043.jpg)
+![image](https://gitee.com/zlluGitHub/gene-tree/raw/master/images/g_20200705171043.jpg)
 
 ## 彩蛋
 
-![image](https://zllugithub.github.io/web-deploy/images/index.jpg)
+![image](https://gitee.com/zlluGitHub/gene-tree/raw/master/images/index.jpg)
